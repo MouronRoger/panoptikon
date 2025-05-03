@@ -30,12 +30,16 @@ Create the file indexing system with the following components:
    - Support exclusion patterns for directories/files
    - Include progress reporting mechanism
    - Implement proper resource management
+   
+   #correct linting errors as you proceed
 
 2. **Metadata Extractor** (`src/panoptikon/index/metadata.py`):
    - Extract required metadata: filename, path, size, dates, extension
    - Implement efficient metadata collection methods
    - Handle different file systems and encodings
    - Support extended attributes where available
+   
+   #correct linting errors as you proceed
 
 3. **Indexing Manager** (`src/panoptikon/index/indexer.py`):
    - Coordinate crawling and metadata extraction
@@ -43,12 +47,16 @@ Create the file indexing system with the following components:
    - Implement throttling to minimize system impact
    - Provide progress feedback mechanism
    - Handle interruptions gracefully
+   
+   #correct linting errors as you proceed
 
 4. **Directory Monitor** (`src/panoptikon/index/monitor.py`):
    - Create a basic file system change monitor
    - Support watching directories for changes
    - Implement event queuing system
    - Use efficient native APIs where possible
+   
+   #correct linting errors as you proceed
 
 ## Step 3: Database Module Implementation
 
@@ -59,24 +67,32 @@ Create the database module with these components:
    - Implement proper indexes for fast searching
    - Support all required metadata fields
    - Include versioning for future migrations
+   
+   #correct linting errors as you proceed
 
 2. **Database Operations** (`src/panoptikon/db/operations.py`):
    - Implement CRUD operations for file metadata
    - Create batch operation methods for performance
    - Use parameterized queries for security
    - Support transaction management
+   
+   #correct linting errors as you proceed
 
 3. **Connection Manager** (`src/panoptikon/db/connection.py`):
    - Implement proper connection pooling
    - Handle database file creation and initialization
    - Manage connection lifecycle
    - Include error handling and recovery
+   
+   #correct linting errors as you proceed
 
 4. **Migration Support** (`src/panoptikon/db/migrations.py`):
    - Create migration framework for schema changes
    - Implement version tracking in database
    - Support automatic migrations on startup
    - Include validation of schema integrity
+   
+   #correct linting errors as you proceed
 
 ## Step 4: Search Functionality Implementation
 
@@ -87,24 +103,32 @@ Create the search module with these components:
    - Optimize for performance (<200ms response time)
    - Support incremental search (refining as user types)
    - Include relevance ranking
+   
+   #correct linting errors as you proceed
 
 2. **Query Parser** (`src/panoptikon/search/parser.py`):
    - Create basic parser for search terms
    - Support simple patterns and wildcards
    - Implement case sensitivity options
    - Prepare for extended syntax in future phases
+   
+   #correct linting errors as you proceed
 
 3. **Filter Builder** (`src/panoptikon/search/filters.py`):
    - Implement filter construction for queries
    - Support filtering by name, path, extension
    - Convert filters to efficient SQL queries
    - Include optimization for common cases
+   
+   #correct linting errors as you proceed
 
 4. **Result Manager** (`src/panoptikon/search/results.py`):
    - Implement result object structure
    - Support sorting by relevance and metadata
    - Create paging mechanism for large results
    - Include serialization for display
+   
+   #correct linting errors as you proceed
 
 ## Step 5: Terminal Interface Implementation
 
@@ -116,11 +140,15 @@ Create a simple command-line interface for testing:
    - Display search results in tabular format
    - Include commands for indexing and searching
    - Show progress during indexing
+   
+   #correct linting errors as you proceed
 
 2. **CLI Arguments** (`src/panoptikon/cli/args.py`):
    - Parse command-line arguments
    - Support options for verbosity, paths, etc.
    - Include help documentation
+   
+   #correct linting errors as you proceed
 
 ## Step 6: Comprehensive Tests
 
@@ -131,23 +159,31 @@ Create thorough tests for all components:
    - Verify metadata extraction accuracy
    - Test indexing performance
    - Validate monitor functionality
+   
+   #correct linting errors as you proceed
 
 2. **Database Tests** (`tests/test_db/`):
    - Test schema creation and migrations
    - Verify CRUD operations
    - Test transaction handling
    - Validate connection management
+   
+   #correct linting errors as you proceed
 
 3. **Search Tests** (`tests/test_search/`):
    - Test search performance and accuracy
    - Verify query parsing
    - Test filter construction
    - Validate result sorting and ranking
+   
+   #correct linting errors as you proceed
 
 4. **CLI Tests** (`tests/test_cli/`):
    - Test command-line interface
    - Verify output formatting
    - Test progress reporting
+   
+   #correct linting errors as you proceed
 
 ## Deliverables
 
