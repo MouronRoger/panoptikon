@@ -1,0 +1,39 @@
+{
+  "editor": {
+    "formatOnSave": true,
+    "rulers": [120],
+    "showHints": true,
+    "lintOnSave": true
+  },
+  "linting": {
+    "enabled": true,
+    "pylintEnabled": false,
+    "flake8Enabled": false,
+    "ruffEnabled": true,
+    "mypyEnabled": true
+  },
+  "ai": {
+    "contextPrompts": [
+      "Always follow the project's quality standards:",
+      "- Maximum line length: 120 characters",
+      "- All functions must have docstrings",
+      "- All parameters must have type annotations",
+      "- Maximum function length: 50 lines",
+      "- Maximum file length: 500 lines",
+      "- Use pathlib instead of os.path",
+      "- No bare except statements",
+      "- Prefer composition over inheritance",
+      "- No circular dependencies"
+    ]
+  },
+  "python": {
+    "formatting": {
+      "provider": "black",
+      "blackArgs": ["--line-length", "120"]
+    },
+    "linting": {
+      "ruffArgs": ["--config=pyproject.toml"],
+      "mypyArgs": ["--config-file=pyproject.toml"]
+    }
+  }
+}
