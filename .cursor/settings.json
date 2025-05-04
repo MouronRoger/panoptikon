@@ -7,8 +7,8 @@
   },
   "linting": {
     "enabled": true,
-    "pylintEnabled": false,
-    "flake8Enabled": false,
+    "pylintEnabled": true,
+    "flake8Enabled": true,
     "ruffEnabled": true,
     "mypyEnabled": true
   },
@@ -33,7 +33,9 @@
     },
     "linting": {
       "ruffArgs": ["--config=pyproject.toml"],
-      "mypyArgs": ["--config-file=pyproject.toml"]
+      "mypyArgs": ["--config-file=pyproject.toml"],
+      "flake8Args": ["--max-line-length=120", "--ignore=E203,W503"],
+      "pylintArgs": ["--rcfile=.pylintrc"]
     }
   }
 }
