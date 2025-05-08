@@ -33,7 +33,7 @@
     },
     "linting": {
       "ruffArgs": ["--config=pyproject.toml"],
-      "mypyArgs": ["--config-file=pyproject.toml"],
+      "mypyArgs": ["--config-file=.mypy.ini"],
       "flake8Args": ["--max-line-length=120", "--ignore=E203,W503"],
       "pylintArgs": ["--rcfile=.pylintrc"]
     }

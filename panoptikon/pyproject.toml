@@ -1,0 +1,118 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "panoptikon"
+version = "0.1.0"
+description = "High-performance file search application inspired by Windows 'Everything'"
+authors = [
+    {name = "Panoptikon Team", email = "example@example.com"},
+]
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+dependencies = [
+    "sqlalchemy>=2.0.0",
+    "watchdog>=3.0.0",
+    "pyobjc>=9.0.1; platform_system=='Darwin'",
+    "click>=8.1.3",
+    "rich>=13.0.0",
+    "pydantic>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black>=23.3.0",
+    "ruff>=0.0.262",
+    "mypy>=1.2.0",
+    "pytest>=7.3.1",
+    "pytest-cov>=4.1.0",
+    "pre-commit>=3.3.1",
+]
+docs = [
+    "sphinx>=6.1.3",
+    "sphinx-rtd-theme>=1.2.0",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/example/panoptikon"
+"Bug Tracker" = "https://github.com/example/panoptikon/issues"
+
+[project.scripts]
+panoptikon = "panoptikon.__main__:main"
+
+[tool.black]
+line-length = 120
+target-version = ["py39"]
+include = '\.pyi?$'
+
+[tool.ruff]
+line-length = 120
+target-version = "py39"
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "B",   # flake8-bugbear
+    "I",   # isort
+    "D",   # pydocstyle
+    "UP",  # pyupgrade
+    "N",   # pep8-naming
+    "C4",  # flake8-comprehensions
+    "SIM", # flake8-simplify
+]
+ignore = ["D203", "D213"]
+fixable = ["ALL"]
+
+[tool.ruff.pydocstyle]
+convention = "google"
+
+[tool.ruff.mccabe]
+max-complexity = 10
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_functions = "test_*"
+python_classes = "Test*"
+addopts = "--cov=src/panoptikon --cov-report=term --cov-report=html --cov-fail-under=80"
+
+[tool.coverage.run]
+source = ["src/panoptikon"]
+omit = ["*/__init__.py", "*/tests/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "pass",
+    "raise ImportError",
+]
+fail_under = 80 

@@ -7,7 +7,7 @@ import pytest
 from panoptikon.index.crawler import FileCrawler
 
 
-def test_crawler_init():
+def test_crawler_init() -> None:
     """Test crawler initialization."""
     roots = [Path("/tmp"), Path.home()]
     excluded = {Path("/tmp/excluded")}
@@ -20,7 +20,7 @@ def test_crawler_init():
     assert crawler.excluded_patterns == patterns
 
 
-def test_crawler_with_sample_files(sample_files):
+def test_crawler_with_sample_files(sample_files: Path) -> None:
     """Test crawler with sample files.
     
     Args:
@@ -47,7 +47,7 @@ def test_crawler_with_sample_files(sample_files):
     assert "subfile2.py" in file_names
 
 
-def test_crawler_with_exclusions(sample_files):
+def test_crawler_with_exclusions(sample_files: Path) -> None:
     """Test crawler with exclusion patterns.
     
     Args:
