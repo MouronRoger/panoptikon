@@ -1,1 +1,1 @@
-"""Search functionality for Panoptikon.""" 
+"""Search functionality for Panoptikon."""

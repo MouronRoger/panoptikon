@@ -1,1 +1,1 @@
-"""Database management and operations for Panoptikon.""" 
+"""Database management and operations for Panoptikon."""

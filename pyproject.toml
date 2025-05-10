@@ -35,6 +35,7 @@ dev = [
     "pytest-cov>=4.1.0",
     "pre-commit>=3.3.2",
     "types-PyObjC",
+    "pytest-stubs>=0.1.0",
 ]
 
 [project.urls]
@@ -87,6 +88,7 @@ warn_no_return = true
 module = "tests.*"
 disallow_untyped_defs = false
 disallow_incomplete_defs = false
+ignore_missing_imports = true
 
 [tool.ruff]
 line-length = 88
@@ -96,6 +98,8 @@ target-version = "py39"
 select = ["E", "F", "B", "I", "N", "D"]
 ignore = ["E203", "D203", "D213"]
 fixable = ["ALL"]
+mccabe = { max-complexity = 10 }
+pydocstyle = { convention = "google" }
 
 [tool.ruff.format]
 quote-style = "double"
@@ -108,9 +112,6 @@ combine-as-imports = true
 force-sort-within-sections = true
 known-first-party = ["panoptikon"]
 section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
-
-[tool.ruff.lint.pydocstyle]
-convention = "google"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

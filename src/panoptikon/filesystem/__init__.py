@@ -1,1 +1,1 @@
-"""Filesystem operations and monitoring for Panoptikon.""" 
+"""Filesystem operations and monitoring for Panoptikon."""

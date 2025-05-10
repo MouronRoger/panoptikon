@@ -1,1 +1,1 @@
-"""User interface components for Panoptikon.""" 
+"""User interface components for Panoptikon."""

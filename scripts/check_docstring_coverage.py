@@ -17,7 +17,7 @@ class DocstringVisitor(ast.NodeVisitor):
             "has_docstrings": [],
         }
 
-    def visit_Module(self, node: ast.Module) -> None:
+    def visit_module(self, node: ast.Module) -> None:
         """Visit a module node.
 
         Args:
@@ -29,7 +29,7 @@ class DocstringVisitor(ast.NodeVisitor):
             self.stats["has_docstrings"].append("module")
         self.generic_visit(node)
 
-    def visit_ClassDef(self, node: ast.ClassDef) -> None:
+    def visit_classdef(self, node: ast.ClassDef) -> None:
         """Visit a class definition node.
 
         Args:
@@ -41,7 +41,7 @@ class DocstringVisitor(ast.NodeVisitor):
             self.stats["has_docstrings"].append(f"class {node.name}")
         self.generic_visit(node)
 
-    def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
+    def visit_functiondef(self, node: ast.FunctionDef) -> None:
         """Visit a function definition node.
 
         Args:
@@ -70,14 +70,20 @@ def check_docstring_coverage(filename: str, min_coverage: float) -> bool:
     visitor = DocstringVisitor()
     visitor.visit(tree)
 
-    total = len(visitor.stats["missing_docstrings"]) + len(visitor.stats["has_docstrings"])
+    missing_count = len(visitor.stats["missing_docstrings"])
+    has_count = len(visitor.stats["has_docstrings"])
+    total = missing_count + has_count
+
     if total == 0:
         return True
 
-    coverage = (len(visitor.stats["has_docstrings"]) / total) * 100
+    coverage = (has_count / total) * 100
 
     if coverage < min_coverage:
-        print(f"Error: {filename} has {coverage:.1f}% docstring coverage (minimum: {min_coverage}%)")
+        print(
+            f"Error: {filename} has {coverage:.1f}% docstring coverage "
+            f"(minimum: {min_coverage}%)"
+        )
         print("Missing docstrings:")
         for item in visitor.stats["missing_docstrings"]:
             print(f"  - {item}")
@@ -116,4 +122,4 @@ def main(argv: Optional[List[str]] = None) -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main()) 
+    sys.exit(main())

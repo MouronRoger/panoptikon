@@ -1,1 +1,1 @@
-"""Utility functions and helpers for Panoptikon.""" 
+"""Utility functions and helpers for Panoptikon."""

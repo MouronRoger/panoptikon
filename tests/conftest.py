@@ -1,13 +1,25 @@
 """Pytest configuration and fixtures."""
 
+import os
 from typing import Generator
 
 import pytest
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(scope="session")
 def _setup_test_env() -> Generator[None, None, None]:
-    """Set up test environment before each test."""
-    # Add any setup code here
+    """Set up the test environment.
+
+    Yields:
+        None
+    """
+    # Save original working directory
+    original_cwd = os.getcwd()
+
+    # Change to the project root directory
+    os.chdir(os.path.dirname(os.path.dirname(__file__)))
+
     yield
-    # Add any teardown code here 
+
+    # Restore original working directory
+    os.chdir(original_cwd)
