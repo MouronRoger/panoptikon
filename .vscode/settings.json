@@ -13,9 +13,42 @@
   "python.linting.pylintArgs": [
     "--rcfile=.pylintrc"
   ],
-  "editor.rulers": [120],
+  "editor.rulers": [
+    120
+  ],
   "python.formatting.provider": "black",
   "python.formatting.blackArgs": [
-    "--line-length", "120"
+    "--line-length",
+    "88"
+  ],
+  "python.sortImports.args": [
+    "--profile",
+    "black",
+    "--line-length",
+    "88"
+  ],
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit",
+    "source.fixAll": "explicit"
+  },
+  "editor.rulers": [
+    88
+  ],
+  "ruff.enable": true,
+  "ruff.formatting.provider": "black",
+  "ruff.lint.args": [
+    "--fix",
+    "--line-length",
+    "88"
+  ],
+  "mypy-type-checker.args": [
+    "--config-file=.mypy.ini"
+  ],
+  "extensions.recommendations": [
+    "ms-python.black-formatter",
+    "ms-python.isort",
+    "charliermarsh.ruff",
+    "ms-python.mypy-type-checker"
   ]
 }
