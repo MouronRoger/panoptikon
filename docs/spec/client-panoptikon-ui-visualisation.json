@@ -1,0 +1,91 @@
+{
+  "applicationName": "Panoptikon",
+  "uiComponents": {
+    "tabBar": {
+      "position": "top",
+      "tabs": [
+        {"id": "all_files", "label": "All Files", "selected": true},
+        {"id": "docs", "label": "Docs", "selected": false},
+        {"id": "spreads", "label": "Spreads", "selected": false},
+        {"id": "pdf", "label": "PDF", "selected": false},
+        {"id": "folders", "label": "Folders", "selected": false},
+        {"id": "images", "label": "Images", "selected": false},
+        {"id": "audio", "label": "Audio", "selected": false},
+        {"id": "video", "label": "Video", "selected": false},
+        {"id": "archive", "label": "Archive", "selected": false},
+        {"id": "apps", "label": "Apps", "selected": false},
+        {"id": "custom", "label": "Custom", "selected": false}
+      ],
+      "customizable": true
+    },
+    "searchControls": {
+      "position": "belowTabs",
+      "components": [
+        {"id": "search_input", "type": "textInput", "placeholder": "Type to filter", "width": "flexible"},
+        {"id": "match_case", "type": "checkbox", "label": "Match case"},
+        {"id": "whole_word", "type": "checkbox", "label": "Whole word"},
+        {"id": "extension", "type": "checkbox", "label": "Extension"},
+        {"id": "extension_wildcards", "type": "text", "label": ".docx, .xlsx, etc"}
+      ]
+    },
+    "resultList": {
+      "position": "center",
+      "type": "tableView",
+      "columns": [
+        {"id": "name", "label": "Name", "sortable": true, "resizable": true, "initialWidth": "35%"},
+        {"id": "type", "label": "Type", "sortable": true, "resizable": true, "initialWidth": "15%"},
+        {"id": "extension", "label": "Extension", "sortable": true, "resizable": true, "initialWidth": "10%"},
+        {"id": "size", "label": "Size", "sortable": true, "resizable": true, "initialWidth": "10%"},
+        {"id": "created", "label": "Created", "sortable": true, "resizable": true, "initialWidth": "15%"},
+        {"id": "modified", "label": "Modified", "sortable": true, "resizable": true, "initialWidth": "15%"}
+      ],
+      "rowHeight": "standard",
+      "alternatingRowColors": true,
+      "selectionType": "multipleRows",
+      "contextMenuEnabled": true,
+      "fileStatusVisualization": {
+        "localFiles": {"backgroundColor": "default", "tooltip": "Local file"},
+        "downloadedCloudFiles": {"backgroundColor": "paleBlue", "tooltip": "Downloaded cloud file"},
+        "undownloadedCloudFiles": {"backgroundColor": "palePink", "tooltip": "Cloud file (not downloaded)"}
+      }
+    },
+    "statusBar": {
+      "position": "bottom",
+      "components": [
+        {"id": "status_text", "type": "staticText", "alignment": "left", "content": "Ready"},
+        {"id": "indexed_count", "type": "staticText", "alignment": "right", "content": "84025 files indexed"}
+      ]
+    }
+  },
+  "interactions": {
+    "tableRowInteractions": {
+      "singleClick": "selectRow",
+      "doubleClick": "openFile",
+      "rightClick": "showContextMenu",
+      "arrowKeys": "navigateRows",
+      "returnKey": "openSelectedFile",
+      "spaceKey": "previewSelectedFile"
+    },
+    "headerInteractions": {
+      "click": "sortByColumn",
+      "rightClick": "showColumnOptions",
+      "dragResize": "resizeColumn",
+      "dragReorder": "reorderColumns"
+    },
+    "tabBarInteractions": {
+      "click": "switchTab",
+      "rightClick": "showTabOptions"
+    }
+  },
+  "visualStyles": {
+    "colorScheme": "system",
+    "supports": ["light", "dark", "highContrast"],
+    "fontFamily": "system",
+    "iconSet": "standard",
+    "fileStatusColors": {
+      "localFiles": "default/clear",
+      "downloadedCloudFiles": "paleBlue",
+      "undownloadedCloudFiles": "palePink"
+    }
+  }
+}
