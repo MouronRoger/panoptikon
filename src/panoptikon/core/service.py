@@ -195,8 +195,15 @@ class ServiceContainer:
 
         This method should be called during application startup.
         """
+        # First set the initialized flag so that new services will be initialized as they're resolved
         self._initialized = True
-        # Initialize all singleton services
+        
+        # Initialize all singleton services that may have been resolved before
+        for service in self._instances.values():
+            if isinstance(service, ServiceInterface):
+                service.initialize()
+            
+        # Make sure all singletons are created and initialized
         for service_type, registration in self._registrations.items():
             if registration["lifetime"] == ServiceLifetime.SINGLETON:
                 # This will initialize the service if it hasn't been resolved yet
@@ -225,6 +232,52 @@ class ServiceContainer:
             temp_stack: set[type[Any]] = set()
             self._validate_service_dependencies(service_type, temp_stack)
 
+    def _get_service_name(self, service_type: type[Any]) -> str:
+        """Get a readable name for a service type.
+        
+        Args:
+            service_type: The service type.
+            
+        Returns:
+            A string representation of the service type.
+        """
+        if hasattr(service_type, "__name__"):
+            return service_type.__name__
+        return str(service_type)
+
+    def _format_dependency_path(self, visited: set[type[Any]], end_type: type[Any]) -> str:
+        """Format a dependency path for error messages.
+        
+        Args:
+            visited: The set of visited service types.
+            end_type: The end point of the dependency path.
+            
+        Returns:
+            A formatted dependency path string.
+        """
+        path_names = []
+        for s in visited:
+            path_names.append(self._get_service_name(s))
+            
+        path_names.append(self._get_service_name(end_type))
+        return " -> ".join(path_names)
+
+    def _normalize_type(self, service_type: Any) -> Any:
+        """Normalize a type, handling Optional and other container types.
+        
+        Args:
+            service_type: The type to normalize.
+            
+        Returns:
+            The normalized type.
+        """
+        # Handle Optional types (these have __origin__ attribute but no __name__)
+        if hasattr(service_type, "__origin__"):
+            # For Optional[Type], use the contained type
+            if hasattr(service_type, "__args__") and service_type.__args__:
+                return service_type.__args__[0]
+        return service_type
+
     def _validate_service_dependencies(
         self, service_type: type[Any], visited: set[type[Any]]
     ) -> None:
@@ -238,26 +291,28 @@ class ServiceContainer:
             CircularDependencyError: If a circular dependency is detected.
             ServiceNotRegisteredError: If a required dependency is not registered.
         """
+        # Normalize the type (handles Optional, etc.)
+        service_type = self._normalize_type(service_type)
+
+        # Check for circular dependencies
         if service_type in visited:
-            path = (
-                " -> ".join(s.__name__ for s in visited)
-                + f" -> {service_type.__name__}"
-            )
+            path = self._format_dependency_path(visited, service_type)
             raise CircularDependencyError(f"Circular dependency detected: {path}")
 
+        # Check if service is registered
         if service_type not in self._registrations:
-            raise ServiceNotRegisteredError(
-                f"Service {service_type.__name__} not registered"
-            )
+            name = self._get_service_name(service_type)
+            raise ServiceNotRegisteredError(f"Service {name} not registered")
 
+        # Get service registration
         registration = self._registrations[service_type]
-        implementation_type = registration["implementation"]
-
-        # Skip further validation if using a factory
+        
+        # Skip validation for factory-created services
         if registration["factory"] is not None:
             return
 
-        # Check constructor dependencies
+        # Validate constructor dependencies
+        implementation_type = registration["implementation"]
         if hasattr(implementation_type, "__init__"):
             visited.add(service_type)
             try:

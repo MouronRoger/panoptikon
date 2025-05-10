@@ -175,6 +175,7 @@ markers = [
     "unit: marks test as a unit test",
     "integration: marks test as an integration test",
     "slow: marks test as slow",
+    "asyncio: marks test as an asyncio test",
 ]
 
 [tool.coverage.run]
