@@ -5,15 +5,15 @@ settings (defaults, user, runtime), schema validation, and hot reloading
 of configuration changes.
 """
 
-from enum import Enum, auto
 import json
 import logging
 import os
-from pathlib import Path
 import threading
+from enum import Enum, auto
+from pathlib import Path
 from typing import Any, Optional
 
-import pydantic  # type: ignore[import-not-found]
+import pydantic
 from pydantic import BaseModel
 
 from ..core.events import EventBase, EventBus
@@ -26,31 +26,21 @@ logger = logging.getLogger(__name__)
 class ConfigChangedEvent(EventBase):
     """Event issued when configuration values change."""
 
-    section: str
-    key: str
+    section: str = ""
+    key: str = ""
     old_value: Optional[Any] = None
     new_value: Optional[Any] = None
 
-    def __init__(
-        self,
-        section: str,
-        key: str,
-        old_value: Optional[Any] = None,
-        new_value: Optional[Any] = None,
-    ) -> None:
-        """Initialize a config changed event.
+    def __post_init__(self) -> None:
+        """Validate required fields after initialization.
 
-        Args:
-            section: Configuration section name.
-            key: Configuration key that changed.
-            old_value: Previous value, if any.
-            new_value: New value, if any.
+        Raises:
+            ValueError: If section or key is empty.
         """
-        super().__init__()
-        self.section = section
-        self.key = key
-        self.old_value = old_value
-        self.new_value = new_value
+        if not self.section:
+            raise ValueError("section is required")
+        if not self.key:
+            raise ValueError("key is required")
 
 
 class ConfigSource(Enum):
@@ -359,7 +349,12 @@ class ConfigurationSystem(ServiceInterface):
 
         # Publish event
         if old_value != value:
-            event = ConfigChangedEvent(section, key, old_value, value)
+            event = ConfigChangedEvent(
+                section=section,
+                key=key,
+                old_value=old_value,
+                new_value=value
+            )
             self._event_bus.publish(event)
 
         logger.debug(
@@ -536,7 +531,12 @@ class ConfigurationSystem(ServiceInterface):
                 for key, value in section_data.items():
                     if key not in old_section_data or old_section_data[key] != value:
                         old_value = old_section_data.get(key)
-                        event = ConfigChangedEvent(section, key, old_value, value)
+                        event = ConfigChangedEvent(
+                            section=section,
+                            key=key,
+                            old_value=old_value,
+                            new_value=value
+                        )
                         self._event_bus.publish(event)
 
     def _validate_section(self, section: str) -> None:

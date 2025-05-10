@@ -42,7 +42,7 @@ class EventPriority(Enum):
 
 @dataclass
 class EventBase:
-    """Base class for all events in the system."""
+    """Core event payload shared by every event type."""
 
     event_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     timestamp: datetime = field(default_factory=datetime.now)
@@ -78,42 +78,25 @@ class EventBase:
         return json.dumps(data, default=str)
 
 
-# Note: ErrorEvent intentionally uses a regular class pattern instead of dataclass
-# to avoid the dataclass constraint that non-default attributes must come before
-# default ones, which would conflict with inherited attributes from EventBase.
+@dataclass
 class ErrorEvent(EventBase):
     """Event issued when an error occurs in the system."""
 
-    def __init__(
-        self,
-        error_type: str,
-        message: str,
-        event_id: Optional[str] = None,
-        timestamp: Optional[datetime] = None,
-        source: Optional[str] = None,
-        severity: str = "ERROR",
-        traceback: Optional[str] = None,
-    ) -> None:
-        """Initialize the error event.
+    error_type: str = ""
+    message: str = ""
+    severity: str = "ERROR"
+    traceback: Optional[str] = None
 
-        Args:
-            error_type: Type of error that occurred
-            message: Error message
-            event_id: Unique ID for the event (inherited from parent)
-            timestamp: Event creation time (inherited from parent)
-            source: Source of the event (inherited from parent)
-            severity: Error severity level
-            traceback: Error traceback information
+    def __post_init__(self) -> None:
+        """Validate required fields after initialization.
+
+        Raises:
+            ValueError: If error_type or message is empty.
         """
-        super().__init__(
-            event_id=event_id or str(uuid.uuid4()),
-            timestamp=timestamp or datetime.now(),
-            source=source
-        )
-        self.error_type = error_type
-        self.message = message
-        self.severity = severity
-        self.traceback = traceback
+        if not self.error_type:
+            raise ValueError("error_type is required")
+        if not self.message:
+            raise ValueError("message is required")
 
     def to_dict(self) -> dict[str, Any]:
         """Convert error event to dictionary representation.
