@@ -13,7 +13,7 @@ from enum import Enum, auto
 from pathlib import Path
 from typing import Any, Optional
 
-import pydantic
+import pydantic  # type: ignore[import-not-found]
 from pydantic import BaseModel
 
 from ..core.events import EventBase, EventBus
