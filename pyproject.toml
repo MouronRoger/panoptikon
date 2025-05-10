@@ -41,6 +41,7 @@ dev = [
     "pre-commit>=3.3.2",
     "types-PyObjC",
     "pytest-stubs>=0.1.0",
+    "pydantic-stubs",
 ]
 docs = [
     "sphinx>=6.1.3",

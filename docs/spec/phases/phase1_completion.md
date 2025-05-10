@@ -8,7 +8,7 @@ Phase 1 focused on establishing the project foundation, setting up the developme
 ### 1. Project Structure
 - ✓ Created core directory structure:
   ```
-  panoptikon/
+  project-root/
   ├── src/panoptikon/
   │   ├── core/
   │   ├── database/
