@@ -42,6 +42,8 @@ dev = [
     "types-PyObjC",
     "pytest-stubs>=0.1.0",
     "pydantic-stubs",
+    "pip-tools>=7.0.0",
+    "bandit>=1.7.5",
 ]
 docs = [
     "sphinx>=6.1.3",

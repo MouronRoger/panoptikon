@@ -30,6 +30,10 @@ jobs:
     - name: Type check with mypy
       run: |
         mypy src/panoptikon
+    - name: Run security scan
+      run: |
+        pip install bandit
+        bandit -r src/
     - name: Upload coverage reports
       uses: codecov/codecov-action@v3
       with:
