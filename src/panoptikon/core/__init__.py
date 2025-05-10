@@ -1,1 +1,1 @@
-"""Core functionality for Panoptikon."""
+"""Core module containing application infrastructure components."""
