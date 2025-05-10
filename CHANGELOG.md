@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Security scanning with bandit
 - CHANGELOG.md file
 - Dependabot configuration
+- Makefile targets for dependency management (`update-deps` and `install-deps`)
 
 ## [0.1.0] - YYYY-MM-DD
 

@@ -1,4 +1,4 @@
-.PHONY: setup test lint format coverage clean build docs
+.PHONY: setup test lint format coverage clean build docs update-deps install-deps
 
 PYTHON = python3.11
 VENV = .venv
@@ -45,4 +45,11 @@ build: clean
 	$(PYTHON) -m build
 
 docs:
-	$(BIN)/sphinx-build -b html docs/source docs/build/html 
+	$(BIN)/sphinx-build -b html docs/source docs/build/html
+
+update-deps:
+	$(BIN)/pip install pip-tools
+	$(BIN)/pip-compile pyproject.toml -o requirements.txt
+
+install-deps:
+	$(BIN)/pip install -r requirements.txt 
