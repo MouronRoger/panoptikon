@@ -39,9 +39,9 @@ dev = [
     "pytest>=7.3.1",
     "pytest-cov>=4.1.0",
     "pre-commit>=3.3.2",
-    "types-PyObjC",
-    "pytest-stubs>=0.1.0",
-    "pydantic-stubs",
+    # "types-PyObjC",  # Commented out as it's causing installation issues
+    # "pytest-stubs>=0.1.0",  # Commented out as it's causing installation issues
+    # "pydantic-stubs",  # Commented out as it's causing installation issues
     "pip-tools>=7.0.0",
     "bandit>=1.7.5",
 ]
@@ -96,9 +96,10 @@ disallow_untyped_decorators = false
 no_implicit_optional = true
 strict_optional = true
 warn_redundant_casts = true
-warn_unused_ignores = true
+warn_unused_ignores = false  # Changed to false because we need to use # type: ignore for PyObjC
 warn_no_return = true
 plugins = ["pydantic.mypy"]
+mypy_path = ["src/panoptikon/typings"]
 
 [[tool.mypy.overrides]]
 module = "tests.*"
@@ -109,6 +110,23 @@ disallow_untyped_decorators = false
 
 [[tool.mypy.overrides]]
 module = "pytest"
+ignore_missing_imports = true
+
+# Ignore PyObjC related imports in type checking
+[[tool.mypy.overrides]]
+module = "objc"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "Foundation"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "AppKit"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "Cocoa"
 ignore_missing_imports = true
 
 [tool.ruff]

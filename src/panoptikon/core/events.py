@@ -95,7 +95,7 @@ class ErrorEvent(EventBase):
         traceback: Optional[str] = None,
     ) -> None:
         """Initialize the error event.
-        
+
         Args:
             error_type: Type of error that occurred
             message: Error message
@@ -106,7 +106,7 @@ class ErrorEvent(EventBase):
             traceback: Error traceback information
         """
         super().__init__(
-            event_id=event_id or str(uuid.uuid4()), 
+            event_id=event_id or str(uuid.uuid4()),
             timestamp=timestamp or datetime.now(),
             source=source
         )
@@ -114,10 +114,10 @@ class ErrorEvent(EventBase):
         self.message = message
         self.severity = severity
         self.traceback = traceback
-    
+
     def to_dict(self) -> dict[str, Any]:
         """Convert error event to dictionary representation.
-        
+
         Returns:
             Dictionary representation of the error event.
         """
