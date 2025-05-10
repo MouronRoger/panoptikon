@@ -10,6 +10,7 @@ import pytest
 
 # Skip the tests if PyObjC is not installed
 try:
+    import Foundation  # type: ignore
     import objc  # type: ignore
     
     PYOBJC_AVAILABLE = True
@@ -34,18 +35,30 @@ pytestmark = pytest.mark.skipif(
 )
 
 
-class MockTableDataSource:
+class MockTableDataSource(Foundation.NSObject):
     """Mock implementation of NSTableViewDataSource."""
 
-    def __init__(self, data: List[List[str]]) -> None:
-        """Initialize with test data.
-
+    def init(self):
+        """Initialize the data source."""
+        self = objc.super(MockTableDataSource, self).init()
+        if self is None:
+            return None
+        self.data = []
+        return self
+    
+    def initWithData_(self, data):
+        """Initialize with data.
+        
         Args:
             data: A 2D array representing table data
         """
+        self = self.init()
+        if self is None:
+            return None
         self.data = data
+        return self
 
-    def numberOfRowsInTableView_(self, table_view: Any) -> int:
+    def numberOfRowsInTableView_(self, table_view):
         """Return the number of rows.
 
         Args:
@@ -56,9 +69,7 @@ class MockTableDataSource:
         """
         return len(self.data)
 
-    def tableView_objectValueForTableColumn_row_(
-        self, table_view: Any, column: Any, row: int
-    ) -> Any:
+    def tableView_objectValueForTableColumn_row_(self, table_view, column, row):
         """Return the value for a cell.
 
         Args:
@@ -96,7 +107,9 @@ class TestTableViewWrapper:
             ["File 2", "20 KB"],
             ["File 3", "30 KB"],
         ]
-        data_source = MockTableDataSource(data)
+        
+        # Use proper PyObjC initialization
+        data_source = MockTableDataSource.alloc().initWithData_(data)
 
         # Verify our data source passes the validation
         assert validate_table_data_source(data_source)
