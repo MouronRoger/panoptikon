@@ -11,7 +11,7 @@ import logging
 import os
 from pathlib import Path
 import threading
-from typing import Any, Dict, Optional, Type
+from typing import Any, Optional
 
 import pydantic
 from pydantic import BaseModel
@@ -30,6 +30,27 @@ class ConfigChangedEvent(EventBase):
     key: str
     old_value: Optional[Any] = None
     new_value: Optional[Any] = None
+
+    def __init__(
+        self,
+        section: str,
+        key: str,
+        old_value: Optional[Any] = None,
+        new_value: Optional[Any] = None,
+    ) -> None:
+        """Initialize a config changed event.
+
+        Args:
+            section: Configuration section name.
+            key: Configuration key that changed.
+            old_value: Previous value, if any.
+            new_value: New value, if any.
+        """
+        super().__init__()
+        self.section = section
+        self.key = key
+        self.old_value = old_value
+        self.new_value = new_value
 
 
 class ConfigSource(Enum):
@@ -103,16 +124,16 @@ class ConfigurationSystem(ServiceInterface):
         self._initialized = False
 
         # Configuration data stores
-        self._default_config: Dict[str, Dict[str, Any]] = {}
-        self._user_config: Dict[str, Dict[str, Any]] = {}
-        self._runtime_config: Dict[str, Dict[str, Any]] = {}
+        self._default_config: dict[str, dict[str, Any]] = {}
+        self._user_config: dict[str, dict[str, Any]] = {}
+        self._runtime_config: dict[str, dict[str, Any]] = {}
 
         # Schema registry
-        self._schemas: Dict[str, Type[ConfigSection]] = {}
+        self._schemas: dict[str, type[ConfigSection]] = {}
 
         # Change monitoring
         self._file_watcher = None
-        self._last_modified_time = 0
+        self._last_modified_time = 0.0
         self._save_lock = threading.RLock()
 
         # Create config directory if it doesn't exist
@@ -160,8 +181,8 @@ class ConfigurationSystem(ServiceInterface):
     def register_section(
         self,
         section_name: str,
-        schema: Type[ConfigSection],
-        defaults: Optional[Dict[str, Any]] = None,
+        schema: type[ConfigSection],
+        defaults: Optional[dict[str, Any]] = None,
     ) -> None:
         """Register a configuration section with its schema.
 
@@ -188,7 +209,8 @@ class ConfigurationSystem(ServiceInterface):
                     self._default_config[section_name][key] = value
                 else:
                     logger.warning(
-                        f"Default value for '{key}' provided but not in schema for section '{section_name}'"
+                        f"Default value for '{key}' provided but not in schema "
+                        f"for section '{section_name}'"
                     )
 
         # Initialize empty sections
@@ -237,7 +259,7 @@ class ConfigurationSystem(ServiceInterface):
 
         return default
 
-    def get_section(self, section: str) -> Dict[str, Any]:
+    def get_section(self, section: str) -> dict[str, Any]:
         """Get all configuration values for a section.
 
         Returns merged values from all configuration sources.
@@ -337,14 +359,8 @@ class ConfigurationSystem(ServiceInterface):
 
         # Publish event
         if old_value != value:
-            self._event_bus.publish(
-                ConfigChangedEvent(
-                    section=section,
-                    key=key,
-                    old_value=old_value,
-                    new_value=value,
-                )
-            )
+            event = ConfigChangedEvent(section, key, old_value, value)
+            self._event_bus.publish(event)
 
         logger.debug(
             f"Set config value: {section}.{key} = {value} (source: {source.name})"
@@ -353,7 +369,7 @@ class ConfigurationSystem(ServiceInterface):
     def update_section(
         self,
         section: str,
-        values: Dict[str, Any],
+        values: dict[str, Any],
         source: ConfigSource = ConfigSource.RUNTIME,
     ) -> None:
         """Update multiple values in a section.
@@ -385,7 +401,7 @@ class ConfigurationSystem(ServiceInterface):
                 with open(self._config_file, "w", encoding="utf-8") as f:
                     json.dump(self._user_config, f, indent=2, sort_keys=True)
 
-                self._last_modified_time = os.path.getmtime(self._config_file)
+                self._last_modified_time = float(os.path.getmtime(self._config_file))
                 logger.debug(f"Saved configuration to {self._config_file}")
             except OSError as e:
                 raise ConfigFileError(f"Failed to save configuration: {e}") from e
@@ -433,7 +449,8 @@ class ConfigurationSystem(ServiceInterface):
                         self._user_config[section_name] = {}
 
             logger.debug(
-                f"Reset configuration to defaults: {'all sections' if section is None else section}"
+                f"Reset configuration to defaults: "
+                f"{'all sections' if section is None else section}"
             )
 
     def _get_default_config_dir(self) -> Path:
@@ -479,7 +496,7 @@ class ConfigurationSystem(ServiceInterface):
                 new_config = json.load(f)
 
             # Update modified time
-            self._last_modified_time = os.path.getmtime(self._config_file)
+            self._last_modified_time = float(os.path.getmtime(self._config_file))
 
             # Check if anything changed
             if new_config == self._user_config:
@@ -494,29 +511,33 @@ class ConfigurationSystem(ServiceInterface):
                 self._validate_section(section)
 
             # Emit events for changed values
-            for section, section_data in new_config.items():
-                if section in self._schemas:
-                    old_section_data = old_config.get(section, {})
-                    for key, value in section_data.items():
-                        if (
-                            key not in old_section_data
-                            or old_section_data[key] != value
-                        ):
-                            old_value = old_section_data.get(key)
-                            self._event_bus.publish(
-                                ConfigChangedEvent(
-                                    section=section,
-                                    key=key,
-                                    old_value=old_value,
-                                    new_value=value,
-                                )
-                            )
+            self._emit_config_change_events(old_config, new_config)
 
             return True
         except json.JSONDecodeError as e:
             raise ConfigFileError(f"Invalid configuration file format: {e}") from e
         except OSError as e:
             raise ConfigFileError(f"Failed to load configuration: {e}") from e
+
+    def _emit_config_change_events(
+        self,
+        old_config: dict[str, dict[str, Any]],
+        new_config: dict[str, dict[str, Any]],
+    ) -> None:
+        """Emit events for configuration changes.
+
+        Args:
+            old_config: Previous configuration.
+            new_config: New configuration.
+        """
+        for section, section_data in new_config.items():
+            if section in self._schemas:
+                old_section_data = old_config.get(section, {})
+                for key, value in section_data.items():
+                    if key not in old_section_data or old_section_data[key] != value:
+                        old_value = old_section_data.get(key)
+                        event = ConfigChangedEvent(section, key, old_value, value)
+                        self._event_bus.publish(event)
 
     def _validate_section(self, section: str) -> None:
         """Validate a configuration section against its schema.
@@ -564,7 +585,7 @@ class ConfigurationSystem(ServiceInterface):
             return
 
         try:
-            mtime = os.path.getmtime(self._config_file)
+            mtime = float(os.path.getmtime(self._config_file))
             if mtime > self._last_modified_time:
                 self.reload()
         except OSError:

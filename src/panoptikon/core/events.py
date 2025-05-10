@@ -13,7 +13,7 @@ from enum import Enum, auto
 import json
 import logging
 import traceback
-from typing import Any, Callable, Dict, Generic, List, Optional, Type, TypeVar, Union
+from typing import Any, Callable, Generic, Optional, TypeVar, Union
 import uuid
 
 from ..core.service import ServiceInterface
@@ -48,7 +48,7 @@ class EventBase:
     timestamp: datetime = field(default_factory=datetime.now)
     source: Optional[str] = None
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert event to dictionary representation.
 
         Returns:
@@ -82,10 +82,15 @@ class EventBase:
 class ErrorEvent(EventBase):
     """Event issued when an error occurs in the system."""
 
+    # These two fields are required (no defaults)
     error_type: str
     message: str
-    traceback: Optional[str] = None
+    # These fields have defaults
+    event_id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    timestamp: datetime = field(default_factory=datetime.now)
+    source: Optional[str] = None
     severity: str = "ERROR"
+    traceback: Optional[str] = None
 
 
 class EventHandler(Generic[EventPayload], ABC):
@@ -119,7 +124,7 @@ class EventSubscription:
 
     def __init__(
         self,
-        event_type: Type[EventBase],
+        event_type: type[EventBase],
         handler: Union[
             EventHandler[Any],
             AsyncEventHandler[Any],
@@ -149,8 +154,8 @@ class EventBus(ServiceInterface):
 
     def __init__(self) -> None:
         """Initialize a new event bus."""
-        self._subscriptions: Dict[Type[EventBase], List[EventSubscription]] = {}
-        self._event_history: List[EventBase] = []
+        self._subscriptions: dict[type[EventBase], list[EventSubscription]] = {}
+        self._event_history: list[EventBase] = []
         self._max_history_size = 1000
         self._event_loop: Optional[asyncio.AbstractEventLoop] = None
         self._record_history = True
@@ -204,7 +209,7 @@ class EventBus(ServiceInterface):
 
     def subscribe(
         self,
-        event_type: Type[T],
+        event_type: type[EventBase],
         handler: Union[
             EventHandler[T],
             AsyncEventHandler[T],
@@ -273,7 +278,7 @@ class EventBus(ServiceInterface):
                     return True
         return False
 
-    def get_event_history(self) -> List[EventBase]:
+    def get_event_history(self) -> list[EventBase]:
         """Get the event history.
 
         Returns:
@@ -318,8 +323,8 @@ class EventBus(ServiceInterface):
         self._record_history = record
 
     def _get_matching_subscriptions(
-        self, event_type: Type[EventBase]
-    ) -> List[EventSubscription]:
+        self, event_type: type[EventBase]
+    ) -> list[EventSubscription]:
         """Get all subscriptions matching the given event type.
 
         Args:
@@ -328,7 +333,7 @@ class EventBus(ServiceInterface):
         Returns:
             List of matching subscriptions.
         """
-        result: List[EventSubscription] = []
+        result: list[EventSubscription] = []
 
         # Check direct subscriptions
         if event_type in self._subscriptions:

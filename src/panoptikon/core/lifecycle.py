@@ -6,14 +6,16 @@ and resource cleanup.
 """
 
 import atexit
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from datetime import datetime
 from enum import Enum, auto
 import logging
 import signal
 import sys
 import threading
 import time
-from typing import Any, Callable, List, Optional
+from typing import Any, Callable, Optional
+import uuid
 
 from ..core.events import EventBase, EventBus
 from ..core.service import ServiceContainer, ServiceInterface
@@ -45,6 +47,9 @@ class ShutdownRequestEvent(EventBase):
     """Event issued when a shutdown is requested."""
 
     reason: str
+    event_id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    timestamp: datetime = field(default_factory=datetime.now)
+    source: Optional[str] = None
     force: bool = False
     timeout: Optional[float] = None
 
@@ -78,8 +83,8 @@ class ApplicationLifecycle(ServiceInterface):
         self._service_container = service_container
         self._event_bus = event_bus
         self._state = ApplicationState.CREATED
-        self._startup_hooks: List[ServiceRegistration] = []
-        self._shutdown_hooks: List[ServiceRegistration] = []
+        self._startup_hooks: list[ServiceRegistration] = []
+        self._shutdown_hooks: list[ServiceRegistration] = []
         self._state_lock = threading.RLock()
         self._exit_code = 0
 
@@ -318,7 +323,7 @@ class ApplicationLifecycle(ServiceInterface):
             if message:
                 logger.info(f"State change reason: {message}")
 
-    def _run_hooks(self, hooks: List[ServiceRegistration], hook_type: str) -> None:
+    def _run_hooks(self, hooks: list[ServiceRegistration], hook_type: str) -> None:
         """Run a list of registered hooks.
 
         Args:

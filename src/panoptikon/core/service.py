@@ -7,17 +7,7 @@ and preventing circular dependencies.
 
 from abc import ABC, abstractmethod
 from enum import Enum, auto
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    Optional,
-    Set,
-    Type,
-    TypeVar,
-    cast,
-    get_type_hints,
-)
+from typing import Any, Callable, Optional, TypeVar, cast, get_type_hints
 
 T = TypeVar("T")
 ServiceType = TypeVar("ServiceType")
@@ -74,15 +64,15 @@ class ServiceContainer:
 
     def __init__(self) -> None:
         """Initialize an empty service container."""
-        self._registrations: Dict[Type[Any], Dict[str, Any]] = {}
-        self._instances: Dict[Type[Any], Any] = {}
-        self._resolution_stack: Set[Type[Any]] = set()
+        self._registrations: dict[type[Any], dict[str, Any]] = {}
+        self._instances: dict[type[Any], Any] = {}
+        self._resolution_stack: set[type[Any]] = set()
         self._initialized = False
 
     def register(
         self,
-        service_type: Type[ServiceType],
-        implementation_type: Optional[Type[ServiceType]] = None,
+        service_type: type[ServiceType],
+        implementation_type: Optional[type[ServiceType]] = None,
         factory: Optional[Callable[["ServiceContainer"], ServiceType]] = None,
         lifetime: ServiceLifetime = ServiceLifetime.SINGLETON,
     ) -> None:
@@ -90,7 +80,8 @@ class ServiceContainer:
 
         Args:
             service_type: The interface or base type to register.
-            implementation_type: The concrete type to instantiate (defaults to service_type).
+            implementation_type: The concrete type to instantiate
+                (defaults to service_type).
             factory: Optional factory function to create the service.
             lifetime: The lifetime of the service (singleton or transient).
 
@@ -111,7 +102,7 @@ class ServiceContainer:
             "lifetime": lifetime,
         }
 
-    def resolve(self, service_type: Type[T]) -> T:
+    def resolve(self, service_type: type[T]) -> T:
         """Resolve a service instance from the container.
 
         Args:
@@ -154,7 +145,7 @@ class ServiceContainer:
             self._resolution_stack.remove(service_type)
 
     def _create_instance(
-        self, service_type: Type[Any], registration: Dict[str, Any]
+        self, service_type: type[Any], registration: dict[str, Any]
     ) -> Any:
         """Create a new instance of the service.
 
@@ -180,7 +171,7 @@ class ServiceContainer:
 
         return instance
 
-    def _create_from_implementation(self, implementation_type: Type[Any]) -> Any:
+    def _create_from_implementation(self, implementation_type: type[Any]) -> Any:
         """Create a new instance using the implementation type.
 
         Args:
@@ -231,11 +222,11 @@ class ServiceContainer:
             CircularDependencyError: If a circular dependency is detected.
         """
         for service_type in self._registrations:
-            temp_stack: Set[Type[Any]] = set()
+            temp_stack: set[type[Any]] = set()
             self._validate_service_dependencies(service_type, temp_stack)
 
     def _validate_service_dependencies(
-        self, service_type: Type[Any], visited: Set[Type[Any]]
+        self, service_type: type[Any], visited: set[type[Any]]
     ) -> None:
         """Recursively validate dependencies for a service type.
 

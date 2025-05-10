@@ -1,7 +1,7 @@
 """Pytest configuration and fixtures."""
 
+from collections.abc import Generator
 import os
-from typing import Generator
 
 import pytest
 

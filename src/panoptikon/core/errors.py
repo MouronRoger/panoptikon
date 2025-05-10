@@ -11,7 +11,7 @@ from enum import Enum, auto
 import logging
 import sys
 import traceback
-from typing import Any, Callable, Dict, List, Optional, Type, Union
+from typing import Any, Callable, Optional, Union
 
 from ..core.events import ErrorEvent, EventBus
 
@@ -50,8 +50,8 @@ class ErrorContext:
     user_action: Optional[str] = None
     component: Optional[str] = None
     source_location: Optional[str] = None
-    environment: Dict[str, Any] = field(default_factory=dict)
-    related_objects: Dict[str, Any] = field(default_factory=dict)
+    environment: dict[str, Any] = field(default_factory=dict)
+    related_objects: dict[str, Any] = field(default_factory=dict)
 
 
 class ApplicationError(Exception):
@@ -103,7 +103,7 @@ class ApplicationError(Exception):
         error_type = self.__class__.__name__
         return f"{self.category.name[:3]}-{error_type}"
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert error to a dictionary representation.
 
         Returns:
@@ -300,16 +300,16 @@ class ErrorManager:
             event_bus: Event bus for publishing error events.
         """
         self._event_bus = event_bus
-        self._error_handlers: Dict[
-            Type[ApplicationError], List[Callable[[ApplicationError], None]]
+        self._error_handlers: dict[
+            type[ApplicationError], list[Callable[[ApplicationError], None]]
         ] = {}
-        self._recovery_handlers: Dict[str, Callable[[], Any]] = {}
-        self._error_history: List[ApplicationError] = []
+        self._recovery_handlers: dict[str, Callable[[], Any]] = {}
+        self._error_history: list[ApplicationError] = []
         self._max_history_size = 100
 
     def register_error_handler(
         self,
-        error_type: Type[ApplicationError],
+        error_type: type[ApplicationError],
         handler: Callable[[ApplicationError], None],
     ) -> None:
         """Register a handler for a specific error type.
@@ -382,7 +382,7 @@ class ErrorManager:
             f"No recovery handler registered for error code: {error.error_code}"
         )
 
-    def get_error_history(self) -> List[ApplicationError]:
+    def get_error_history(self) -> list[ApplicationError]:
         """Get the history of errors.
 
         Returns:

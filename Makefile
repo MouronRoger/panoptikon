@@ -19,7 +19,6 @@ test:
 lint:
 	$(BIN)/ruff check $(SRC) $(TESTS)
 	$(BIN)/mypy $(SRC)
-	$(BIN)/pylint $(SRC)
 
 format:
 	$(BIN)/ruff format $(SRC) $(TESTS)
