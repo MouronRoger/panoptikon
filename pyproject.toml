@@ -91,11 +91,25 @@ disallow_incomplete_defs = false
 [tool.ruff]
 line-length = 88
 target-version = "py39"
+
+[tool.ruff.lint]
 select = ["E", "F", "B", "I", "N", "D"]
 ignore = ["E203", "D203", "D213"]
-fixable = ["I", "F", "B"]
+fixable = ["ALL"]
 
-[tool.ruff.pydocstyle]
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+docstring-code-format = true
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+force-sort-within-sections = true
+known-first-party = ["panoptikon"]
+section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
+
+[tool.ruff.lint.pydocstyle]
 convention = "google"
 
 [tool.pytest.ini_options]

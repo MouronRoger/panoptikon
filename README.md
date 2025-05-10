@@ -1,99 +1,83 @@
 # Panoptikon
 
-A high-performance file search application for macOS inspired by the Windows "Everything" utility.
+A high-performance file search application inspired by Windows 'Everything'.
 
-## Overview
+## Features
 
-Panoptikon allows you to instantly search all files on your system by maintaining a real-time index of your file system. The main features include:
+- Fast file indexing and search
+- Real-time file system monitoring
+- Cross-platform support (macOS, Linux, Windows)
+- Modern and intuitive user interface
 
-- Lightning-fast file search across your entire system
-- Real-time file system monitoring for up-to-date results
-- Clean, native macOS interface built with PyObjC
-- Cloud storage integration (iCloud, Dropbox, Google Drive, OneDrive)
-- Advanced filtering options
+## Requirements
+
+- Python 3.9 or higher
+- SQLAlchemy 2.0+
+- Watchdog 3.0+
 
 ## Installation
 
-### Requirements
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/user/panoptikon.git
+   cd panoptikon
+   ```
 
-- macOS 10.15+
-- Python 3.9+
+2. Create and activate a virtual environment:
+   ```bash
+   python3.11 -m venv .venv
+   source .venv/bin/activate  # On Unix/macOS
+   # or
+   .venv\Scripts\activate  # On Windows
+   ```
 
-### Install from Source
-
-```bash
-# Clone the repository
-git clone https://github.com/user/panoptikon.git
-cd panoptikon
-
-# Create and activate a virtual environment (optional but recommended)
-python -m venv venv
-source venv/bin/activate
-
-# Install the package and dependencies
-pip install -e .
-```
-
-### Development Setup
-
-For development, install the additional development dependencies:
-
-```bash
-pip install -e ".[dev]"
-
-# Install pre-commit hooks
-pre-commit install
-```
-
-## Usage
-
-```bash
-# Run the application
-panoptikon
-```
+3. Install the package in development mode:
+   ```bash
+   make setup
+   ```
 
 ## Development
 
-### Project Structure
+### Code Style
 
-The project is organized into the following modules:
-
-- `index`: File indexing system
-- `search`: Search functionality
-- `ui`: PyObjC interface
-- `db`: Database operations
-- `cloud`: Cloud provider integration
-- `config`: Application settings
-- `utils`: Common utilities
-
-Each module has well-defined responsibilities with clean interfaces.
+This project uses:
+- Black for code formatting (120 character line length)
+- isort for import sorting
+- Ruff for fast linting
+- MyPy for static type checking
+- Maximum file length of 500 lines
 
 ### Running Tests
 
 ```bash
 # Run all tests
-pytest
+make test
 
-# Run tests with coverage report
-pytest --cov=src/panoptikon
-
-# Run specific test modules
-pytest tests/test_index/
+# Run tests with coverage
+make coverage
 ```
 
-## Code Quality Standards
+### Code Quality Checks
 
-This project follows strict quality standards from day one:
+```bash
+# Run linting
+make lint
 
-- **Line Length**: Maximum 120 characters per line
-- **File Size**: Maximum 500 lines per file
-- **Function Size**: Maximum 50 lines per function
-- **Class Size**: Maximum 200 lines per class
-- **Complexity**: Maximum cyclomatic complexity of 10
-- **Docstrings**: 95%+ coverage for all public APIs
-- **Type Hints**: Required for all function parameters and returns
-- **Test Coverage**: Minimum 80% code coverage
+# Format code
+make format
+
+# Clean up build artifacts
+make clean
+```
+
+### Pre-commit Hooks
+
+The project uses pre-commit hooks to ensure code quality. They are installed automatically during setup, but you can manually install them with:
+
+```bash
+pre-commit install
+```
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
+MIT License - see LICENSE file for details. 
