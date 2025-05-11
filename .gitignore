@@ -100,4 +100,14 @@ poetry.lock
 venv/
 ENV/
 env.bak/
-venv.bak/ 
+venv.bak/
+
+# GitHub Actions Runner
+actions-runner/
+actions-runner-*.tar.gz
+.runner
+.credentials
+.credentials_rsaparams
+.env
+.path
+.env.sh 
