@@ -436,4 +436,4 @@ class EventBus(ServiceInterface):
             self._event_loop.create_task(handler(event))
         else:
             # Fallback to synchronous delivery
-            self._deliver_synchronous(event, handler)
+            self._deliver_synchronous(event, handler) 
