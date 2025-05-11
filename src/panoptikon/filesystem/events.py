@@ -60,7 +60,7 @@ class FileSystemEvent(EventBase):
             Dictionary representation of the event.
         """
         result = super().to_dict()
-        result.update({"path": str(self.path)})
+        result.update({"path": str(self.path), "event_type": self.__class__.__name__})
         return result
 
 
@@ -310,6 +310,7 @@ class WatchedPathsChangedEvent(EventBase):
         result = super().to_dict()
         result.update(
             {
+                "event_type": self.__class__.__name__,
                 "added_paths": [str(p) for p in self.added_paths],
                 "removed_paths": [str(p) for p in self.removed_paths],
             }
