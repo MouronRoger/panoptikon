@@ -4,9 +4,15 @@ This module demonstrates how to implement a macOS application using PyObjC
 while maintaining type safety through the boundary pattern.
 """
 
+# pylint: disable=import-error
 from __future__ import annotations
 
-from typing import Any, List, Protocol
+import importlib
+import sys
+from types import ModuleType
+from typing import Any
+from typing import List as ListType  # For backward compatibility
+from typing import Protocol, cast
 
 # All PyObjC imports are contained in the wrapper classes
 # or used with type: ignore to maintain clean type checking
@@ -16,6 +22,12 @@ from panoptikon.ui.objc_wrappers import (
     TableViewWrapper,
 )
 from panoptikon.ui.validators import validate_table_data_source
+
+# For type checking
+if sys.version_info >= (3, 8):
+    pass
+else:
+    pass
 
 
 class SearchDelegate(Protocol):
@@ -48,22 +60,32 @@ class FileSearchApp:
 
     def __init__(self) -> None:
         """Initialize the application."""
-        # We'll import PyObjC modules only within the methods that use them
-        # to keep the type checker happy in the rest of the code
-        try:
-            import AppKit  # type: ignore
-            import Foundation  # type: ignore
-            import objc  # type: ignore
+        # Buffer for table content – created early so delegates can rely on it.
+        self._files: ListType[ListType[str]] = []
 
+        # Attempt to import the core PyObjC modules; they must be real modules,
+        # not dummy objects (e.g. an `ImportError` instance returned by a mock).
+        try:
+            # Try importing each required module and confirm they're genuine modules
+            for name in ("AppKit", "Foundation", "objc"):
+                try:
+                    module = importlib.import_module(name)
+                    if not isinstance(module, ModuleType):
+                        raise ImportError(f"{name} is not a valid module")
+                except (ImportError, AttributeError):
+                    # Either module not found or has invalid structure
+                    raise ImportError(f"Failed to import {name}")
+            
             self._pyobjc_available = True
         except ImportError:
+            # Any problem importing (or validating) the modules means PyObjC
+            # is effectively unavailable for our purposes.
             self._pyobjc_available = False
             print("PyObjC not available - UI features disabled")
             return
 
         # Create UI components using our typed wrappers
         self._setup_ui()
-        self._files: List[List[str]] = []
 
     def _setup_ui(self) -> None:
         """Set up the UI components.
@@ -125,9 +147,6 @@ class FileSearchApp:
             return
 
         # Import PyObjC modules only within the methods that use them
-        import AppKit  # type: ignore
-        import Foundation  # type: ignore
-        import objc  # type: ignore
 
         # Create and set table data source
         self._table_delegate = _TableDelegate.alloc().init()
@@ -163,7 +182,7 @@ class FileSearchApp:
         app.activateIgnoringOtherApps_(True)
         app.run()
 
-    def set_files(self, files: List[List[str]]) -> None:
+    def set_files(self, files: ListType[ListType[str]]) -> None:
         """Set the files to display in the table.
 
         Args:
