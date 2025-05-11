@@ -6,6 +6,7 @@ the actual PyObjC environment.
 
 import sys
 from collections.abc import Generator
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -73,26 +74,33 @@ def mock_wrappers() -> Generator[None, None, None]:
 
 class TestSearchDelegate:
     """Test implementation of a search delegate."""
-    
-    def __init__(self) -> None:
+
+    last_search_text: str
+    last_submitted_text: str
+
+    def setup(self) -> None:
         """Initialize with empty values."""
         self.last_search_text = ""
         self.last_submitted_text = ""
-    
+
     def on_search_changed(self, search_text: str) -> None:
         """Record the changed search text.
         
         Args:
             search_text: The current search text
         """
+        if not hasattr(self, "last_search_text"):
+            self.setup()
         self.last_search_text = search_text
-    
+
     def on_search_submitted(self, search_text: str) -> None:
         """Record the submitted search text.
         
         Args:
             search_text: The submitted search text
         """
+        if not hasattr(self, "last_submitted_text"):
+            self.setup()
         self.last_submitted_text = search_text
 
 

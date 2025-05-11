@@ -13,6 +13,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from src.panoptikon.core.config import (
+    ConfigDict,
     ConfigFileError,
     ConfigSection,
     ConfigSource,
@@ -24,6 +25,13 @@ from src.panoptikon.core.events import EventBus
 
 class TestConfigSection(ConfigSection):
     """Test configuration section for testing."""
+
+    model_config = ConfigDict(
+        extra="forbid",
+        validate_assignment=True,
+        validate_default=True,
+        arbitrary_types_allowed=True,
+    )
 
     test_string: str = "default"
     test_int: int = 42

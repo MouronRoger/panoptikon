@@ -11,6 +11,7 @@ from pydantic import BaseModel, Field
 
 from src.panoptikon.core.config import (
     ConfigChangedEvent,
+    ConfigDict,
     ConfigFileError,
     ConfigSection,
     ConfigSource,
@@ -22,6 +23,13 @@ from src.panoptikon.core.events import EventBus, EventHandler
 class TestConfigSection(ConfigSection):
     """Test configuration section."""
 
+    model_config = ConfigDict(
+        extra="forbid",
+        validate_assignment=True,
+        validate_default=True,
+        arbitrary_types_allowed=True,
+    )
+
     string_value: str = "default"
     int_value: int = 42
     list_value: List[str] = Field(default_factory=list)
@@ -30,12 +38,16 @@ class TestConfigSection(ConfigSection):
 class TestEventHandler(EventHandler[ConfigChangedEvent]):
     """Test event handler for config events."""
 
-    def __init__(self) -> None:
+    events: List[ConfigChangedEvent]
+
+    def setup(self) -> None:
         """Initialize with empty event list."""
-        self.events: List[ConfigChangedEvent] = []
+        self.events = []
 
     def handle(self, event: ConfigChangedEvent) -> None:
         """Store events in a list."""
+        if not hasattr(self, "events"):
+            self.setup()
         self.events.append(event)
 
 

@@ -24,40 +24,56 @@ class TestEvent(EventBase):
     message: str = "test"
     value: int = 0
 
+    def __post_init__(self) -> None:
+        """Post initialization hook."""
+        pass  # No need to call super() since EventBase doesn't have __post_init__
+
 
 class TestEventHandler(EventHandler[TestEvent]):
     """Test event handler for synchronous events."""
 
-    def __init__(self) -> None:
+    events: List[TestEvent]
+
+    def setup(self) -> None:
         """Initialize with empty event list."""
-        self.events: List[TestEvent] = []
+        self.events = []
 
     def handle(self, event: EventBase) -> None:
         """Store event in list."""
+        if not hasattr(self, "events"):
+            self.setup()
         self.events.append(event)  # type: ignore
 
 
 class TestAsyncEventHandler(AsyncEventHandler[TestEvent]):
     """Test event handler for asynchronous events."""
 
-    def __init__(self) -> None:
+    events: List[TestEvent]
+
+    def setup(self) -> None:
         """Initialize with empty event list."""
-        self.events: List[TestEvent] = []
+        self.events = []
 
     async def handle(self, event: TestEvent) -> None:
         """Store event in list asynchronously."""
+        if not hasattr(self, "events"):
+            self.setup()
         self.events.append(event)
 
 
 class ErrorEventHandler(EventHandler[ErrorEvent]):
     """Handler for error events."""
 
-    def __init__(self) -> None:
+    error_events: List[ErrorEvent]
+
+    def setup(self) -> None:
         """Initialize with empty error list."""
-        self.error_events: List[ErrorEvent] = []
+        self.error_events = []
 
     def handle(self, event: ErrorEvent) -> None:
         """Store error event in list."""
+        if not hasattr(self, "error_events"):
+            self.setup()
         self.error_events.append(event)
 
 
