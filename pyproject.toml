@@ -25,7 +25,7 @@ requires-python = ">=3.9"
 dependencies = [
     "sqlalchemy>=2.0.0",
     "watchdog>=3.0.0",
-    "pyobjc>=9.0.1; platform_system=='Darwin'",
+    "pyobjc==11.0; platform_system=='Darwin'",
     "click>=8.1.3",
     "rich>=13.0.0",
     "pydantic>=2.0.0",
@@ -38,10 +38,8 @@ dev = [
     "mypy>=1.3.0",
     "pytest>=7.3.1",
     "pytest-cov>=4.1.0",
+    "pytest-asyncio>=0.23.0",
     "pre-commit>=3.3.2",
-    # "types-PyObjC",  # Commented out as it's causing installation issues
-    # "pytest-stubs>=0.1.0",  # Commented out as it's causing installation issues
-    # "pydantic-stubs",  # Commented out as it's causing installation issues
     "pip-tools>=7.0.0",
     "bandit>=1.7.5",
 ]
@@ -96,7 +94,7 @@ disallow_untyped_decorators = false
 no_implicit_optional = true
 strict_optional = true
 warn_redundant_casts = true
-warn_unused_ignores = false  # Changed to false because we need to use # type: ignore for PyObjC
+warn_unused_ignores = false
 warn_no_return = true
 plugins = ["pydantic.mypy"]
 mypy_path = ["src/panoptikon/typings"]
@@ -135,15 +133,15 @@ target-version = "py39"
 
 [tool.ruff.lint]
 select = [
-    "E",   # pycodestyle errors
-    "F",   # pyflakes
-    "B",   # flake8-bugbear
-    "I",   # isort
-    "D",   # pydocstyle
-    "UP",  # pyupgrade
-    "N",   # pep8-naming
-    "C4",  # flake8-comprehensions
-    "SIM", # flake8-simplify
+    "E",
+    "F",
+    "B",
+    "I",
+    "D",
+    "UP",
+    "N",
+    "C4",
+    "SIM",
 ]
 ignore = ["E203", "D203", "D213"]
 fixable = ["ALL"]
@@ -151,7 +149,7 @@ mccabe = { max-complexity = 10 }
 pydocstyle = { convention = "google" }
 
 [tool.ruff.lint.per-file-ignores]
-"*.pyi" = ["ALL"]  # Ignore all rules for .pyi files
+"*.pyi" = ["ALL"]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -177,6 +175,8 @@ markers = [
     "slow: marks test as slow",
     "asyncio: marks test as an asyncio test",
 ]
+asyncio_mode = "strict"
+asyncio_default_fixture_loop_scope = "function"
 
 [tool.coverage.run]
 source = ["src/panoptikon"]
