@@ -1,8 +1,6 @@
 """Tests for the application lifecycle management."""
 
 import threading
-import time
-from typing import List
 
 import pytest
 
@@ -11,8 +9,6 @@ from src.panoptikon.core.lifecycle import (
     ApplicationLifecycle,
     ApplicationState,
     ApplicationStateChangedEvent,
-    ServiceRegistration,
-    ShutdownRequestEvent,
 )
 from src.panoptikon.core.service import ServiceContainer, ServiceInterface
 
@@ -47,7 +43,7 @@ def test_lifecycle_initialization(lifecycle: ApplicationLifecycle) -> None:
 
 def test_startup_hook_registration(lifecycle: ApplicationLifecycle) -> None:
     """Test startup hook registration and ordering."""
-    called: List[str] = []
+    called: list[str] = []
 
     def hook1() -> None:
         called.append("hook1")
@@ -73,7 +69,7 @@ def test_startup_hook_registration(lifecycle: ApplicationLifecycle) -> None:
 
 def test_shutdown_hook_registration(lifecycle: ApplicationLifecycle) -> None:
     """Test shutdown hook registration and ordering."""
-    called: List[str] = []
+    called: list[str] = []
 
     def hook1() -> None:
         called.append("hook1")
@@ -100,7 +96,7 @@ def test_shutdown_hook_registration(lifecycle: ApplicationLifecycle) -> None:
 
 def test_state_transitions(lifecycle: ApplicationLifecycle, event_bus: EventBus) -> None:
     """Test application state transitions."""
-    state_changes: List[ApplicationStateChangedEvent] = []
+    state_changes: list[ApplicationStateChangedEvent] = []
 
     def state_change_handler(event: ApplicationStateChangedEvent) -> None:
         state_changes.append(event)
@@ -153,7 +149,7 @@ def test_wait_for_shutdown_timeout(lifecycle: ApplicationLifecycle) -> None:
 
 def test_hook_error_handling(lifecycle: ApplicationLifecycle) -> None:
     """Test error handling in hooks."""
-    called: List[str] = []
+    called: list[str] = []
 
     def good_hook() -> None:
         called.append("good")

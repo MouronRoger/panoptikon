@@ -8,11 +8,11 @@ while maintaining type safety through the boundary pattern.
 from __future__ import annotations
 
 import importlib
-import sys
 from types import ModuleType
-from typing import Any
-from typing import List as ListType  # For backward compatibility
-from typing import Protocol, cast
+from typing import (
+    Any,
+    Protocol,
+)
 
 # All PyObjC imports are contained in the wrapper classes
 # or used with type: ignore to maintain clean type checking
@@ -24,10 +24,7 @@ from panoptikon.ui.objc_wrappers import (
 from panoptikon.ui.validators import validate_table_data_source
 
 # For type checking
-if sys.version_info >= (3, 8):
-    pass
-else:
-    pass
+pass
 
 
 class SearchDelegate(Protocol):
@@ -61,7 +58,7 @@ class FileSearchApp:
     def __init__(self) -> None:
         """Initialize the application."""
         # Buffer for table content – created early so delegates can rely on it.
-        self._files: ListType[ListType[str]] = []
+        self._files: list[list[str]] = []
 
         # Attempt to import the core PyObjC modules; they must be real modules,
         # not dummy objects (e.g. an `ImportError` instance returned by a mock).
@@ -182,7 +179,7 @@ class FileSearchApp:
         app.activateIgnoringOtherApps_(True)
         app.run()
 
-    def set_files(self, files: ListType[ListType[str]]) -> None:
+    def set_files(self, files: list[list[str]]) -> None:
         """Set the files to display in the table.
 
         Args:

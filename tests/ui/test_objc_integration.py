@@ -4,7 +4,6 @@ These tests verify that the wrappers correctly interact with PyObjC
 and catch interface errors early.
 """
 
-from typing import Any, List
 
 import pytest
 

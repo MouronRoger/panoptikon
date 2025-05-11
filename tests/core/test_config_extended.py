@@ -3,11 +3,11 @@
 These tests focus on features that aren't well covered in the existing test suite.
 """
 
+from collections.abc import Generator
 import json
 import os
-import tempfile
-from collections.abc import Generator
 from pathlib import Path
+import tempfile
 from unittest.mock import MagicMock, patch
 
 import pytest

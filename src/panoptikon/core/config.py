@@ -5,12 +5,12 @@ settings (defaults, user, runtime), schema validation, and hot reloading
 of configuration changes.
 """
 
+from enum import Enum, auto
 import json
 import logging
 import os
-import threading
-from enum import Enum, auto
 from pathlib import Path
+import threading
 from typing import Any, Optional
 
 from pydantic import BaseModel, ConfigDict, ValidationError, dataclasses

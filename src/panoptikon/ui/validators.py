@@ -7,7 +7,7 @@ runtime failures.
 
 from __future__ import annotations
 
-from typing import Any, Callable, List, TypeVar
+from typing import Any, Callable, TypeVar
 
 # Validation functions
 
@@ -27,13 +27,10 @@ def validate_objc_method_exists(obj: Any, method_name: str) -> bool:
         return False
 
     # Check if the attribute is callable
-    if not callable(getattr(obj, method_name)):
-        return False
-
-    return True
+    return callable(getattr(obj, method_name))
 
 
-def validate_objc_protocol_conformance(obj: Any, protocol_methods: List[str]) -> bool:
+def validate_objc_protocol_conformance(obj: Any, protocol_methods: list[str]) -> bool:
     """Verify an object implements all methods required by a protocol.
 
     Args:
@@ -61,7 +58,7 @@ def assert_objc_method_exists(obj: Any, method_name: str) -> None:
     ), f"Required method '{method_name}' missing on {obj.__class__.__name__}"
 
 
-def assert_objc_protocol_conformance(obj: Any, protocol_methods: List[str]) -> None:
+def assert_objc_protocol_conformance(obj: Any, protocol_methods: list[str]) -> None:
     """Assert that an object conforms to a protocol.
 
     Args:

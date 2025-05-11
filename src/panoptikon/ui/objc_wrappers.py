@@ -7,7 +7,7 @@ between typed Python code and untyped PyObjC interfaces.
 
 from __future__ import annotations
 
-from typing import Any, List, Optional, Tuple, TypeVar
+from typing import Any, TypeVar
 
 # PyObjC imports with type ignores isolated to this file
 import AppKit  # type: ignore
@@ -15,15 +15,15 @@ import Foundation  # type: ignore
 import objc  # type: ignore
 
 T = TypeVar("T")
-Rect = Tuple[float, float, float, float]  # (x, y, width, height)
-Point = Tuple[float, float]  # (x, y)
-Size = Tuple[float, float]  # (width, height)
+Rect = tuple[float, float, float, float]  # (x, y, width, height)
+Point = tuple[float, float]  # (x, y)
+Size = tuple[float, float]  # (width, height)
 
 
 class SearchFieldWrapper:
     """Typed wrapper for NSSearchField."""
 
-    def __init__(self, frame: Optional[Rect] = None) -> None:
+    def __init__(self, frame: Rect | None = None) -> None:
         """Initialize with an optional frame rectangle.
 
         Args:
@@ -82,7 +82,7 @@ class SearchFieldWrapper:
 class TableViewWrapper:
     """Typed wrapper for NSTableView."""
 
-    def __init__(self, frame: Optional[Rect] = None) -> None:
+    def __init__(self, frame: Rect | None = None) -> None:
         """Initialize with an optional frame rectangle.
 
         Args:
@@ -170,7 +170,7 @@ class SegmentedControlWrapper:
     """Typed wrapper for NSSegmentedControl."""
 
     def __init__(
-        self, segments: List[str], frame: Optional[Rect] = None, tracking_mode: int = 0
+        self, segments: list[str], frame: Rect | None = None, tracking_mode: int = 0
     ) -> None:
         """Initialize with segments and an optional frame rectangle.
 

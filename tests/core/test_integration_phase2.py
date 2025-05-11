@@ -4,8 +4,8 @@ This script demonstrates the integration of service container, event bus,
 configuration system, error handling, and application lifecycle.
 """
 
-import logging
 from dataclasses import dataclass
+import logging
 from typing import Optional
 
 from panoptikon.core.config import ConfigService
@@ -112,7 +112,7 @@ def test_core_infrastructure_phase2() -> None:
         assert len(test_service.received_events) > 0
     else:
         logger.error("❌ Event system not working! No events received.")
-        assert False, "No events received"
+        raise AssertionError("No events received")
 
     # Test configuration service
     config_service = container.resolve(ConfigService)

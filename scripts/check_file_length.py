@@ -2,8 +2,9 @@
 """Script to check file length limits."""
 
 import argparse
+from collections.abc import Sequence
 import sys
-from typing import Optional, Sequence
+from typing import Optional
 
 
 def check_file_length(filename: str, max_lines: int) -> bool:
@@ -16,7 +17,7 @@ def check_file_length(filename: str, max_lines: int) -> bool:
     Returns:
         bool: True if file is within limits, False otherwise
     """
-    with open(filename, "r", encoding="utf-8") as f:
+    with open(filename, encoding="utf-8") as f:
         for i, _ in enumerate(f, 1):
             if i > max_lines:
                 print(f"Error: {filename} has more than {max_lines} lines")

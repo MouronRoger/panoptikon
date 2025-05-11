@@ -4,9 +4,8 @@ These tests focus on the delegate classes and methods that weren't fully covered
 in the main test file.
 """
 
-import sys
 from collections.abc import Generator
-from typing import Dict
+import sys
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -15,7 +14,7 @@ from src.panoptikon.ui.macos_app import FileSearchApp
 
 
 @pytest.fixture
-def mock_objc_setup() -> Generator[Dict[str, MagicMock], None, None]:
+def mock_objc_setup() -> Generator[dict[str, MagicMock], None, None]:
     """Set up a comprehensive PyObjC mock environment."""
     # Create mock modules with proper classes
     app_kit_mock = MagicMock()

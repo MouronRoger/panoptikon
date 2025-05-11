@@ -1,18 +1,17 @@
 """Tests for the configuration system."""
 
+from collections.abc import Generator
 import json
 import os
-import tempfile
 from pathlib import Path
-from typing import Any, Dict, Generator, List, cast
+import tempfile
 
+from pydantic import Field
 import pytest
-from pydantic import BaseModel, Field
 
 from src.panoptikon.core.config import (
     ConfigChangedEvent,
     ConfigDict,
-    ConfigFileError,
     ConfigSection,
     ConfigSource,
     ConfigurationSystem,
@@ -32,13 +31,13 @@ class TestConfigSection(ConfigSection):
 
     string_value: str = "default"
     int_value: int = 42
-    list_value: List[str] = Field(default_factory=list)
+    list_value: list[str] = Field(default_factory=list)
 
 
 class TestEventHandler(EventHandler[ConfigChangedEvent]):
     """Test event handler for config events."""
 
-    events: List[ConfigChangedEvent]
+    events: list[ConfigChangedEvent]
 
     def setup(self) -> None:
         """Initialize with empty event list."""

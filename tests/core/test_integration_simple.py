@@ -117,7 +117,7 @@ def test_simple_core_infrastructure() -> None:
         assert len(test_service.received_events) > 0
     else:
         logger.error("❌ Event system not working! No events received.")
-        assert False, "No events received"
+        raise AssertionError("No events received")
 
     # Clean shutdown
     logger.info("Shutting down services")

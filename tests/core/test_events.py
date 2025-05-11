@@ -2,7 +2,6 @@
 
 import asyncio
 from dataclasses import dataclass
-from typing import List, Optional
 
 import pytest
 
@@ -32,7 +31,7 @@ class TestEvent(EventBase):
 class TestEventHandler(EventHandler[TestEvent]):
     """Test event handler for synchronous events."""
 
-    events: List[TestEvent]
+    events: list[TestEvent]
 
     def setup(self) -> None:
         """Initialize with empty event list."""
@@ -48,7 +47,7 @@ class TestEventHandler(EventHandler[TestEvent]):
 class TestAsyncEventHandler(AsyncEventHandler[TestEvent]):
     """Test event handler for asynchronous events."""
 
-    events: List[TestEvent]
+    events: list[TestEvent]
 
     def setup(self) -> None:
         """Initialize with empty event list."""
@@ -64,7 +63,7 @@ class TestAsyncEventHandler(AsyncEventHandler[TestEvent]):
 class ErrorEventHandler(EventHandler[ErrorEvent]):
     """Handler for error events."""
 
-    error_events: List[ErrorEvent]
+    error_events: list[ErrorEvent]
 
     def setup(self) -> None:
         """Initialize with empty error list."""

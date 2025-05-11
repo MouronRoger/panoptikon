@@ -4,9 +4,8 @@ These tests use mocks to test the MacOS app functionality without requiring
 the actual PyObjC environment.
 """
 
-import sys
 from collections.abc import Generator
-from typing import Any
+import sys
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -30,18 +29,18 @@ def mock_objc_modules() -> Generator[None, None, None]:
     # Mock AppKit classes and constants
     app_kit = sys.modules["AppKit"]
     # Using setattr to avoid "Module has no attribute" errors
-    setattr(app_kit, "NSWindow", MagicMock())
+    app_kit.NSWindow = MagicMock()
     app_kit.NSWindow.alloc.return_value.initWithContentRect_styleMask_backing_defer_.return_value = MagicMock()
-    setattr(app_kit, "NSWindowStyleMaskTitled", 1)
-    setattr(app_kit, "NSWindowStyleMaskClosable", 2)
-    setattr(app_kit, "NSWindowStyleMaskResizable", 4)
-    setattr(app_kit, "NSBackingStoreBuffered", 2)
-    setattr(app_kit, "NSApplication", MagicMock())
+    app_kit.NSWindowStyleMaskTitled = 1
+    app_kit.NSWindowStyleMaskClosable = 2
+    app_kit.NSWindowStyleMaskResizable = 4
+    app_kit.NSBackingStoreBuffered = 2
+    app_kit.NSApplication = MagicMock()
     app_kit.NSApplication.sharedApplication.return_value = MagicMock()
     
     # Mock Foundation classes and functions
     foundation = sys.modules["Foundation"]
-    setattr(foundation, "NSMakeRect", lambda x, y, w, h: (x, y, w, h))
+    foundation.NSMakeRect = lambda x, y, w, h: (x, y, w, h)
     
     yield
     

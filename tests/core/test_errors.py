@@ -1,7 +1,6 @@
 """Tests for the error handling system."""
 
 from datetime import datetime
-from typing import List
 
 import pytest
 
@@ -147,7 +146,7 @@ def test_error_manager_initialization(error_manager: ErrorManager) -> None:
 
 def test_error_manager_handlers(error_manager: ErrorManager) -> None:
     """Test error handler registration and execution."""
-    handled_errors: List[ApplicationError] = []
+    handled_errors: list[ApplicationError] = []
 
     def handler(error: ApplicationError) -> None:
         handled_errors.append(error)
@@ -235,8 +234,8 @@ def test_error_manager_exception_conversion(error_manager: ErrorManager) -> None
 
 def test_error_manager_handler_inheritance(error_manager: ErrorManager) -> None:
     """Test error handler inheritance."""
-    handled_base: List[ApplicationError] = []
-    handled_specific: List[ApplicationError] = []
+    handled_base: list[ApplicationError] = []
+    handled_specific: list[ApplicationError] = []
 
     def base_handler(error: ApplicationError) -> None:
         handled_base.append(error)

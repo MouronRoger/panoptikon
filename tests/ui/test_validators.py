@@ -1,6 +1,6 @@
 """Tests for PyObjC interface validation."""
 
-from typing import Any, List
+from typing import Any
 
 import pytest
 
@@ -19,7 +19,7 @@ from src.panoptikon.ui.validators import (
 class MockObjC:
     """Mock PyObjC object for testing."""
 
-    def __init__(self, methods: List[str]) -> None:
+    def __init__(self, methods: list[str]) -> None:
         """Initialize with a list of method names."""
         self._methods = methods
 

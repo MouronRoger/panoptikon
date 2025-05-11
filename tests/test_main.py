@@ -1,7 +1,8 @@
 """Tests for the main application entry point."""
 
+from collections.abc import Generator
 import logging
-from typing import Any, Generator, cast
+from typing import Any, cast
 from unittest.mock import patch
 
 import pytest

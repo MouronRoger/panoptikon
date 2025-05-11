@@ -4,7 +4,7 @@
 import argparse
 import ast
 import sys
-from typing import Dict, List, Optional
+from typing import Optional
 
 
 class DocstringVisitor(ast.NodeVisitor):
@@ -12,7 +12,7 @@ class DocstringVisitor(ast.NodeVisitor):
 
     def __init__(self) -> None:
         """Initialize the visitor."""
-        self.stats: Dict[str, List[str]] = {
+        self.stats: dict[str, list[str]] = {
             "missing_docstrings": [],
             "has_docstrings": [],
         }
@@ -64,7 +64,7 @@ def check_docstring_coverage(filename: str, min_coverage: float) -> bool:
     Returns:
         bool: True if coverage meets minimum requirement, False otherwise
     """
-    with open(filename, "r", encoding="utf-8") as f:
+    with open(filename, encoding="utf-8") as f:
         tree = ast.parse(f.read(), filename)
 
     visitor = DocstringVisitor()
@@ -92,7 +92,7 @@ def check_docstring_coverage(filename: str, min_coverage: float) -> bool:
     return True
 
 
-def main(argv: Optional[List[str]] = None) -> int:
+def main(argv: Optional[list[str]] = None) -> int:
     """Main entry point.
 
     Args:
