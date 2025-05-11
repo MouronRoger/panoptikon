@@ -5,12 +5,12 @@ structured error types, error reporting, recovery mechanisms, and
 diagnostic information collection.
 """
 
-from dataclasses import dataclass, field
-from datetime import datetime
-from enum import Enum, auto
 import logging
 import sys
 import traceback
+from dataclasses import dataclass, field
+from datetime import datetime
+from enum import Enum, auto
 from typing import Any, Callable, Optional, Union
 
 from ..core.events import ErrorEvent, EventBus
@@ -282,6 +282,34 @@ class ValidationError(ApplicationError):
             message,
             severity=severity,
             category=ErrorCategory.VALIDATION,
+            inner_exception=inner_exception,
+            context=context,
+        )
+
+
+class ServiceNotRegisteredError(ApplicationError):
+    """Raised when attempting to resolve a service that hasn't been registered."""
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        severity: ErrorSeverity = ErrorSeverity.ERROR,
+        inner_exception: Optional[Exception] = None,
+        context: Optional[ErrorContext] = None,
+    ) -> None:
+        """Initialize a new service not registered error.
+
+        Args:
+            message: Human-readable error message.
+            severity: Severity level of the error.
+            inner_exception: Optional exception that caused this error.
+            context: Optional context information for the error.
+        """
+        super().__init__(
+            message,
+            severity=severity,
+            category=ErrorCategory.CONFIGURATION,
             inner_exception=inner_exception,
             context=context,
         )

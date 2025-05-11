@@ -50,6 +50,9 @@ def main() -> int:
         # Validate the dependency graph
         container.validate_dependencies()
 
+        # Get services from container
+        lifecycle = container.resolve(ApplicationLifecycle)
+
         # Start the application
         lifecycle.start()
 

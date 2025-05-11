@@ -6,16 +6,16 @@ and resource cleanup.
 """
 
 import atexit
-from dataclasses import dataclass, field
-from datetime import datetime
-from enum import Enum, auto
 import logging
 import signal
 import sys
 import threading
 import time
-from typing import Any, Callable, Optional
 import uuid
+from dataclasses import dataclass, field
+from datetime import datetime
+from enum import Enum, auto
+from typing import Any, Callable, Optional
 
 from ..core.events import EventBase, EventBus
 from ..core.service import ServiceContainer, ServiceInterface
@@ -46,12 +46,12 @@ class ApplicationStateChangedEvent(EventBase):
 class ShutdownRequestEvent(EventBase):
     """Event issued when a shutdown is requested."""
 
-    reason: str
     event_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     timestamp: datetime = field(default_factory=datetime.now)
     source: Optional[str] = None
     force: bool = False
     timeout: Optional[float] = None
+    reason: str = "Normal shutdown"
 
 
 @dataclass

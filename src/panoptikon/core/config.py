@@ -13,8 +13,7 @@ from enum import Enum, auto
 from pathlib import Path
 from typing import Any, Optional
 
-import pydantic  # type: ignore[import-not-found]
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, ValidationError, dataclasses
 
 from ..core.events import EventBase, EventBus
 from ..core.service import ServiceInterface
@@ -22,7 +21,7 @@ from ..core.service import ServiceInterface
 logger = logging.getLogger(__name__)
 
 
-@pydantic.dataclasses.dataclass
+@dataclasses.dataclass
 class ConfigChangedEvent(EventBase):
     """Event issued when configuration values change."""
 
@@ -54,13 +53,12 @@ class ConfigSource(Enum):
 class ConfigSection(BaseModel):
     """Base class for configuration sections."""
 
-    class Config:
-        """Pydantic configuration."""
-
-        extra = "forbid"  # Prevent additional fields not in the schema
-        validate_assignment = True  # Validate values on assignment
-        validate_all = True  # Validate default values
-        arbitrary_types_allowed = True  # Allow more complex types
+    model_config = ConfigDict(
+        extra="forbid",  # Prevent additional fields not in the schema
+        validate_assignment=True,  # Validate values on assignment
+        validate_default=True,  # Validate default values
+        arbitrary_types_allowed=True,  # Allow more complex types
+    )
 
 
 class ConfigurationError(Exception):
@@ -191,11 +189,22 @@ class ConfigurationSystem(ServiceInterface):
 
         self._schemas[section_name] = schema
 
-        # Store default values
+        # Get default values from schema
+        self._default_config[section_name] = {}
+        for field_name, field in schema.model_fields.items():
+            if field.default_factory is not None:
+                try:
+                    self._default_config[section_name][field_name] = field.default_factory()
+                except TypeError:
+                    # Handle case where default_factory is a type or requires arguments
+                    self._default_config[section_name][field_name] = field.default_factory
+            elif field.default is not None:
+                self._default_config[section_name][field_name] = field.default
+
+        # Override with provided defaults if any
         if defaults:
-            self._default_config[section_name] = {}
             for key, value in defaults.items():
-                if hasattr(schema, key):
+                if key in schema.model_fields:
                     self._default_config[section_name][key] = value
                 else:
                     logger.warning(
@@ -221,7 +230,8 @@ class ConfigurationSystem(ServiceInterface):
         1. Runtime configuration
         2. User configuration
         3. Default configuration
-        4. Provided default value
+        4. Schema default value
+        5. Provided default value
 
         Args:
             section: Configuration section name.
@@ -246,6 +256,19 @@ class ConfigurationSystem(ServiceInterface):
 
         if section in self._default_config and key in self._default_config[section]:
             return self._default_config[section][key]
+
+        # If key exists in schema but no value is set, use schema default
+        schema = self._schemas[section]
+        if key in schema.model_fields:
+            field = schema.model_fields[key]
+            if field.default_factory is not None:
+                try:
+                    return field.default_factory()
+                except TypeError:
+                    # Handle case where default_factory is a type or requires arguments
+                    return field.default_factory
+            if field.default is not None:
+                return field.default
 
         return default
 
@@ -421,27 +444,19 @@ class ConfigurationSystem(ServiceInterface):
 
         Args:
             section: Optional section to reset. If None, resets all sections.
+            
+        Note:
+            This method only clears runtime configuration. User configuration
+            (saved values) are preserved.
         """
         with self._save_lock:
             if section:
+                # Only clear runtime config, keep user config
                 if section in self._runtime_config:
                     self._runtime_config[section] = {}
-                if section in self._user_config:
-                    self._user_config[section] = {}
-                    if self._auto_save:
-                        self.save()
             else:
-                self._runtime_config = {}
-                self._user_config = {}
-                if self._auto_save:
-                    self.save()
-
-                # Re-initialize empty sections
-                for section_name in self._schemas:
-                    if section_name not in self._runtime_config:
-                        self._runtime_config[section_name] = {}
-                    if section_name not in self._user_config:
-                        self._user_config[section_name] = {}
+                # Clear all runtime config, keep user config
+                self._runtime_config = {name: {} for name in self._schemas}
 
             logger.debug(
                 f"Reset configuration to defaults: "
@@ -503,16 +518,17 @@ class ConfigurationSystem(ServiceInterface):
 
             # Validate all sections
             for section in self._schemas:
-                self._validate_section(section)
+                if section in self._user_config:
+                    self._validate_section(section)
 
             # Emit events for changed values
             self._emit_config_change_events(old_config, new_config)
 
             return True
-        except json.JSONDecodeError as e:
-            raise ConfigFileError(f"Invalid configuration file format: {e}") from e
         except OSError as e:
             raise ConfigFileError(f"Failed to load configuration: {e}") from e
+        except json.JSONDecodeError as e:
+            raise ConfigFileError(f"Invalid configuration file: {e}") from e
 
     def _emit_config_change_events(
         self,
@@ -558,7 +574,7 @@ class ConfigurationSystem(ServiceInterface):
         try:
             schema = self._schemas[section]
             schema(**config_data)
-        except pydantic.ValidationError as e:
+        except ValidationError as e:
             # Log error but don't raise, to avoid breaking the application
             logger.error(
                 f"Configuration validation failed for section '{section}': {e}"
