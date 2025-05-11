@@ -145,7 +145,7 @@ class CloudProviderDetector:
             root_path: Root path of the provider.
             marker_files: Files that identify this provider.
             marker_folders: Folders that identify this provider.
-            regex_patterns: Regex patterns for files/folders that identify this provider.
+            regex_patterns: Regex patterns that identify this provider.
         """
         self._providers[provider_type] = CloudProviderInfo(
             provider_type=provider_type,

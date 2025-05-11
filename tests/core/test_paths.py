@@ -2,6 +2,7 @@
 
 from pathlib import Path
 import tempfile
+from typing import Union
 import unittest
 
 from src.panoptikon.filesystem.paths import (
