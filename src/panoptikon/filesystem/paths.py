@@ -11,7 +11,7 @@ import os
 from pathlib import Path
 import re
 from re import Pattern
-from typing import Dict, List, Optional, Union
+from typing import Optional, Union
 
 from ..core.service import ServiceInterface
 
@@ -97,8 +97,8 @@ class PathRuleSet:
 
     def __init__(self) -> None:
         """Initialize an empty rule set."""
-        self.include_rules: List[PathRule] = []
-        self.exclude_rules: List[PathRule] = []
+        self.include_rules: list[PathRule] = []
+        self.exclude_rules: list[PathRule] = []
 
     def add_include(
         self, pattern: str, match_type: PathMatchType = PathMatchType.GLOB
@@ -144,14 +144,9 @@ class PathRuleSet:
             return True
 
         # Check include rules
-        for rule in self.include_rules:
-            if rule.matches(path_str):
-                return True
+        return any(rule.matches(path_str) for rule in self.include_rules)
 
-        # If there are include rules but none matched, exclude the path
-        return False
-
-    def filter_paths(self, paths: List[Union[str, Path]]) -> List[Union[str, Path]]:
+    def filter_paths(self, paths: list[Union[str, Path]]) -> list[Union[str, Path]]:
         """Filter a list of paths according to the rules.
 
         Args:
@@ -168,7 +163,7 @@ class PathManager(ServiceInterface):
 
     def __init__(self) -> None:
         """Initialize the path manager."""
-        self._path_rule_sets: Dict[str, PathRuleSet] = {}
+        self._path_rule_sets: dict[str, PathRuleSet] = {}
 
     def initialize(self) -> None:
         """Initialize the service."""
@@ -231,11 +226,12 @@ class PathManager(ServiceInterface):
         if isinstance(path, str):
             path = Path(path)
 
-        # Resolve symlinks, make absolute, normalize case on case-insensitive filesystems
+        # Resolve symlinks, make absolute, and normalize case on case-insensitive
+        # filesystems.
         path = path.expanduser().resolve()
 
         # On macOS and Windows, store lowercase path for consistent lookups
-        if os.name == "nt" or os.name == "posix" and os.uname().sysname == "Darwin":
+        if os.name == "nt" or (os.name == "posix" and os.uname().sysname == "Darwin"):
             path = Path(str(path).lower())
 
         return path
@@ -277,7 +273,7 @@ class PathManager(ServiceInterface):
             return False
 
     @staticmethod
-    def common_prefix(paths: List[Union[str, Path]]) -> Optional[Path]:
+    def common_prefix(paths: list[Union[str, Path]]) -> Optional[Path]:
         """Find the longest common path prefix.
 
         Args:

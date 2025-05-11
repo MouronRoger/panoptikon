@@ -10,7 +10,7 @@ from datetime import datetime
 import logging
 from pathlib import Path
 import platform
-from typing import Dict, Optional, Set, Tuple
+from typing import Optional
 
 from ..core.events import EventBus
 from ..core.service import ServiceInterface
@@ -53,8 +53,8 @@ class BookmarkService(ServiceInterface):
             event_bus: Event bus to publish events to.
         """
         self._event_bus = event_bus
-        self._bookmarks: Dict[Path, Bookmark] = {}
-        self._active_scopes: Dict[Path, int] = {}  # Path -> reference count
+        self._bookmarks: dict[Path, Bookmark] = {}
+        self._active_scopes: dict[Path, int] = {}  # Path -> reference count
         self._bookmark_storage_path: Optional[Path] = None
 
     def initialize(self) -> None:
@@ -102,7 +102,10 @@ class BookmarkService(ServiceInterface):
             url = Foundation.NSURL.fileURLWithPath_(str(path))
             bookmark_data, error = (
                 url.bookmarkDataWithOptions_includingResourceValuesForKeys_relativeToURL_error_(
-                    Foundation.NSURLBookmarkCreationWithSecurityScope, None, None, None
+                    Foundation.NSURLBookmarkCreationWithSecurityScope,
+                    None,
+                    None,
+                    None,
                 )
             )
 
@@ -167,7 +170,8 @@ class BookmarkService(ServiceInterface):
         try:
             url = Foundation.NSURL.URLByResolvingBookmarkData_options_relativeToURL_bookmarkDataIsStale_error_(
                 Foundation.NSData.dataWithBytes_length_(
-                    bookmark.bookmark_data, len(bookmark.bookmark_data)
+                    bookmark.bookmark_data,
+                    len(bookmark.bookmark_data),
                 ),
                 Foundation.NSURLBookmarkResolutionWithSecurityScope,
                 None,
@@ -266,7 +270,7 @@ class BookmarkService(ServiceInterface):
             return False
         return self._bookmarks[path].is_valid
 
-    def get_bookmarked_paths(self) -> Set[Path]:
+    def get_bookmarked_paths(self) -> set[Path]:
         """Get all paths with bookmarks.
 
         Returns:
@@ -372,7 +376,7 @@ class BookmarkService(ServiceInterface):
 
     def _read_bookmark_file(
         self, bookmark_file: Path
-    ) -> Tuple[Optional[Path], Optional[bytes], datetime]:
+    ) -> tuple[Optional[Path], Optional[bytes], datetime]:
         """Read a bookmark file.
 
         Args:
@@ -430,7 +434,8 @@ class BookmarkService(ServiceInterface):
 
             if error or not url:
                 logger.error(
-                    f"Error resolving bookmark for {path}: {error.localizedDescription() if error else 'Unknown error'}"
+                    f"Error resolving bookmark for {path}: "
+                    f"{error.localizedDescription() if error else 'Unknown error'}"
                 )
                 return False
 
