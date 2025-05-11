@@ -8,7 +8,15 @@ This module provides core filesystem functionality:
 - Path normalization and filtering
 """
 
+from .access import (
+    AccessRequest,
+    AccessResult,
+    AccessType,
+    FileAccessService,
+    PermissionStrategy,
+)
 from .bookmarks import Bookmark, BookmarkService
+from .cloud import CloudProviderInfo, CloudStorageService
 from .events import (
     BookmarkEvent,
     CloudProviderType,
@@ -55,4 +63,13 @@ __all__ = [
     # Bookmarks
     "Bookmark",
     "BookmarkService",
+    # Cloud storage
+    "CloudProviderInfo",
+    "CloudStorageService",
+    # Access control
+    "AccessType",
+    "PermissionStrategy",
+    "AccessRequest",
+    "AccessResult",
+    "FileAccessService",
 ]
