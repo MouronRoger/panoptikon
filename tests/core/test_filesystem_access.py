@@ -132,6 +132,7 @@ class TestFileAccessService(unittest.TestCase):
 
         # Test with a path outside home (requires bookmark on macOS)
         test_path = Path("/tmp/test.txt")
+        resolved_path = test_path.resolve()  # Handle /private/tmp on macOS
 
         # Request access
         request = AccessRequest(
@@ -142,14 +143,17 @@ class TestFileAccessService(unittest.TestCase):
         result = self.service.request_access(request)
 
         # Should try to create a bookmark
-        self.bookmark_service.create_bookmark.assert_called_once_with(test_path)
-        self.bookmark_service.start_access.assert_called_once_with(test_path)
+        self.bookmark_service.create_bookmark.assert_called_once_with(resolved_path)
+        self.bookmark_service.start_access.assert_called_once_with(resolved_path)
         self.assertTrue(result.success)
 
     def test_cloud_integration(self) -> None:
         """Test integration with CloudStorageService."""
         # Mock provider detection
         self.cloud_service.get_provider_for_path.return_value = None
+
+        # Get resolved path for test comparison
+        resolved_test_file = self.test_file.resolve()
 
         # Request access to a path
         request = AccessRequest(
@@ -160,5 +164,7 @@ class TestFileAccessService(unittest.TestCase):
         result = self.service.request_access(request)
 
         # Should check for cloud provider
-        self.cloud_service.get_provider_for_path.assert_called_once_with(self.test_file)
+        self.cloud_service.get_provider_for_path.assert_called_once_with(
+            resolved_test_file
+        )
         self.assertTrue(result.success)

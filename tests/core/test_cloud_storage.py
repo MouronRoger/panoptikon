@@ -80,25 +80,33 @@ class TestCloudProviderDetector(unittest.TestCase):
             with open(test_file, "w") as f:
                 f.write("Test content")
 
-            # Initialize detector with mock home
+            # Initialize detector with mock home and keep patch active
+            # while testing detection
             with (
                 patch("pathlib.Path.home", return_value=temp_path),
                 patch("platform.system", return_value="Darwin"),
             ):
                 detector = CloudProviderDetector()
 
-            # Test file should be detected as Dropbox
-            provider = detector.detect_provider(test_file)
-            self.assertIsNotNone(provider)
-            self.assertEqual(CloudProviderType.DROPBOX, provider.provider_type)
+                # Debug info
+                print(f"Home path: {Path.home()}")
+                print(f"Test file path: {test_file}")
+                print(f"Providers: {detector._providers}")
+                print(f"Provider roots: {detector._provider_roots}")
 
-            # Path outside should not be detected
-            outside_path = temp_path / "outside.txt"
-            with open(outside_path, "w") as f:
-                f.write("Not in cloud")
+                # Test file should be detected as Dropbox
+                provider = detector.detect_provider(test_file)
+                self.assertIsNotNone(provider)
+                if provider is not None:  # Type check for mypy
+                    self.assertEqual(CloudProviderType.DROPBOX, provider.provider_type)
 
-            provider = detector.detect_provider(outside_path)
-            self.assertIsNone(provider)
+                # Path outside should not be detected
+                outside_path = temp_path / "outside.txt"
+                with open(outside_path, "w") as f:
+                    f.write("Not in cloud")
+
+                provider = detector.detect_provider(outside_path)
+                self.assertIsNone(provider)
 
 
 class TestCloudStorageService(unittest.TestCase):

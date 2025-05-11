@@ -190,13 +190,35 @@ class CloudProviderDetector:
         """
         path = path.resolve()
 
-        # Fast check for direct provider roots
+        # For all providers, normalize paths for comparison
         for provider in self._providers.values():
-            # If path is the provider root or a subpath
-            if path == provider.root_path or str(path).startswith(
-                str(provider.root_path)
-            ):
+            # Try different ways to match the path
+            provider_root = provider.root_path.resolve()
+
+            # Direct equality check
+            if path == provider_root:
                 return provider
+
+            # Check if path starts with provider root
+            path_str = str(path)
+            root_str = str(provider_root)
+            if path_str.startswith(root_str + "/"):
+                return provider
+
+            # On macOS, check for /private prefix difference
+            if platform.system() == "Darwin":
+                if path_str.startswith("/private"):
+                    # Remove /private prefix for comparison
+                    non_private_path = path_str.replace("/private", "", 1)
+                    non_private_root = root_str.replace("/private", "", 1)
+                    if non_private_path.startswith(non_private_root):
+                        return provider
+                else:
+                    # Add /private prefix for comparison
+                    private_path = "/private" + path_str
+                    private_root = "/private" + root_str
+                    if private_path.startswith(private_root):
+                        return provider
 
         return None
 
