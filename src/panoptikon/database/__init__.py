@@ -1,1 +1,37 @@
 """Database management and operations for Panoptikon."""
+
+from pathlib import Path
+from typing import Optional
+
+from .config import DatabaseConfig, get_default_config
+from .connection import DatabaseConnection, DatabaseConnectionService
+from .schema import DatabaseSchemaService, SchemaManager
+from .service import DatabaseService
+
+__all__ = [
+    "DatabaseConnection",
+    "DatabaseConnectionService",
+    "DatabaseConfig",
+    "DatabaseSchemaService",
+    "DatabaseService",
+    "SchemaManager",
+    "get_default_config",
+    "get_default_db_path",
+]
+
+
+def get_default_db_path(data_dir: Optional[Path] = None) -> Path:
+    """Get the default path for the database file.
+
+    Args:
+        data_dir: Optional data directory. If not provided, uses the
+            user's home directory.
+
+    Returns:
+        Path to the default database file.
+    """
+    if data_dir is None:
+        home_dir = Path.home()
+        data_dir = home_dir / ".panoptikon"
+
+    return data_dir / "panoptikon.db"
