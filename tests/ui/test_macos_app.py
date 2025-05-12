@@ -28,19 +28,18 @@ def mock_objc_modules() -> Generator[None, None, None]:
 
     # Mock AppKit classes and constants
     app_kit = sys.modules["AppKit"]
-    # Using setattr to avoid "Module has no attribute" errors
-    app_kit.NSWindow = MagicMock()
+    app_kit.NSWindow = MagicMock()  # type: ignore[attr-defined]
     app_kit.NSWindow.alloc.return_value.initWithContentRect_styleMask_backing_defer_.return_value = MagicMock()
-    app_kit.NSWindowStyleMaskTitled = 1
-    app_kit.NSWindowStyleMaskClosable = 2
-    app_kit.NSWindowStyleMaskResizable = 4
-    app_kit.NSBackingStoreBuffered = 2
-    app_kit.NSApplication = MagicMock()
-    app_kit.NSApplication.sharedApplication.return_value = MagicMock()
+    app_kit.NSWindowStyleMaskTitled = 1  # type: ignore[attr-defined]
+    app_kit.NSWindowStyleMaskClosable = 2  # type: ignore[attr-defined]
+    app_kit.NSWindowStyleMaskResizable = 4  # type: ignore[attr-defined]
+    app_kit.NSBackingStoreBuffered = 2  # type: ignore[attr-defined]
+    app_kit.NSApplication = MagicMock()  # type: ignore[attr-defined]
+    app_kit.NSApplication.sharedApplication.return_value = MagicMock()  # type: ignore[attr-defined]
 
     # Mock Foundation classes and functions
     foundation = sys.modules["Foundation"]
-    foundation.NSMakeRect = lambda x, y, w, h: (x, y, w, h)
+    foundation.NSMakeRect = lambda x, y, w, h: (x, y, w, h)  # type: ignore[attr-defined]
 
     yield
 
@@ -207,14 +206,14 @@ class TestFileSearchApp:
             app_mock = MagicMock()
 
             # Store the original
-            original_app = sys.modules["AppKit"].NSApplication
-            original_shared_app = original_app.sharedApplication
+            original_app = sys.modules["AppKit"].NSApplication  # type: ignore[attr-defined]
+            original_shared_app = original_app.sharedApplication  # type: ignore[attr-defined]
 
             try:
                 # Replace with mock
                 sys.modules["AppKit"].NSApplication.sharedApplication = MagicMock(
                     return_value=app_mock
-                )
+                )  # type: ignore[attr-defined]
 
                 # Call the method
                 app.show()
@@ -225,8 +224,8 @@ class TestFileSearchApp:
                 app_mock.run.assert_called_once()
             finally:
                 # Restore original
-                sys.modules["AppKit"].NSApplication = original_app
-                original_app.sharedApplication = original_shared_app
+                sys.modules["AppKit"].NSApplication = original_app  # type: ignore[attr-defined]
+                original_app.sharedApplication = original_shared_app  # type: ignore[attr-defined]
 
     def test_show_without_pyobjc(self) -> None:
         """Test showing without PyObjC available."""
