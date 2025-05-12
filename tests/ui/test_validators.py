@@ -164,3 +164,14 @@ def test_validated_objc_call() -> None:
         pass
 
     no_args()  # Should not raise
+
+
+def test_validate_search_field_delegate_true() -> None:
+    """Test validate_search_field_delegate returns True if any method exists."""
+
+    class Dummy:
+        def controlTextDidChange_(self) -> None:
+            pass
+
+    obj = Dummy()
+    assert validate_search_field_delegate(obj) is True

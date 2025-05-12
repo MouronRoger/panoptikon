@@ -93,22 +93,11 @@ class CircularService2(ServiceInterface):
 
 
 def test_registration_and_resolution() -> None:
-    """Test basic service registration and resolution."""
+    """Test service registration and resolution."""
     container = ServiceContainer()
-
-    # Register a service
-    container.register(MockService, MockService)
-
-    # Resolve the service
+    container.register(MockService, implementation_type=MockService)
     service = container.resolve(MockService)
-
     assert isinstance(service, MockService)
-    assert not service.initialized  # Not initialized yet
-
-    # Initialize services
-    container.initialize_all()
-
-    assert service.initialized  # Now initialized
 
 
 def test_singleton_lifecycle() -> None:

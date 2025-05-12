@@ -4,8 +4,8 @@ These tests use mocks to test the MacOS app functionality without requiring
 the actual PyObjC environment.
 """
 
-import sys
 from collections.abc import Generator
+import sys
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -30,9 +30,7 @@ def mock_objc_modules() -> Generator[None, None, None]:
     app_kit = sys.modules["AppKit"]
     # Using setattr to avoid "Module has no attribute" errors
     app_kit.NSWindow = MagicMock()
-    app_kit.NSWindow.alloc.return_value.initWithContentRect_styleMask_backing_defer_.return_value = (
-        MagicMock()
-    )
+    app_kit.NSWindow.alloc.return_value.initWithContentRect_styleMask_backing_defer_.return_value = MagicMock()
     app_kit.NSWindowStyleMaskTitled = 1
     app_kit.NSWindowStyleMaskClosable = 2
     app_kit.NSWindowStyleMaskResizable = 4
@@ -111,20 +109,19 @@ class TestFileSearchApp:
     def test_init_without_pyobjc(self) -> None:
         """Test initializing without PyObjC available."""
         # Mock imports to fail
-        with patch("src.panoptikon.ui.macos_app.FileSearchApp._setup_ui") as mock_setup:
-            with patch.dict(sys.modules, {"AppKit": None, "Foundation": None}):
-                # Force import error during AppKit import
-                with patch(
-                    "builtins.__import__",
-                    side_effect=lambda name, *args, **kwargs: (
-                        ImportError()
-                        if name in ("AppKit", "Foundation", "objc")
-                        else __import__(name, *args, **kwargs)
-                    ),
-                ):
-                    app = FileSearchApp()
-                    assert app._pyobjc_available is False
-                    mock_setup.assert_not_called()
+        with (
+            patch("src.panoptikon.ui.macos_app.FileSearchApp._setup_ui") as mock_setup,
+            patch.dict(sys.modules, {"AppKit": None, "Foundation": None}),
+            patch(
+                "builtins.__import__",
+                side_effect=lambda name, *args, **kwargs: ImportError()
+                if name in ("AppKit", "Foundation", "objc")
+                else __import__(name, *args, **kwargs),
+            ),
+        ):
+            app = FileSearchApp()
+            assert not getattr(app, "_pyobjc_available", True)
+            mock_setup.assert_not_called()
 
     def test_init_with_pyobjc(
         self, mock_objc_modules: None, mock_wrappers: None

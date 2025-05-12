@@ -219,3 +219,17 @@ def test_objc_method_validation() -> None:
     # Test assert method with non-existent method (should raise AssertionError)
     with pytest.raises(AssertionError):
         assert_objc_method_exists(ns_object, "nonExistentMethod_")
+
+
+class DummyTableView:
+    def numberOfRowsInTableView_(self, table_view):
+        return len(self.data)
+
+    def tableView_objectValueForTableColumn_row_(self, table_view, column, row):
+        if row >= len(self.data):
+            return ""
+        if column.identifier() == "0":
+            return self.data[row][0]
+        if column.identifier() == "1":
+            return self.data[row][1]
+        return ""

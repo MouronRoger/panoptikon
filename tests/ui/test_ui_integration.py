@@ -213,7 +213,7 @@ class TestFileSearchAppMocked:
         mock_appkit.NSApplication.sharedApplication.return_value = mock_app
 
         # Create app instance
-        app = FileSearchApp()
+        _ = FileSearchApp()
 
         # Verify UI components were initialized
         mock_search_wrapper.assert_called_once()

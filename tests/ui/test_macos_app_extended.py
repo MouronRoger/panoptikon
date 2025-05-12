@@ -4,8 +4,8 @@ These tests focus on the delegate classes and methods that weren't fully covered
 in the main test file.
 """
 
-import sys
 from collections.abc import Generator
+import sys
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -76,9 +76,9 @@ class TestImprovedCoverage:
         """Test delegate method calls."""
         # Set up a more detailed mock for the search delegate
         search_delegate_instance = MagicMock()
-        mock_objc_setup["search_delegate"].alloc.return_value.init.return_value = (
-            search_delegate_instance
-        )
+        mock_objc_setup[
+            "search_delegate"
+        ].alloc.return_value.init.return_value = search_delegate_instance
 
         # Create app and test callback setting
         with patch.object(FileSearchApp, "_setup_ui"):
@@ -176,7 +176,8 @@ class TestImprovedCoverage:
             def tableViewSelectionDidChange_(self, notification):
                 table_view = notification.object()
                 selected_row = table_view.selectedRow()
-                return f"Selected row: {selected_row}"
+                if selected_row >= 0:
+                    print(f"Selected row: {selected_row}")
 
         # Test the delegate
         delegate = MockTableDelegate()
@@ -200,15 +201,15 @@ def test_main_function() -> None:
         mock_app.return_value = app_instance
 
         # Patch the set_files method to verify it's called with something
-        with patch.object(app_instance, "set_files") as mock_set_files:
-            with patch.object(app_instance, "show"):
-                # Import locally to avoid circular import issues
-                from src.panoptikon.ui.macos_app import main
+        with (
+            patch.object(app_instance, "set_files") as mock_set_files,
+            patch.object(app_instance, "show"),
+        ):
+            # Import locally to avoid circular import issues
+            from src.panoptikon.ui.macos_app import main
 
-                main()
+            main()
+            app_instance.show.assert_called_once()
 
-                # Verify app was shown
-                app_instance.show.assert_called_once()
-
-                # Verify some kind of files were set (we don't care about the exact content)
-                mock_set_files.assert_called_once()
+            # Verify some kind of files were set (we don't care about the exact content)
+            mock_set_files.assert_called_once()
