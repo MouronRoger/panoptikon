@@ -10,8 +10,6 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from src.panoptikon.ui.macos_app import FileSearchApp
-
 
 @pytest.fixture
 def mock_objc_setup() -> Generator[dict[str, MagicMock], None, None]:
@@ -54,23 +52,41 @@ class TestImprovedCoverage:
 
     def test_delegates_creation(self, mock_objc_setup: dict) -> None:
         """Test the creation and setup of delegates."""
-        # Create app and patch the setup_ui method
-        with patch.object(FileSearchApp, "_setup_ui"):
-            app = FileSearchApp()
-            app._pyobjc_available = True
+        # Patch delegate classes before importing FileSearchApp
+        with (
+            patch(
+                "src.panoptikon.ui.macos_app._TableDataSource",
+                mock_objc_setup["table_data_source"],
+            ),
+            patch(
+                "src.panoptikon.ui.macos_app._TableDelegate",
+                mock_objc_setup["table_delegate"],
+            ),
+            patch(
+                "src.panoptikon.ui.macos_app._SearchFieldDelegate",
+                mock_objc_setup["search_delegate"],
+            ),
+        ):
+            from src.panoptikon.ui.macos_app import FileSearchApp
 
-            # Now add required attributes that would be created by _setup_ui
-            app._table_view = MagicMock()
-            app._search_field = MagicMock()
-            app._search_options = MagicMock()
+            with patch.object(FileSearchApp, "_setup_ui"):
+                app = FileSearchApp()
+                app._pyobjc_available = True
 
-            # Test _set_up_delegates
-            app._set_up_delegates()
+                # Now add required attributes that would be created by _setup_ui
+                app._table_view = MagicMock()
+                app._search_field = MagicMock()
+                app._search_options = MagicMock()
 
-            # Check that delegates were created
-            mock_objc_setup["table_data_source"].alloc.assert_called_once()
-            mock_objc_setup["table_delegate"].alloc.assert_called_once()
-            mock_objc_setup["search_delegate"].alloc.assert_called_once()
+                # Patch _pyobjc_available to True before calling _set_up_delegates
+                with patch.object(app, "_pyobjc_available", True):
+                    # Test _set_up_delegates
+                    app._set_up_delegates()
+
+                # Check that delegates were created
+                mock_objc_setup["table_data_source"].assert_called_once()
+                mock_objc_setup["table_delegate"].assert_called_once()
+                mock_objc_setup["search_delegate"].assert_called_once()
 
     def test_delegate_methods(self, mock_objc_setup: dict) -> None:
         """Test delegate method calls."""
@@ -80,28 +96,48 @@ class TestImprovedCoverage:
             "search_delegate"
         ].alloc.return_value.init.return_value = search_delegate_instance
 
-        # Create app and test callback setting
-        with patch.object(FileSearchApp, "_setup_ui"):
-            app = FileSearchApp()
-            app._pyobjc_available = True
+        # Patch delegate classes before importing FileSearchApp
+        with (
+            patch(
+                "src.panoptikon.ui.macos_app._TableDataSource",
+                mock_objc_setup["table_data_source"],
+            ),
+            patch(
+                "src.panoptikon.ui.macos_app._TableDelegate",
+                mock_objc_setup["table_delegate"],
+            ),
+            patch(
+                "src.panoptikon.ui.macos_app._SearchFieldDelegate",
+                mock_objc_setup["search_delegate"],
+            ),
+        ):
+            from src.panoptikon.ui.macos_app import FileSearchApp
 
-            # Mock the table view and other components
-            app._table_view = MagicMock()
-            app._search_field = MagicMock()
-            app._search_options = MagicMock()
-            app._search_options.get_selected_segment.return_value = 1
+            with patch.object(FileSearchApp, "_setup_ui"):
+                app = FileSearchApp()
+                app._pyobjc_available = True
 
-            # Setup delegates
-            app._set_up_delegates()
+                # Mock the table view and other components
+                app._table_view = MagicMock()
+                app._search_field = MagicMock()
+                app._search_options = MagicMock()
+                app._search_options.get_selected_segment.return_value = 1
 
-            # Verify search delegate was set up with app as callback
-            search_delegate_instance.setCallback_.assert_called_once_with(app)
+                # Patch _pyobjc_available to True before calling _set_up_delegates
+                with patch.object(app, "_pyobjc_available", True):
+                    # Setup delegates
+                    app._set_up_delegates()
 
-            # Test search methods
-            with patch("builtins.print"):
-                app.on_search_changed("test")
-                app.on_search_submitted("submit")
-                app.onSearchOptionChanged(None)
+                # Verify search delegate was set up with app as callback
+                mock_objc_setup[
+                    "search_delegate"
+                ].return_value.setCallback_.assert_called_once_with(app)
+
+                # Test search methods
+                with patch("builtins.print"):
+                    app.on_search_changed("test")
+                    app.on_search_submitted("submit")
+                    app.on_search_option_changed(None)
 
     def test_table_data_source_methods(self) -> None:
         """Test table data source methods separately with direct mocking."""
@@ -188,9 +224,18 @@ class TestImprovedCoverage:
         notification.object.return_value = table_view
         table_view.selectedRow.return_value = 5
 
-        # Verify behavior
-        result = delegate.tableViewSelectionDidChange_(notification)
-        assert result == "Selected row: 5"
+        # Verify behavior by capturing print output
+        import io
+        import sys
+
+        captured = io.StringIO()
+        sys_stdout = sys.stdout
+        sys.stdout = captured
+        try:
+            delegate.tableViewSelectionDidChange_(notification)
+        finally:
+            sys.stdout = sys_stdout
+        assert "Selected row: 5" in captured.getvalue()
 
 
 def test_main_function() -> None:

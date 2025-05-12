@@ -1,5 +1,7 @@
 """Permission-aware file system operations.
 
+IMPORTANT: All cloud file operations (open, reveal, download, etc.) must be delegated to Finder/NSWorkspace (see Phase 8). Direct cloud provider API integration is FORBIDDEN. See docs/spec/phases/phase8_prompt.md and system architecture docs for rationale.
+
 This module provides a layer of abstraction over file system operations:
 - Permission-aware file operations
 - Progressive permission acquisition
@@ -9,6 +11,7 @@ This module provides a layer of abstraction over file system operations:
 
 from dataclasses import dataclass
 from enum import Enum, auto
+import logging
 import os
 from pathlib import Path
 import platform
@@ -22,6 +25,8 @@ from .bookmarks import BookmarkService
 from .cloud import CloudProviderInfo, CloudStorageService
 from .events import FilePermissionEvent, PermissionStatus
 from .paths import PathManager
+
+logger = logging.getLogger(__name__)
 
 
 class AccessType(Enum):
@@ -72,7 +77,19 @@ T = TypeVar("T")
 
 
 class FileAccessService(ServiceInterface):
-    """Service for permission-aware file system operations."""
+    """Service for permission-aware file system operations.
+
+    This service provides a unified interface for file operations with:
+    - Permission checking and acquisition strategies
+    - Security bookmark handling for persistent access
+    - Cloud provider detection and operation routing
+    - Caching of accessible paths for performance
+
+    Cloud Operations (Phase 8):
+    For cloud files, operations are delegated to the system (Finder) using
+    NSWorkspace. This ensures proper sync handling without implementing
+    provider-specific APIs. See Phase 8 for implementation details.
+    """
 
     def __init__(
         self,
@@ -117,8 +134,9 @@ class FileAccessService(ServiceInterface):
         # Standard file operations apply to all provider types
         self._register_standard_operations(None)
 
-        # Provider-specific operations would be registered here
-        # For example, different implementations for cloud providers
+        # TODO (Phase 8): Register cloud-specific handlers that delegate to NSWorkspace
+        # Cloud operations should use NSWorkspace.shared.open() and similar methods
+        # to let Finder handle all cloud sync/download operations transparently
 
     def _register_standard_operations(
         self, provider_info: Optional[CloudProviderInfo]
@@ -341,6 +359,22 @@ class FileAccessService(ServiceInterface):
         except (PermissionError, OSError):
             return False
 
+    def _cloud_operation_not_implemented(self, path: Path) -> bool:
+        """Placeholder for cloud operations that will be implemented in Phase 8.
+
+        Args:
+            path: Path to the cloud file.
+
+        Returns:
+            False, as the operation is not yet implemented.
+
+        Note:
+            In Phase 8, this will be replaced with NSWorkspace delegation
+            to let Finder handle all cloud sync/download operations.
+        """
+        logger.warning(f"Cloud operation requested for {path} but not yet implemented")
+        return False
+
     def _get_operation_handler(
         self, path: Path, access_type: AccessType
     ) -> Callable[[Path], bool]:
@@ -355,6 +389,9 @@ class FileAccessService(ServiceInterface):
         """
         # Get cloud provider for path, if any
         provider = self._cloud_service.get_provider_for_path(path)
+
+        # TODO (Phase 8): For cloud providers, return handlers that delegate
+        # to NSWorkspace instead of performing direct file operations
 
         # Look for provider-specific handler
         key = (provider, access_type)

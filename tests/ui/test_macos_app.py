@@ -189,7 +189,7 @@ class TestFileSearchApp:
             app._search_options.get_selected_segment.return_value = 2
 
             # Test option change
-            app.onSearchOptionChanged(None)
+            app.on_search_option_changed(None)
             mock_print.assert_called_with("Search option changed to: Date")
 
     def test_show_with_pyobjc(

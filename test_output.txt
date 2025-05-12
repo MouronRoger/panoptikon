@@ -2,45 +2,492 @@
 platform darwin -- Python 3.9.18, pytest-8.3.5, pluggy-1.5.0
 rootdir: /Users/james/Documents/GitHub/panoptikon
 configfile: pyproject.toml
+testpaths: tests
 plugins: asyncio-0.26.0, cov-6.1.1
 asyncio: mode=strict, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
-collected 8 items
+collected 201 items
 
-tests/core/test_paths.py ........
-ERROR: Coverage failure: total of 22 is less than fail-under=80
-                                                                         [100%]
+tests/core/test_bookmarks.py ...................                         [  9%]
+tests/core/test_bootstrap.py .                                           [  9%]
+tests/core/test_cloud_storage.py ...............                         [ 17%]
+tests/core/test_config.py .......                                        [ 20%]
+tests/core/test_config_hot_reload.py ......s...                          [ 25%]
+tests/core/test_errors.py .........                                      [ 30%]
+tests/core/test_events.py ........................                       [ 42%]
+tests/core/test_filesystem.py .............................sss......     [ 61%]
+tests/core/test_integration.py ..                                        [ 62%]
+tests/core/test_lifecycle.py .........                                   [ 66%]
+tests/core/test_paths.py ........                                        [ 70%]
+tests/core/test_service.py .........                                     [ 75%]
+tests/core/test_ui.py .......                                            [ 78%]
+tests/test_core.py .                                                     [ 79%]
+tests/test_main.py ...                                                   [ 80%]
+tests/ui/test_macos_app.py ........                                      [ 84%]
+tests/ui/test_macos_app_extended.py .....                                [ 87%]
+tests/ui/test_objc_integration.py ....                                   [ 89%]
+tests/ui/test_ui_integration.py FFFFFFFFF                                [ 93%]
+tests/ui/test_ui_mocking.py ....                                         [ 95%]
+tests/ui/test_validators.py .........                                    [100%]
 
+=================================== FAILURES ===================================
+_____________________ TestUIIntegration.test_app_lifecycle _____________________
+
+self = <test_ui_integration.TestUIIntegration object at 0x106494580>
+mock_shared_app = <MagicMock name='sharedApplication' id='4403542912'>
+mock_nsapp = <MagicMock name='NSApp' id='4405800864'>
+
+    @patch("AppKit.NSApp")
+    @patch("AppKit.NSApplication.sharedApplication")
+    def test_app_lifecycle(self, mock_shared_app, mock_nsapp) -> None:
+        """Test the show method of FileSearchApp."""
+        mock_app = MagicMock()
+        mock_shared_app.return_value = mock_app
+        app = FileSearchApp()
+        app._window = MagicMock()
+        app.show()
+>       app._window.makeKeyAndOrderFront_.assert_called_once()
+
+tests/ui/test_ui_integration.py:88: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <MagicMock name='mock.makeKeyAndOrderFront_' id='4406381536'>
+
+    def assert_called_once(self):
+        """assert that the mock was called only once.
+        """
+        if not self.call_count == 1:
+            msg = ("Expected '%s' to have been called once. Called %s times.%s"
+                   % (self._mock_name or 'mock',
+                      self.call_count,
+                      self._calls_repr()))
+>           raise AssertionError(msg)
+E           AssertionError: Expected 'makeKeyAndOrderFront_' to have been called once. Called 0 times.
+
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:886: AssertionError
+----------------------------- Captured stdout call -----------------------------
+PyObjC not available - UI features disabled
+Cannot show UI - PyObjC not available
+____________ TestUIComponentIntegration.test_component_integration _____________
+
+self = <test_ui_integration.TestUIComponentIntegration object at 0x106494070>
+mock_table_alloc = <MagicMock name='alloc' id='4408293600'>
+mock_segment_alloc = <MagicMock name='alloc' id='4405704160'>
+mock_search_alloc = <MagicMock name='alloc' id='4406359040'>
+mock_shared_app = <MagicMock name='sharedApplication' id='4406178672'>
+mock_nsapp = <MagicMock name='NSApp' id='4405961056'>
+
+    @patch("AppKit.NSApp")
+    @patch("AppKit.NSApplication.sharedApplication")
+    @patch("AppKit.NSSearchField.alloc")
+    @patch("AppKit.NSSegmentedControl.alloc")
+    @patch("AppKit.NSTableView.alloc")
+    def test_component_integration(
+        self,
+        mock_table_alloc,
+        mock_segment_alloc,
+        mock_search_alloc,
+        mock_shared_app,
+        mock_nsapp,
+    ) -> None:
+        """Test UI component instantiation and delegate setup."""
+        mock_search_field = MagicMock()
+        mock_search_alloc.return_value.init.return_value = mock_search_field
+        mock_segment_control = MagicMock()
+        mock_segment_alloc.return_value.init.return_value = mock_segment_control
+        mock_table_view = MagicMock()
+        mock_table_alloc.return_value.init.return_value = mock_table_view
+        app = FileSearchApp()
+        # Test that the wrappers were instantiated
+>       assert hasattr(app, "_search_field")
+E       AssertionError: assert False
+E        +  where False = hasattr(<panoptikon.ui.macos_app.FileSearchApp object at 0x106b6d640>, '_search_field')
+
+tests/ui/test_ui_integration.py:118: AssertionError
+----------------------------- Captured stdout call -----------------------------
+PyObjC not available - UI features disabled
+_______________ TestUIEventIntegration.test_ui_event_integration _______________
+
+self = <test_ui_integration.TestUIEventIntegration object at 0x106494c70>
+mock_shared_app = <MagicMock name='sharedApplication' id='4403008176'>
+mock_nsapp = <MagicMock name='NSApp' id='4402899168'>
+
+    @patch("AppKit.NSApp")
+    @patch("AppKit.NSApplication.sharedApplication")
+    def test_ui_event_integration(self, mock_shared_app, mock_nsapp) -> None:
+        """Test that show does not error when PyObjC is available."""
+        mock_app = MagicMock()
+        mock_shared_app.return_value = mock_app
+        app = FileSearchApp()
+        app._window = MagicMock()
+        app.show()
+>       app._window.makeKeyAndOrderFront_.assert_called_once()
+
+tests/ui/test_ui_integration.py:135: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <MagicMock name='mock.makeKeyAndOrderFront_' id='4402954592'>
+
+    def assert_called_once(self):
+        """assert that the mock was called only once.
+        """
+        if not self.call_count == 1:
+            msg = ("Expected '%s' to have been called once. Called %s times.%s"
+                   % (self._mock_name or 'mock',
+                      self.call_count,
+                      self._calls_repr()))
+>           raise AssertionError(msg)
+E           AssertionError: Expected 'makeKeyAndOrderFront_' to have been called once. Called 0 times.
+
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:886: AssertionError
+----------------------------- Captured stdout call -----------------------------
+PyObjC not available - UI features disabled
+Cannot show UI - PyObjC not available
+________________ TestUIFileSystemIntegration.test_file_display _________________
+
+self = <test_ui_integration.TestUIFileSystemIntegration object at 0x1064873d0>
+mock_shared_app = <MagicMock name='sharedApplication' id='4408138672'>
+mock_nsapp = <MagicMock name='NSApp' id='4407843280'>
+
+    @patch("AppKit.NSApp")
+    @patch("AppKit.NSApplication.sharedApplication")
+    def test_file_display(self, mock_shared_app, mock_nsapp) -> None:
+        """Test display of filesystem items in the UI."""
+        # Create app
+        app = FileSearchApp()
+    
+        # Setup test files
+        test_files = [
+            str(Path("/test/dir1/file1.txt")),
+            str(Path("/test/dir1/file2.txt")),
+            str(Path("/test/dir2/file3.txt")),
+        ]
+    
+        # Set files
+        app.set_files(test_files)
+    
+        # Test basic search
+>       app.search("file1")
+E       AttributeError: 'FileSearchApp' object has no attribute 'search'
+
+tests/ui/test_ui_integration.py:161: AttributeError
+----------------------------- Captured stdout call -----------------------------
+PyObjC not available - UI features disabled
+_______________ TestFileSearchAppMocked.test_app_initialization ________________
+
+args = (<test_ui_integration.TestFileSearchAppMocked object at 0x106487970>,)
+keywargs = {}
+
+    @wraps(func)
+    def patched(*args, **keywargs):
+>       with self.decoration_helper(patched,
+                                    args,
+                                    keywargs) as (newargs, newkeywargs):
+
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1333: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:119: in __enter__
+    return next(self.gen)
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1315: in decoration_helper
+    arg = exit_stack.enter_context(patching)
+../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:448: in enter_context
+    result = _cm_type.__enter__(cm)
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1404: in __enter__
+    original, local = self.get_original()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <unittest.mock._patch object at 0x106605d30>
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+    
+        original = DEFAULT
+        local = False
+    
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+    
+        if name in _builtins and isinstance(target, ModuleType):
+            self.create = True
+    
+        if not self.create and original is DEFAULT:
+>           raise AttributeError(
+                "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: <module 'panoptikon.ui.macos_app' from '/Users/james/Documents/GitHub/panoptikon/src/panoptikon/ui/macos_app.py'> does not have the attribute 'Foundation'
+
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1377: AttributeError
+_____________ TestFileSearchAppMocked.test_file_loading_and_search _____________
+
+args = (<test_ui_integration.TestFileSearchAppMocked object at 0x1064946d0>,)
+keywargs = {}
+
+    @wraps(func)
+    def patched(*args, **keywargs):
+>       with self.decoration_helper(patched,
+                                    args,
+                                    keywargs) as (newargs, newkeywargs):
+
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1333: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:119: in __enter__
+    return next(self.gen)
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1315: in decoration_helper
+    arg = exit_stack.enter_context(patching)
+../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:448: in enter_context
+    result = _cm_type.__enter__(cm)
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1404: in __enter__
+    original, local = self.get_original()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <unittest.mock._patch object at 0x106490eb0>
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+    
+        original = DEFAULT
+        local = False
+    
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+    
+        if name in _builtins and isinstance(target, ModuleType):
+            self.create = True
+    
+        if not self.create and original is DEFAULT:
+>           raise AttributeError(
+                "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: <module 'panoptikon.ui.macos_app' from '/Users/james/Documents/GitHub/panoptikon/src/panoptikon/ui/macos_app.py'> does not have the attribute 'Foundation'
+
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1377: AttributeError
+___________ TestFileSearchAppMocked.test_ui_delegates_and_datasource ___________
+
+args = (<test_ui_integration.TestFileSearchAppMocked object at 0x106487160>,)
+keywargs = {}
+
+    @wraps(func)
+    def patched(*args, **keywargs):
+>       with self.decoration_helper(patched,
+                                    args,
+                                    keywargs) as (newargs, newkeywargs):
+
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1333: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:119: in __enter__
+    return next(self.gen)
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1315: in decoration_helper
+    arg = exit_stack.enter_context(patching)
+../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:448: in enter_context
+    result = _cm_type.__enter__(cm)
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1404: in __enter__
+    original, local = self.get_original()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <unittest.mock._patch object at 0x106490b80>
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+    
+        original = DEFAULT
+        local = False
+    
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+    
+        if name in _builtins and isinstance(target, ModuleType):
+            self.create = True
+    
+        if not self.create and original is DEFAULT:
+>           raise AttributeError(
+                "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: <module 'panoptikon.ui.macos_app' from '/Users/james/Documents/GitHub/panoptikon/src/panoptikon/ui/macos_app.py'> does not have the attribute 'Foundation'
+
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1377: AttributeError
+________________ TestSearchIntegration.test_search_capabilities ________________
+
+args = (<test_ui_integration.TestSearchIntegration object at 0x106487820>,)
+keywargs = {}
+
+    @wraps(func)
+    def patched(*args, **keywargs):
+>       with self.decoration_helper(patched,
+                                    args,
+                                    keywargs) as (newargs, newkeywargs):
+
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1333: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:119: in __enter__
+    return next(self.gen)
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1315: in decoration_helper
+    arg = exit_stack.enter_context(patching)
+../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:448: in enter_context
+    result = _cm_type.__enter__(cm)
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1404: in __enter__
+    original, local = self.get_original()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <unittest.mock._patch object at 0x1064907c0>
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+    
+        original = DEFAULT
+        local = False
+    
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+    
+        if name in _builtins and isinstance(target, ModuleType):
+            self.create = True
+    
+        if not self.create and original is DEFAULT:
+>           raise AttributeError(
+                "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: <module 'panoptikon.ui.macos_app' from '/Users/james/Documents/GitHub/panoptikon/src/panoptikon/ui/macos_app.py'> does not have the attribute 'Foundation'
+
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1377: AttributeError
+_________________ TestEventBusIntegration.test_event_handling __________________
+
+args = (<test_ui_integration.TestEventBusIntegration object at 0x106487c70>,)
+keywargs = {}
+
+    @wraps(func)
+    def patched(*args, **keywargs):
+>       with self.decoration_helper(patched,
+                                    args,
+                                    keywargs) as (newargs, newkeywargs):
+
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1333: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:119: in __enter__
+    return next(self.gen)
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1315: in decoration_helper
+    arg = exit_stack.enter_context(patching)
+../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:448: in enter_context
+    result = _cm_type.__enter__(cm)
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1404: in __enter__
+    original, local = self.get_original()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <unittest.mock._patch object at 0x1064904c0>
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+    
+        original = DEFAULT
+        local = False
+    
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+    
+        if name in _builtins and isinstance(target, ModuleType):
+            self.create = True
+    
+        if not self.create and original is DEFAULT:
+>           raise AttributeError(
+                "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: <module 'panoptikon.ui.macos_app' from '/Users/james/Documents/GitHub/panoptikon/src/panoptikon/ui/macos_app.py'> does not have the attribute 'Foundation'
+
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1377: AttributeError
+=============================== warnings summary ===============================
+tests/conftest.py:24
+  /Users/james/Documents/GitHub/panoptikon/tests/conftest.py:24: PytestCollectionWarning: cannot collect test class 'TestConfigSection' because it has a __init__ constructor (from: tests/core/test_bootstrap.py)
+    class TestConfigSection(ConfigSection):
+
+tests/conftest.py:24
+  /Users/james/Documents/GitHub/panoptikon/tests/conftest.py:24: PytestCollectionWarning: cannot collect test class 'TestConfigSection' because it has a __init__ constructor (from: tests/core/test_config.py)
+    class TestConfigSection(ConfigSection):
+
+tests/conftest.py:24
+  /Users/james/Documents/GitHub/panoptikon/tests/conftest.py:24: PytestCollectionWarning: cannot collect test class 'TestConfigSection' because it has a __init__ constructor (from: tests/core/test_config_hot_reload.py)
+    class TestConfigSection(ConfigSection):
+
+tests/core/test_events.py:26
+  /Users/james/Documents/GitHub/panoptikon/tests/core/test_events.py:26: PytestCollectionWarning: cannot collect test class 'TestEvent' because it has a __init__ constructor (from: tests/core/test_events.py)
+    @dataclass
+
+tests/core/test_events.py:34
+  /Users/james/Documents/GitHub/panoptikon/tests/core/test_events.py:34: PytestCollectionWarning: cannot collect test class 'TestEventHandler' because it has a __init__ constructor (from: tests/core/test_events.py)
+    class TestEventHandler(EventHandler[TestEvent]):
+
+tests/core/test_events.py:46
+  /Users/james/Documents/GitHub/panoptikon/tests/core/test_events.py:46: PytestCollectionWarning: cannot collect test class 'TestAsyncEventHandler' because it has a __init__ constructor (from: tests/core/test_events.py)
+    class TestAsyncEventHandler(AsyncEventHandler[TestEvent]):
+
+tests/core/test_events.py:58
+  /Users/james/Documents/GitHub/panoptikon/tests/core/test_events.py:58: PytestCollectionWarning: cannot collect test class 'TestErrorEventHandler' because it has a __init__ constructor (from: tests/core/test_events.py)
+    class TestErrorEventHandler(EventHandler[ErrorEvent]):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 ================================ tests coverage ================================
 _______________ coverage: platform darwin, python 3.9.18-final-0 _______________
 
 Name                                     Stmts   Miss  Cover
 ------------------------------------------------------------
 src/panoptikon/__init__.py                   1      0   100%
-src/panoptikon/__main__.py                  32     32     0%
+src/panoptikon/__main__.py                  32      0   100%
 src/panoptikon/core/__init__.py              0      0   100%
-src/panoptikon/core/config.py              245    199    19%
-src/panoptikon/core/errors.py              178    178     0%
-src/panoptikon/core/events.py              168    107    36%
-src/panoptikon/core/lifecycle.py           135    135     0%
-src/panoptikon/core/service.py             108     80    26%
+src/panoptikon/core/config.py              245     37    85%
+src/panoptikon/core/errors.py              178     21    88%
+src/panoptikon/core/events.py              168      9    95%
+src/panoptikon/core/lifecycle.py           135      7    95%
+src/panoptikon/core/service.py             108      5    95%
 src/panoptikon/database/__init__.py          0      0   100%
 src/panoptikon/filesystem/__init__.py        7      0   100%
-src/panoptikon/filesystem/access.py        270    200    26%
-src/panoptikon/filesystem/bookmarks.py     214    174    19%
-src/panoptikon/filesystem/cloud.py         139    103    26%
-src/panoptikon/filesystem/events.py        107     61    43%
+src/panoptikon/filesystem/access.py        275     81    71%
+src/panoptikon/filesystem/bookmarks.py     214     42    80%
+src/panoptikon/filesystem/cloud.py         139     12    91%
+src/panoptikon/filesystem/events.py        107      3    97%
 src/panoptikon/filesystem/paths.py         106     12    89%
-src/panoptikon/filesystem/watcher.py       296    227    23%
+src/panoptikon/filesystem/watcher.py       296    119    60%
 src/panoptikon/search/__init__.py            0      0   100%
 src/panoptikon/typings/__init__.py           0      0   100%
 src/panoptikon/ui/__init__.py                0      0   100%
-src/panoptikon/ui/macos_app.py             127    127     0%
-src/panoptikon/ui/objc_wrappers.py          79     79     0%
-src/panoptikon/ui/validators.py             37     37     0%
+src/panoptikon/ui/macos_app.py             127     26    80%
+src/panoptikon/ui/objc_wrappers.py          79     10    87%
+src/panoptikon/ui/validators.py             37      1    97%
 src/panoptikon/utils/__init__.py             0      0   100%
 ------------------------------------------------------------
-TOTAL                                     2249   1751    22%
+TOTAL                                     2254    385    83%
 Coverage HTML written to dir htmlcov
 Coverage XML written to file coverage.xml
-FAIL Required test coverage of 80% not reached. Total coverage: 22.14%
-============================== 8 passed in 0.54s ===============================
+Required test coverage of 80% reached. Total coverage: 82.92%
+=========================== short test summary info ============================
+FAILED tests/ui/test_ui_integration.py::TestUIIntegration::test_app_lifecycle
+FAILED tests/ui/test_ui_integration.py::TestUIComponentIntegration::test_component_integration
+FAILED tests/ui/test_ui_integration.py::TestUIEventIntegration::test_ui_event_integration
+FAILED tests/ui/test_ui_integration.py::TestUIFileSystemIntegration::test_file_display
+FAILED tests/ui/test_ui_integration.py::TestFileSearchAppMocked::test_app_initialization
+FAILED tests/ui/test_ui_integration.py::TestFileSearchAppMocked::test_file_loading_and_search
+FAILED tests/ui/test_ui_integration.py::TestFileSearchAppMocked::test_ui_delegates_and_datasource
+FAILED tests/ui/test_ui_integration.py::TestSearchIntegration::test_search_capabilities
+FAILED tests/ui/test_ui_integration.py::TestEventBusIntegration::test_event_handling
+============= 9 failed, 188 passed, 4 skipped, 7 warnings in 2.59s =============

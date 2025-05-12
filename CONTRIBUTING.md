@@ -98,6 +98,7 @@ The code review process focuses on:
 3. **Maintainability**: Is the code easy to understand and maintain?
 4. **Performance**: Is the code efficient and performant?
 5. **Security**: Does the code follow security best practices?
+6. **Cloud File Operations**: All cloud file operations (open, reveal, download, etc.) must be delegated to Finder/NSWorkspace. Direct cloud provider API integration is FORBIDDEN. See docs/spec/phases/phase8_prompt.md and system architecture docs for rationale.
 
 ## Testing Expectations
 

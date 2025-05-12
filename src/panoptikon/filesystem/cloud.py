@@ -250,7 +250,18 @@ class CloudProviderDetector:
 
 
 class CloudStorageService(ServiceInterface):
-    """Service for managing cloud storage detection and status."""
+    """Service for managing cloud storage detection and status.
+
+    This service is responsible for:
+    - Detecting cloud storage providers and their locations
+    - Monitoring cloud provider status (online/offline)
+    - Caching provider information for performance
+
+    Important: This service only DETECTS cloud storage. All actual operations
+    on cloud files are delegated to the system (Finder) via NSWorkspace
+    in Phase 8. We never directly handle sync/download operations - this
+    ensures compatibility and avoids the complexity of provider-specific APIs.
+    """
 
     def __init__(self, event_bus: EventBus, path_manager: PathManager) -> None:
         """Initialize the cloud storage service.
