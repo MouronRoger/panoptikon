@@ -7,14 +7,13 @@ This module contains tests for all filesystem components:
 - Integration tests between filesystem components
 """
 
+from collections.abc import Generator
 import os
+from pathlib import Path
 import platform
 import tempfile
 import time
 import unittest
-from collections.abc import Generator
-from pathlib import Path
-from typing import Dict
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -80,7 +79,7 @@ def event_callback() -> MagicMock:
 
 
 @pytest.fixture
-def mock_dependencies() -> Dict[str, MagicMock]:
+def mock_dependencies() -> dict[str, MagicMock]:
     """Create mock dependencies for FileAccessService."""
     event_bus = MagicMock(spec=EventBus)
     path_manager = MagicMock(spec=PathManager)
@@ -157,7 +156,7 @@ def watch_service(
 
 @pytest.fixture
 def access_service(
-    mock_dependencies: Dict[str, MagicMock],
+    mock_dependencies: dict[str, MagicMock],
 ) -> Generator[FileAccessService, None, None]:
     """Create a FileAccessService with mock dependencies."""
     service = FileAccessService(
@@ -479,7 +478,7 @@ class TestAccessRequestHandling:
     """Tests focusing on access request handling in FileAccessService."""
 
     def test_get_operation_handler_cloud_provider(
-        self, access_service: FileAccessService, mock_dependencies: Dict[str, MagicMock]
+        self, access_service: FileAccessService, mock_dependencies: dict[str, MagicMock]
     ) -> None:
         """Test getting operation handler for a cloud provider path."""
         path = Path("/cloud/path")
@@ -496,25 +495,25 @@ class TestAccessRequestHandling:
         mock_dependencies["cloud_service"].get_provider_for_path.return_value = provider
 
         # Mock both methods to avoid bookmark handling and use our handler
-        with patch.object(
-            access_service, "_get_operation_handler", return_value=mock_handler
+        with (
+            patch.object(
+                access_service, "_get_operation_handler", return_value=mock_handler
+            ),
+            patch.object(access_service, "_handle_bookmark_access", return_value=None),
         ):
-            with patch.object(
-                access_service, "_handle_bookmark_access", return_value=None
-            ):
-                # Test request_access which will use our mocked handler
-                request = AccessRequest(
-                    path=path,
-                    access_type=AccessType.READ,
-                    strategy=PermissionStrategy.IMMEDIATE,
-                )
-                result = access_service.request_access(request)
+            # Test request_access which will use our mocked handler
+            request = AccessRequest(
+                path=path,
+                access_type=AccessType.READ,
+                strategy=PermissionStrategy.IMMEDIATE,
+            )
+            result = access_service.request_access(request)
 
-                # Request should succeed
-                assert result.success is True
+            # Request should succeed
+            assert result.success is True
 
-                # Verify our mock handler was called with the path
-                mock_handler.assert_called_once_with(path)
+            # Verify our mock handler was called with the path
+            mock_handler.assert_called_once_with(path)
 
     def test_handle_bookmark_access_not_needed(
         self, access_service: FileAccessService, temp_dir: Path
@@ -563,7 +562,7 @@ class TestBookmarkIntegration:
     """Tests for macOS security bookmark integration."""
 
     def test_bookmark_integration(
-        self, mock_dependencies: Dict[str, MagicMock]
+        self, mock_dependencies: dict[str, MagicMock]
     ) -> None:
         """Test integration with BookmarkService."""
         # Create service with our mocked dependencies

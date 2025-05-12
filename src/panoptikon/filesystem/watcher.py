@@ -4,12 +4,12 @@ This module provides abstractions for watching filesystem changes using
 FSEvents (on macOS) with a fallback polling-based mechanism.
 """
 
-import logging
-import threading
 from abc import ABC, abstractmethod
 from enum import Enum, auto
+import logging
 from pathlib import Path
-from typing import Callable, Dict, List, Optional, Set
+import threading
+from typing import Callable, List, Optional, Set
 
 from ..core.events import EventBus
 from ..core.service import ServiceInterface
@@ -109,7 +109,7 @@ class FSEventsWatcher(FSWatcher):
         self._event_callback = event_callback
         self._latency = latency
         self._observer: Optional[Observer] = None
-        self._streams: Dict[Path, Stream] = {}
+        self._streams: dict[Path, Stream] = {}
         self._watching = False
 
     def start(self) -> None:
@@ -122,7 +122,7 @@ class FSEventsWatcher(FSWatcher):
         self._watching = True
 
         # Start any existing streams
-        for path, stream in self._streams.items():
+        for _path, stream in self._streams.items():
             self._observer.schedule(stream)
 
         logger.debug("FSEvents watcher started")
@@ -235,10 +235,10 @@ class PollingWatcher(FSWatcher):
         """
         self._event_callback = event_callback
         self._interval = interval
-        self._watches: Dict[Path, Dict[Path, float]] = (
-            {}
-        )  # Path -> {file_path -> mtime}
-        self._recursive_watches: Set[Path] = set()
+        self._watches: dict[
+            Path, dict[Path, float]
+        ] = {}  # Path -> {file_path -> mtime}
+        self._recursive_watches: set[Path] = set()
         self._stop_event = threading.Event()
         self._thread: Optional[threading.Thread] = None
         self._watching = False
@@ -334,7 +334,7 @@ class PollingWatcher(FSWatcher):
         Args:
             watch_path: The directory to refresh.
         """
-        files: Dict[Path, float] = {}
+        files: dict[Path, float] = {}
 
         try:
             if watch_path.is_file():
@@ -369,7 +369,7 @@ class PollingWatcher(FSWatcher):
         Returns:
             List of file paths found.
         """
-        result: List[Path] = []
+        result: list[Path] = []
 
         try:
             for item in directory.iterdir():
@@ -430,7 +430,7 @@ class PollingWatcher(FSWatcher):
             self._event_callback(event)
         self._watches[watch_path] = {}
 
-    def _get_current_state(self, watch_path: Path) -> Dict[Path, float]:
+    def _get_current_state(self, watch_path: Path) -> dict[Path, float]:
         """Get the current state of files in a directory.
 
         Args:
@@ -439,7 +439,7 @@ class PollingWatcher(FSWatcher):
         Returns:
             Dictionary mapping file paths to modification times.
         """
-        current_files: Dict[Path, float] = {}
+        current_files: dict[Path, float] = {}
 
         # Scan current state
         if watch_path.is_file():
@@ -461,7 +461,7 @@ class PollingWatcher(FSWatcher):
         return current_files
 
     def _process_new_and_modified_files(
-        self, old_state: Dict[Path, float], current_files: Dict[Path, float]
+        self, old_state: dict[Path, float], current_files: dict[Path, float]
     ) -> None:
         """Process created and modified files.
 
@@ -476,7 +476,7 @@ class PollingWatcher(FSWatcher):
                 self._emit_file_event(file_path, FileChangeType.MODIFIED)
 
     def _process_deleted_files(
-        self, old_state: Dict[Path, float], current_files: Dict[Path, float]
+        self, old_state: dict[Path, float], current_files: dict[Path, float]
     ) -> None:
         """Process deleted files.
 
@@ -514,8 +514,8 @@ class FileSystemWatchService(ServiceInterface):
         self._event_bus = event_bus
         self._watcher: Optional[FSWatcher] = None
         self._watcher_type = WatcherType.AUTO
-        self._watched_paths: Set[Path] = set()
-        self._recursive_watches: Set[Path] = set()
+        self._watched_paths: set[Path] = set()
+        self._recursive_watches: set[Path] = set()
 
     def initialize(self) -> None:
         """Initialize the service."""

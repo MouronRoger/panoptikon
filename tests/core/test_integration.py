@@ -1,18 +1,20 @@
-"""Consolidated integration tests for core infrastructure (service container, event bus, config, error handling, lifecycle). Covers both minimal and full integration paths, parameterized for event bus implementation."""
+"""Integration tests for core infrastructure (event bus, config, error handling, lifecycle).
+Covers both minimal and full integration paths, parameterized for event bus implementation.
+"""
 
-import logging
-import uuid
 from datetime import datetime
+import logging
 from typing import Any, Optional
+import uuid
 
 import pytest
 
-import tests.events_patched as events_patched
 from panoptikon.core.config import ConfigurationSystem  # type: ignore
 from panoptikon.core.errors import ErrorHandlingService  # type: ignore
 from panoptikon.core.events import EventBase, EventBus  # type: ignore
 from panoptikon.core.lifecycle import ApplicationLifecycle  # type: ignore
 from panoptikon.core.service import ServiceContainer, ServiceInterface, ServiceLifetime
+import tests.events_patched as events_patched
 
 logger = logging.getLogger("test_integration")
 
@@ -97,9 +99,9 @@ def test_core_integration(
     event_bus.initialize()
     test_service.initialize()
     test_service.publish_test_event(f"Hello from {test_name} minimal!")
-    assert (
-        test_service.received_events
-    ), f"No events received in {test_name} minimal path"
+    assert test_service.received_events, (
+        f"No events received in {test_name} minimal path"
+    )
     test_service.shutdown()
     event_bus.shutdown()
 

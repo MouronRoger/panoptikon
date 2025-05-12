@@ -121,9 +121,7 @@ def test_specific_errors() -> None:
     validation_error = ValidationError("validation error")
     assert validation_error.category == ErrorCategory.VALIDATION
     assert validation_error.error_code.startswith("VAL-ValidationError")
-    assert (
-        validation_error.severity == ErrorSeverity.WARNING
-    )  # Different default severity
+    assert validation_error.severity == ErrorSeverity.WARNING
 
 
 @pytest.fixture

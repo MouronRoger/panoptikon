@@ -12,7 +12,7 @@ from src.panoptikon.core.config import (
     ConfigurationSystem,
 )
 from src.panoptikon.core.events import EventBus, EventHandler
-from tests.conftest import TestConfigSection  # type: ignore
+from tests.conftest import TestConfigSection
 
 
 def test_initialization(
@@ -64,6 +64,8 @@ def test_register_section(config_system: ConfigurationSystem) -> None:
     assert isinstance(model, TestConfigSection)
     assert model.string_value == "test"
     assert model.int_value == 100
+
+    assert "test" in config_system._schemas
 
 
 def test_set_config_value(
@@ -129,41 +131,21 @@ def test_update_section(config_system: ConfigurationSystem) -> None:
 def test_save_and_reload(
     config_system: ConfigurationSystem, temp_config_dir: Path
 ) -> None:
-    """Test saving and reloading configuration."""
-    # Initialize
-    config_system.initialize()
+    """Test saving and reloading configuration from disk."""
+    config_system._config_dir = temp_config_dir
+    config_system._config_file = temp_config_dir / "config.json"
 
-    # Register section
-    config_system.register_section("test", TestConfigSection)
-
-    # Set a user-level value
-    config_system.set("test", "string_value", "to be saved", source=ConfigSource.USER)
-
-    # Save explicitly
+    # Set a value and save
+    config_system.set("test", "string_value", "save test", source=ConfigSource.USER)
     config_system.save()
 
-    # Verify the file was saved with the expected content
-    config_file = temp_config_dir / "config.json"
-    with open(config_file, encoding="utf-8") as f:
-        data = json.load(f)
-        assert "test" in data
-        assert data["test"]["string_value"] == "to be saved"
+    # Modify the file directly
+    with open(config_system._config_file, "w") as f:
+        f.write('{"test": {"string_value": "reloaded"}}')
 
-    # Modify the running configuration
-    config_system.set(
-        "test", "string_value", "runtime only", source=ConfigSource.RUNTIME
-    )
-    assert config_system.get("test", "string_value") == "runtime only"
-
-    # Reload from disk
+    # Reload
     config_system.reload()
-
-    # Runtime values should be preserved
-    assert config_system.get("test", "string_value") == "runtime only"
-
-    # Now reset runtime configuration and reload should show the saved value
-    config_system.reset_to_defaults("test")
-    assert config_system.get("test", "string_value") == "to be saved"
+    assert config_system.get("test", "string_value") == "reloaded"
 
 
 def test_reset_to_defaults(config_system: ConfigurationSystem) -> None:

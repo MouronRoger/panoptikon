@@ -1,9 +1,9 @@
 """Tests for the path manager module."""
 
-import tempfile
-import unittest
 from pathlib import Path
+import tempfile
 from typing import Union
+import unittest
 
 from src.panoptikon.filesystem.paths import (
     PathManager,
@@ -194,3 +194,17 @@ class TestPathManager(unittest.TestCase):
 
         # Deleting non-existent set should fail
         self.assertFalse(self.path_manager.delete_rule_set("non_existent"))
+
+    def test_path_rule_set_includes_and_excludes(
+        self, path_manager: PathManager
+    ) -> None:
+        """Test PathRuleSet includes and excludes logic."""
+        rule_set = path_manager.create_rule_set("test")
+        rule_set.add_include("/test/**")
+        rule_set.add_exclude("/test/exclude/**")
+
+        # Should include /test/file.txt
+        assert rule_set.matches(Path("/test/file.txt"))
+
+        # Should exclude /test/exclude/file.txt
+        assert not rule_set.matches(Path("/test/exclude/file.txt"))

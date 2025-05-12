@@ -4,11 +4,11 @@ This module provides a comprehensive yet maintainable set of tests for the Bookm
 which manages security-scoped bookmarks for macOS applications.
 """
 
-import platform
-import tempfile
 from collections.abc import Generator
 from datetime import datetime
 from pathlib import Path
+import platform
+import tempfile
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -450,33 +450,33 @@ class TestMacOSBookmarkOperations:
         mock_url.startAccessingSecurityScopedResource = MagicMock(return_value=True)
         mock_data = MagicMock()
 
-        with patch("Foundation.NSURL", spec=True) as mock_nsurl_class:
-            with patch("Foundation.NSData", spec=True) as mock_nsdata_class:
-                mock_nsdata_class.dataWithBytes_length_ = MagicMock(
-                    return_value=mock_data
-                )
-                method_name = (
-                    "URLByResolvingBookmarkData_options_relativeToURL_"
-                    "bookmarkDataIsStale_error_"
-                )
-                setattr(mock_nsurl_class, method_name, mock_url)
+        with (
+            patch("Foundation.NSURL", spec=True) as mock_nsurl_class,
+            patch("Foundation.NSData", spec=True) as mock_nsdata_class,
+        ):
+            mock_nsdata_class.dataWithBytes_length_ = MagicMock(return_value=mock_data)
+            method_name = (
+                "URLByResolvingBookmarkData_options_relativeToURL_"
+                "bookmarkDataIsStale_error_"
+            )
+            setattr(mock_nsurl_class, method_name, mock_url)
 
-                # Set appropriate values for objc.NULL
-                with patch("objc.NULL", None):
-                    # Start access
-                    result = bookmark_service.start_access(test_file)
+            # Set appropriate values for objc.NULL
+            with patch("objc.NULL", None):
+                # Start access
+                result = bookmark_service.start_access(test_file)
 
-                    # Should succeed
-                    assert result is True
+                # Should succeed
+                assert result is True
 
-                    # Should increment reference count
-                    assert resolved_path in bookmark_service._active_scopes
-                    assert bookmark_service._active_scopes[resolved_path] == 1
+                # Should increment reference count
+                assert resolved_path in bookmark_service._active_scopes
+                assert bookmark_service._active_scopes[resolved_path] == 1
 
-                    # Start access again - should increment count
-                    result = bookmark_service.start_access(test_file)
-                    assert result is True
-                    assert bookmark_service._active_scopes[resolved_path] == 2
+                # Start access again - should increment count
+                result = bookmark_service.start_access(test_file)
+                assert result is True
+                assert bookmark_service._active_scopes[resolved_path] == 2
 
     def test_start_access_no_bookmark(
         self, bookmark_service: BookmarkService, test_file: Path
@@ -557,49 +557,49 @@ class TestMacOSBookmarkOperations:
         mock_url = MagicMock()
         mock_data = MagicMock()
 
-        with patch("Foundation.NSURL", spec=True) as mock_nsurl_class:
-            with patch("Foundation.NSData", spec=True) as mock_nsdata_class:
-                mock_nsdata_class.dataWithBytes_length_ = MagicMock(
-                    return_value=mock_data
-                )
-                method_name = (
-                    "URLByResolvingBookmarkData_options_relativeToURL_"
-                    "bookmarkDataIsStale_error_"
-                )
-                # Valid case
-                setattr(
-                    mock_nsurl_class,
-                    method_name,
-                    MagicMock(return_value=(mock_url, False, None)),
-                )
+        with (
+            patch("Foundation.NSURL", spec=True) as mock_nsurl_class,
+            patch("Foundation.NSData", spec=True) as mock_nsdata_class,
+        ):
+            mock_nsdata_class.dataWithBytes_length_ = MagicMock(return_value=mock_data)
+            method_name = (
+                "URLByResolvingBookmarkData_options_relativeToURL_"
+                "bookmarkDataIsStale_error_"
+            )
+            # Valid case
+            setattr(
+                mock_nsurl_class,
+                method_name,
+                MagicMock(return_value=(mock_url, False, None)),
+            )
 
-                with patch.object(Path, "exists", return_value=True):
-                    # Verify valid bookmark
-                    result = bookmark_service._verify_bookmark(test_file, b"valid_data")
-                    assert result is True
+            with patch.object(Path, "exists", return_value=True):
+                # Verify valid bookmark
+                result = bookmark_service._verify_bookmark(test_file, b"valid_data")
+                assert result is True
 
-                # Now test the stale case
-                setattr(
-                    mock_nsurl_class,
-                    method_name,
-                    MagicMock(return_value=(mock_url, True, None)),
-                )
+            # Now test the stale case
+            setattr(
+                mock_nsurl_class,
+                method_name,
+                MagicMock(return_value=(mock_url, True, None)),
+            )
 
-                # Verify stale bookmark
-                result = bookmark_service._verify_bookmark(test_file, b"stale_data")
-                assert result is False
+            # Verify stale bookmark
+            result = bookmark_service._verify_bookmark(test_file, b"stale_data")
+            assert result is False
 
-                # Now test the error case
-                mock_error = MagicMock()
-                mock_error.localizedDescription = MagicMock(
-                    return_value="Error description"
-                )
-                setattr(
-                    mock_nsurl_class,
-                    method_name,
-                    MagicMock(return_value=(None, False, mock_error)),
-                )
+            # Now test the error case
+            mock_error = MagicMock()
+            mock_error.localizedDescription = MagicMock(
+                return_value="Error description"
+            )
+            setattr(
+                mock_nsurl_class,
+                method_name,
+                MagicMock(return_value=(None, False, mock_error)),
+            )
 
-                # Verify error case
-                result = bookmark_service._verify_bookmark(test_file, b"error_data")
-                assert result is False
+            # Verify error case
+            result = bookmark_service._verify_bookmark(test_file, b"error_data")
+            assert result is False

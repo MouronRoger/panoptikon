@@ -13,7 +13,7 @@ from src.panoptikon.core.config import (
     ConfigurationSystem,
 )
 from src.panoptikon.core.events import EventBus
-from tests.conftest import TestConfigSection  # type: ignore
+from tests.conftest import TestConfigSection
 
 # ruff: noqa: I001 -- order preserved after automated removal of unused imports
 
@@ -28,7 +28,7 @@ def test_config_validation(config_system_hot: ConfigurationSystem) -> None:
     assert config_system_hot.get("test", "int_value") == 100
 
     # Test invalid values (type error)
-    with pytest.raises(Exception):  # Should raise some kind of validation error
+    with pytest.raises((TypeError, ValueError, Exception)):
         config_system_hot.set("test", "int_value", "not_an_int")
 
 
@@ -64,9 +64,11 @@ def test_config_file_error_handling(temp_config_dir: Path, event_bus: EventBus) 
     config_system.set("test", "string_value", "test value", source=ConfigSource.USER)
 
     # Mock json.dump to raise an error
-    with patch("json.dump", side_effect=OSError("Mock file error")):
-        with pytest.raises(ConfigFileError):
-            config_system.save()
+    with (
+        patch("json.dump", side_effect=OSError("Mock file error")),
+        pytest.raises(ConfigFileError),
+    ):
+        config_system.save()
 
 
 def test_load_invalid_config_file(temp_config_dir: Path, event_bus: EventBus) -> None:
@@ -147,14 +149,16 @@ def test_config_dir_detection() -> None:
     event_bus = EventBus()
 
     # Test with mocked _get_default_config_dir
-    with patch.object(
-        ConfigurationSystem,
-        "_get_default_config_dir",
-        return_value=Path("/tmp/mock_config_dir"),
+    with (
+        patch.object(
+            ConfigurationSystem,
+            "_get_default_config_dir",
+            return_value=Path("/tmp/mock_config_dir"),
+        ),
+        patch("os.makedirs"),
     ):
-        with patch("os.makedirs"):  # Prevent actual directory creation
-            config_system = ConfigurationSystem(event_bus)
-            assert str(config_system._config_dir) == "/tmp/mock_config_dir"
+        config_system = ConfigurationSystem(event_bus)
+        assert str(config_system._config_dir) == "/tmp/mock_config_dir"
 
 
 def test_file_watching(config_system_hot: ConfigurationSystem) -> None:

@@ -145,7 +145,10 @@ In this pragmatic architecture, we adopt a standard layered approach but include
 1. User selects file(s) in Results Table
 2. Context Menu or keyboard shortcut initiates operation
 3. Cloud Manager determines file location type
-4. FS Operations handles the operation with provider-specific logic
+4. FS Operations delegates to system handlers:
+   - For cloud files: Uses NSWorkspace.shared.open() or equivalent
+   - For local files: Direct file system operations
+   - Never directly handles cloud sync/download - always delegates to Finder
 5. UI provides feedback on operation outcome
 
 ## 3. Data Architecture
@@ -311,8 +314,9 @@ CREATE INDEX idx_files_cloud ON files(cloud_provider, cloud_status); -- Cloud st
 
 2. **Operation Handling**:
    - Create provider-agnostic file operation interfaces
-   - Delegate to native applications for complex operations
-   - Support offline handling with synchronized status
+   - **CRITICAL**: All cloud file operations (open, reveal, download) must be delegated to the system/Finder using NSWorkspace or equivalent
+   - Never implement direct cloud provider APIs or handle sync/download internally
+   - Support offline handling by delegating to Finder which manages sync status
 
 3. **Status Visualization**:
    - Implement consistent cloud file indicators

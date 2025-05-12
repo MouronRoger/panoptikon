@@ -68,7 +68,7 @@ class FileSearchApp:
                         raise ImportError(f"{name} is not a valid module")
                 except (ImportError, AttributeError):
                     # Either module not found or has invalid structure
-                    raise ImportError(f"Failed to import {name}")
+                    raise ImportError(f"Failed to import {name}") from None
 
             self._pyobjc_available = True
         except ImportError:

@@ -21,11 +21,12 @@
    - Build download progress visualization
    - Design offline indicator system
 
-3. **Operation Delegation**:
-   - Build provider-specific handling
-   - Implement operation routing
-   - Create fallback mechanisms
-   - Support provider-native operations
+3. **Operation Delegation to System/Finder**:
+   - Build system delegation layer using NSWorkspace
+   - Implement operation routing that always delegates cloud operations to Finder
+   - Create fallback mechanisms (e.g., if NSWorkspace fails, use `open` command)
+   - Support provider-native operations through system delegation, NOT direct APIs
+   - NEVER implement direct cloud provider download/sync - let Finder handle everything
 
 4. **Placeholder Support**:
    - Implement cloud-only file indicators

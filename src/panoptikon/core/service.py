@@ -195,7 +195,8 @@ class ServiceContainer:
 
         This method should be called during application startup.
         """
-        # First set the initialized flag so that new services will be initialized as they're resolved
+        # First set the initialized flag so that new services will be initialized
+        # as they're resolved
         self._initialized = True
 
         # Initialize all singleton services that may have been resolved before
@@ -274,10 +275,13 @@ class ServiceContainer:
             The normalized type.
         """
         # Handle Optional types (these have __origin__ attribute but no __name__)
-        if hasattr(service_type, "__origin__"):
+        if (
+            hasattr(service_type, "__origin__")
+            and hasattr(service_type, "__args__")
+            and service_type.__args__
+        ):
             # For Optional[Type], use the contained type
-            if hasattr(service_type, "__args__") and service_type.__args__:
-                return service_type.__args__[0]
+            return service_type.__args__[0]
         return service_type
 
     def _validate_service_dependencies(

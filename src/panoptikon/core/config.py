@@ -231,15 +231,9 @@ class ConfigurationSystem(ServiceInterface):
         self._default_config[section_name] = {}
         for field_name, field in schema.model_fields.items():
             if field.default_factory is not None:
-                try:
-                    self._default_config[section_name][field_name] = (
-                        field.default_factory()
-                    )
-                except TypeError:
-                    # Handle case where default_factory is a type or requires arguments
-                    self._default_config[section_name][field_name] = (
-                        field.default_factory
-                    )
+                self._default_config[section_name][field_name] = _call_default_factory(
+                    field.default_factory
+                )
             elif field.default is not None:
                 self._default_config[section_name][field_name] = field.default
 
@@ -304,11 +298,7 @@ class ConfigurationSystem(ServiceInterface):
         if key in schema.model_fields:
             field = schema.model_fields[key]
             if field.default_factory is not None:
-                try:
-                    return field.default_factory()
-                except TypeError:
-                    # Handle case where default_factory is a type or requires arguments
-                    return field.default_factory
+                return _call_default_factory(field.default_factory)
             if field.default is not None:
                 return field.default
 
@@ -677,3 +667,10 @@ class ConfigurationSystem(ServiceInterface):
         except OSError:
             # Ignore errors
             pass
+
+
+def _call_default_factory(factory: Any) -> Any:
+    try:
+        return factory()
+    except TypeError:
+        return factory

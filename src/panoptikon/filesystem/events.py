@@ -6,7 +6,7 @@ and monitoring activities.
 
 from enum import Enum, auto
 from pathlib import Path
-from typing import Any, Dict, Optional, Set
+from typing import Any, Optional
 
 from ..core.events import EventBase
 
@@ -53,7 +53,7 @@ class FileSystemEvent(EventBase):
         super().__init__()
         self.path = path
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert event to dictionary representation.
 
         Returns:
@@ -81,7 +81,7 @@ class FileChangeEvent(FileSystemEvent):
         self.change_type = change_type
         self.old_path = old_path
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert event to dictionary representation.
 
         Returns:
@@ -111,7 +111,7 @@ class FilePermissionEvent(FileSystemEvent):
         self.status = status
         self.message = message
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert event to dictionary representation.
 
         Returns:
@@ -147,7 +147,7 @@ class CloudStorageEvent(FileSystemEvent):
         self.online = online
         self.sync_status = sync_status
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert event to dictionary representation.
 
         Returns:
@@ -188,7 +188,7 @@ class FileSystemErrorEvent(FileSystemEvent):
         self.message = message
         self.error_code = error_code
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert event to dictionary representation.
 
         Returns:
@@ -225,7 +225,7 @@ class DirectoryLimitEvent(FileSystemEvent):
         self.total_size = total_size
         self.limit_reached = limit_reached
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert event to dictionary representation.
 
         Returns:
@@ -265,7 +265,7 @@ class BookmarkEvent(FileSystemEvent):
         self.valid = valid
         self.error = error
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert event to dictionary representation.
 
         Returns:
@@ -288,8 +288,8 @@ class WatchedPathsChangedEvent(EventBase):
 
     def __init__(
         self,
-        added_paths: Optional[Set[Path]] = None,
-        removed_paths: Optional[Set[Path]] = None,
+        added_paths: Optional[set[Path]] = None,
+        removed_paths: Optional[set[Path]] = None,
     ) -> None:
         """Initialize a watched paths changed event.
 
@@ -301,7 +301,7 @@ class WatchedPathsChangedEvent(EventBase):
         self.added_paths = added_paths or set()
         self.removed_paths = removed_paths or set()
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert event to dictionary representation.
 
         Returns:

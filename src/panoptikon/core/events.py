@@ -5,16 +5,16 @@ through publish/subscribe patterns, supporting both synchronous and
 asynchronous event handling.
 """
 
-import asyncio
-import json
-import logging
-import traceback
-import uuid
 from abc import ABC, abstractmethod
+import asyncio
 from dataclasses import asdict, dataclass, field, is_dataclass
 from datetime import datetime
 from enum import Enum, auto
+import json
+import logging
+import traceback
 from typing import Any, Callable, Generic, Optional, TypeVar, Union
+import uuid
 
 from ..core.service import ServiceInterface
 
@@ -266,7 +266,8 @@ class EventBus(ServiceInterface):
             callable(handler) or isinstance(handler, (EventHandler, AsyncEventHandler))
         ):
             raise TypeError(
-                f"Handler must be callable or EventHandler/AsyncEventHandler, got: {type(handler)}"
+                "Handler must be callable or EventHandler/AsyncEventHandler, got: "
+                f"{type(handler)}"
             )
 
         # Determine delivery mode if not specified

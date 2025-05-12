@@ -7,14 +7,14 @@ This module provides a layer of abstraction over file system operations:
 - Permission state visualization
 """
 
+from dataclasses import dataclass
+from enum import Enum, auto
 import os
+from pathlib import Path
 import platform
 import shutil
 import stat
-from dataclasses import dataclass
-from enum import Enum, auto
-from pathlib import Path
-from typing import Callable, Dict, Optional, Set, Tuple, TypeVar, cast
+from typing import Callable, Optional, TypeVar, cast
 
 from ..core.events import EventBus
 from ..core.service import ServiceInterface
@@ -95,11 +95,11 @@ class FileAccessService(ServiceInterface):
         self._cloud_service = cloud_service
 
         # Cache of paths known to be accessible
-        self._accessible_paths: Dict[str, Set[AccessType]] = {}
+        self._accessible_paths: dict[str, set[AccessType]] = {}
 
         # Mapping of operation types to handler functions based on provider
-        self._provider_operations: Dict[
-            Tuple[Optional[CloudProviderInfo], AccessType], Callable
+        self._provider_operations: dict[
+            tuple[Optional[CloudProviderInfo], AccessType], Callable[[Path], bool]
         ] = {}
 
     def initialize(self) -> None:
@@ -131,7 +131,7 @@ class FileAccessService(ServiceInterface):
         # Read operations
         self._provider_operations[
             cast(
-                Tuple[Optional[CloudProviderInfo], AccessType],
+                tuple[Optional[CloudProviderInfo], AccessType],
                 (provider_info, AccessType.READ),
             )
         ] = self._standard_read
@@ -139,7 +139,7 @@ class FileAccessService(ServiceInterface):
         # Write operations
         self._provider_operations[
             cast(
-                Tuple[Optional[CloudProviderInfo], AccessType],
+                tuple[Optional[CloudProviderInfo], AccessType],
                 (provider_info, AccessType.WRITE),
             )
         ] = self._standard_write
@@ -147,7 +147,7 @@ class FileAccessService(ServiceInterface):
         # Delete operations
         self._provider_operations[
             cast(
-                Tuple[Optional[CloudProviderInfo], AccessType],
+                tuple[Optional[CloudProviderInfo], AccessType],
                 (provider_info, AccessType.DELETE),
             )
         ] = self._standard_delete
@@ -155,7 +155,7 @@ class FileAccessService(ServiceInterface):
         # Rename operations
         self._provider_operations[
             cast(
-                Tuple[Optional[CloudProviderInfo], AccessType],
+                tuple[Optional[CloudProviderInfo], AccessType],
                 (provider_info, AccessType.RENAME),
             )
         ] = self._standard_rename
@@ -163,7 +163,7 @@ class FileAccessService(ServiceInterface):
         # Move operations
         self._provider_operations[
             cast(
-                Tuple[Optional[CloudProviderInfo], AccessType],
+                tuple[Optional[CloudProviderInfo], AccessType],
                 (provider_info, AccessType.MOVE),
             )
         ] = self._standard_move
@@ -171,7 +171,7 @@ class FileAccessService(ServiceInterface):
         # Create operations
         self._provider_operations[
             cast(
-                Tuple[Optional[CloudProviderInfo], AccessType],
+                tuple[Optional[CloudProviderInfo], AccessType],
                 (provider_info, AccessType.CREATE),
             )
         ] = self._standard_create
@@ -179,7 +179,7 @@ class FileAccessService(ServiceInterface):
         # Metadata operations
         self._provider_operations[
             cast(
-                Tuple[Optional[CloudProviderInfo], AccessType],
+                tuple[Optional[CloudProviderInfo], AccessType],
                 (provider_info, AccessType.METADATA),
             )
         ] = self._standard_metadata
@@ -393,10 +393,11 @@ class FileAccessService(ServiceInterface):
             return None
 
         # Path requires a bookmark, check if we have one
-        if self._bookmark_service.has_bookmark(path):
+        if self._bookmark_service.has_bookmark(
+            path
+        ) and self._bookmark_service.start_access(path):
             # Start accessing the bookmark
-            if self._bookmark_service.start_access(path):
-                return None  # Continue with normal access handling
+            return None  # Continue with normal access handling
 
         # Need to create a bookmark based on strategy
         if request.strategy == PermissionStrategy.IMMEDIATE:

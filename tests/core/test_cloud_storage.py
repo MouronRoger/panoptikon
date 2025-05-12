@@ -4,9 +4,9 @@ These tests focus on improving coverage for the cloud storage detection and
 handling functionality.
 """
 
+from pathlib import Path
 import platform
 import tempfile
-from pathlib import Path
 from typing import Optional
 from unittest.mock import MagicMock, patch
 
@@ -40,7 +40,7 @@ class TestCloudProviderDetectorAdvanced:
             with patch("pathlib.Path.is_dir", return_value=True):
                 with patch(
                     "pathlib.Path.iterdir",
-                    side_effect=PermissionError("Permission denied"),
+                    side_effect=PermissionError("No permission"),
                 ):
                     assert not detector._check_provider_online(Path("/fake/path"))
 
@@ -139,9 +139,7 @@ class TestCloudProviderDetectorAdvanced:
         original_check = detector._check_provider_online
 
         def mock_check(path: Path) -> bool:
-            if path == Path("/test/cloud/1"):
-                return False
-            return True
+            return path != Path("/test/cloud/1")
 
         # Use monkeypatch to avoid type checking issues
         detector._check_provider_online = mock_check  # type-checking bypass for test

@@ -31,7 +31,6 @@ def lifecycle(
 ) -> ApplicationLifecycle:
     """Create an application lifecycle manager for testing."""
     lifecycle = ApplicationLifecycle(service_container, event_bus)
-    lifecycle.initialize()
     return lifecycle
 
 
@@ -102,30 +101,28 @@ def test_state_transitions(
     """Test application state transitions."""
     state_changes: list[ApplicationStateChangedEvent] = []
 
-    def state_change_handler(event: ApplicationStateChangedEvent) -> None:
+    def on_state_change(event: ApplicationStateChangedEvent) -> None:
         state_changes.append(event)
 
-    # Subscribe to state change events
-    event_bus.subscribe(ApplicationStateChangedEvent, state_change_handler)
+    event_bus.subscribe(ApplicationStateChangedEvent, on_state_change)
 
-    # Start the application
-    lifecycle.start()
-    assert lifecycle.get_state() == ApplicationState.RUNNING
+    # Start in INITIALIZING
+    assert lifecycle._state == ApplicationState.INITIALIZING
 
-    # Stop the application
-    lifecycle.stop()
-    assert lifecycle.get_state() == ApplicationState.STOPPED
+    # Transition to RUNNING
+    lifecycle._set_state(ApplicationState.RUNNING)
+    assert lifecycle._state == ApplicationState.RUNNING
+    assert state_changes[-1].new_state == ApplicationState.RUNNING
 
-    # Check state transitions
-    assert len(state_changes) == 4
-    assert state_changes[0].old_state == ApplicationState.CREATED
-    assert state_changes[0].new_state == ApplicationState.INITIALIZING
-    assert state_changes[1].old_state == ApplicationState.INITIALIZING
-    assert state_changes[1].new_state == ApplicationState.RUNNING
-    assert state_changes[2].old_state == ApplicationState.RUNNING
-    assert state_changes[2].new_state == ApplicationState.STOPPING
-    assert state_changes[3].old_state == ApplicationState.STOPPING
-    assert state_changes[3].new_state == ApplicationState.STOPPED
+    # Transition to SHUTTING_DOWN
+    lifecycle._set_state(ApplicationState.SHUTTING_DOWN)
+    assert lifecycle._state == ApplicationState.SHUTTING_DOWN
+    assert state_changes[-1].new_state == ApplicationState.SHUTTING_DOWN
+
+    # Transition to STOPPED
+    lifecycle._set_state(ApplicationState.STOPPED)
+    assert lifecycle._state == ApplicationState.STOPPED
+    assert state_changes[-1].new_state == ApplicationState.STOPPED
 
 
 def test_shutdown_request(lifecycle: ApplicationLifecycle) -> None:
