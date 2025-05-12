@@ -172,7 +172,7 @@ class FileSearchApp:
         self._window.makeKeyAndOrderFront_(None)
 
         # Get the shared application and run it
-        import AppKit  # type: ignore[import-untyped]
+        import AppKit
 
         app = AppKit.NSApplication.sharedApplication()
         app.activateIgnoringOtherApps_(True)
