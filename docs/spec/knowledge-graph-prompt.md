@@ -31,5 +31,5 @@
   * Any unresolved tagging or dependency issues
 
 ⠀
-📎 **Use Context:** Panoptikon follows a modular, phase-based architecture with resilient OS abstractions, a search/index core, and layered UI/system integration. The knowledge graph is critical for keeping this complex architecture traceable, auditable, and auto-refactorable.
+📎 **Use Context:**Panoptikon follows a modular, phase-based architecture with resilient OS abstractions, a search/index core, and layered UI/system integration. The knowledge graph is critical for keeping this complex architecture traceable, auditable, and auto-refactorable.
 🛠️ **Tech Context:** Python 3.11+, PyObjC, SQLite (WAL mode), Event-driven architecture, strict lint/test gates.
