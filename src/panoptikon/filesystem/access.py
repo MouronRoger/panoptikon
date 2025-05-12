@@ -232,9 +232,12 @@ class FileAccessService(ServiceInterface):
         Returns:
             True if successful, False otherwise.
         """
-        if not path.exists():
-            # If path doesn't exist, check if parent is writable
-            return self._standard_create(path.parent)
+        try:
+            if not path.exists():
+                # If path doesn't exist, check if parent is writable
+                return self._standard_create(path.parent)
+        except (PermissionError, OSError):
+            return False
 
         try:
             # Test file writability by checking mode
@@ -263,8 +266,11 @@ class FileAccessService(ServiceInterface):
         Returns:
             True if successful, False otherwise.
         """
-        if not path.exists():
-            return True  # Nothing to delete
+        try:
+            if not path.exists():
+                return True  # Nothing to delete
+        except (PermissionError, OSError):
+            return False
 
         try:
             # Check if parent directory is writable
@@ -283,7 +289,10 @@ class FileAccessService(ServiceInterface):
         Returns:
             True if successful, False otherwise.
         """
-        if not path.exists():
+        try:
+            if not path.exists():
+                return False
+        except (PermissionError, OSError):
             return False
 
         # Need write access to parent directory
@@ -302,7 +311,10 @@ class FileAccessService(ServiceInterface):
         Returns:
             True if successful, False otherwise.
         """
-        if not path.exists():
+        try:
+            if not path.exists():
+                return False
+        except (PermissionError, OSError):
             return False
 
         if target is None:

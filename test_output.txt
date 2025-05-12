@@ -1,493 +1,283 @@
 ============================= test session starts ==============================
-platform darwin -- Python 3.9.18, pytest-8.3.5, pluggy-1.5.0
+platform darwin -- Python 3.9.18, pytest-8.3.5, pluggy-1.5.0 -- /Users/james/Documents/GitHub/panoptikon/.venv/bin/python
+cachedir: .pytest_cache
 rootdir: /Users/james/Documents/GitHub/panoptikon
 configfile: pyproject.toml
-testpaths: tests
-plugins: asyncio-0.26.0, cov-6.1.1
+plugins: asyncio-0.26.0, mock-3.14.0, cov-6.1.1
 asyncio: mode=strict, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
-collected 201 items
+collecting ... collected 196 items
 
-tests/core/test_bookmarks.py ...................                         [  9%]
-tests/core/test_bootstrap.py .                                           [  9%]
-tests/core/test_cloud_storage.py ...............                         [ 17%]
-tests/core/test_config.py .......                                        [ 20%]
-tests/core/test_config_hot_reload.py ......s...                          [ 25%]
-tests/core/test_errors.py .........                                      [ 30%]
-tests/core/test_events.py ........................                       [ 42%]
-tests/core/test_filesystem.py .............................sss......     [ 61%]
-tests/core/test_integration.py ..                                        [ 62%]
-tests/core/test_lifecycle.py .........                                   [ 66%]
-tests/core/test_paths.py ........                                        [ 70%]
-tests/core/test_service.py .........                                     [ 75%]
-tests/core/test_ui.py .......                                            [ 78%]
-tests/test_core.py .                                                     [ 79%]
-tests/test_main.py ...                                                   [ 80%]
-tests/ui/test_macos_app.py ........                                      [ 84%]
-tests/ui/test_macos_app_extended.py .....                                [ 87%]
-tests/ui/test_objc_integration.py ....                                   [ 89%]
-tests/ui/test_ui_integration.py FFFFFFFFF                                [ 93%]
-tests/ui/test_ui_mocking.py ....                                         [ 95%]
-tests/ui/test_validators.py .........                                    [100%]
+tests/core/test_bookmarks.py::TestBookmarkDataClass::test_bookmark_creation PASSED [  0%]
+tests/core/test_bookmarks.py::TestBookmarkServiceBasics::test_initialization PASSED [  1%]
+tests/core/test_bookmarks.py::TestBookmarkServiceBasics::test_shutdown PASSED [  1%]
+tests/core/test_bookmarks.py::TestBookmarkServiceBasics::test_has_bookmark PASSED [  2%]
+tests/core/test_bookmarks.py::TestBookmarkServiceBasics::test_is_valid PASSED [  2%]
+tests/core/test_bookmarks.py::TestBookmarkServiceBasics::test_get_bookmarked_paths PASSED [  3%]
+tests/core/test_bookmarks.py::TestBookmarkStorage::test_path_to_filename PASSED [  3%]
+tests/core/test_bookmarks.py::TestBookmarkStorage::test_save_and_read_bookmark PASSED [  4%]
+tests/core/test_bookmarks.py::TestBookmarkStorage::test_remove_bookmark PASSED [  4%]
+tests/core/test_bookmarks.py::TestBookmarkStorage::test_remove_bookmark_with_active_access PASSED [  5%]
+tests/core/test_bookmarks.py::TestBookmarkStorage::test_load_bookmarks PASSED [  5%]
+tests/core/test_bookmarks.py::TestMacOSBookmarkOperations::test_create_bookmark PASSED [  6%]
+tests/core/test_bookmarks.py::TestMacOSBookmarkOperations::test_create_bookmark_error PASSED [  6%]
+tests/core/test_bookmarks.py::TestMacOSBookmarkOperations::test_start_access PASSED [  7%]
+tests/core/test_bookmarks.py::TestMacOSBookmarkOperations::test_start_access_no_bookmark PASSED [  7%]
+tests/core/test_bookmarks.py::TestMacOSBookmarkOperations::test_start_access_already_active PASSED [  8%]
+tests/core/test_bookmarks.py::TestMacOSBookmarkOperations::test_stop_access PASSED [  8%]
+tests/core/test_bookmarks.py::TestMacOSBookmarkOperations::test_stop_access_not_active PASSED [  9%]
+tests/core/test_bookmarks.py::TestMacOSBookmarkOperations::test_verify_bookmark PASSED [  9%]
+tests/core/test_bootstrap.py::test_system_bootstrap_and_minimal_flow PASSED [ 10%]
+tests/core/test_cloud_storage.py::TestCloudProviderDetectorAdvanced::test_initialize_providers_non_existent_paths PASSED [ 10%]
+tests/core/test_cloud_storage.py::TestCloudProviderDetectorAdvanced::test_check_provider_online_exceptions PASSED [ 11%]
+tests/core/test_cloud_storage.py::TestCloudProviderDetectorAdvanced::test_detect_provider_path_variants PASSED [ 11%]
+tests/core/test_cloud_storage.py::TestCloudProviderDetectorAdvanced::test_detect_provider_macos_private_prefix PASSED [ 12%]
+tests/core/test_cloud_storage.py::TestCloudProviderDetectorAdvanced::test_refresh_provider_status PASSED [ 12%]
+tests/core/test_cloud_storage.py::TestCloudProviderDetectorAdvanced::test_initialize_providers_mac_real_paths PASSED [ 13%]
+tests/core/test_cloud_storage.py::TestCloudProviderDetectorAdvanced::test_detect_provider_real_paths PASSED [ 13%]
+tests/core/test_cloud_storage.py::TestCloudStorageServiceAdvanced::test_initialize_publishes_events PASSED [ 14%]
+tests/core/test_cloud_storage.py::TestCloudStorageServiceAdvanced::test_get_provider_for_path_caching PASSED [ 14%]
+tests/core/test_cloud_storage.py::TestCloudStorageServiceAdvanced::test_get_provider_for_path_cache_limit PASSED [ 15%]
+tests/core/test_cloud_storage.py::TestCloudStorageServiceAdvanced::test_is_cloud_path PASSED [ 15%]
+tests/core/test_cloud_storage.py::TestCloudStorageServiceAdvanced::test_get_provider_type PASSED [ 16%]
+tests/core/test_cloud_storage.py::TestCloudStorageServiceAdvanced::test_is_provider_online PASSED [ 16%]
+tests/core/test_cloud_storage.py::TestCloudStorageServiceAdvanced::test_refresh_provider_status_publishes_events PASSED [ 17%]
+tests/core/test_cloud_storage.py::TestCloudStorageServiceAdvanced::test_get_all_providers PASSED [ 17%]
+tests/core/test_config.py::test_initialization PASSED                    [ 18%]
+tests/core/test_config.py::test_register_section PASSED                  [ 18%]
+tests/core/test_config.py::test_set_config_value PASSED                  [ 19%]
+tests/core/test_config.py::test_update_section PASSED                    [ 19%]
+tests/core/test_config.py::test_save_and_reload PASSED                   [ 20%]
+tests/core/test_config.py::test_reset_to_defaults PASSED                 [ 20%]
+tests/core/test_config.py::test_error_handling PASSED                    [ 21%]
+tests/core/test_config_hot_reload.py::test_config_validation PASSED      [ 21%]
+tests/core/test_config_hot_reload.py::test_get_as_model_validation PASSED [ 22%]
+tests/core/test_config_hot_reload.py::test_config_file_error_handling PASSED [ 22%]
+tests/core/test_config_hot_reload.py::test_load_invalid_config_file PASSED [ 23%]
+tests/core/test_config_hot_reload.py::test_hot_reload PASSED             [ 23%]
+tests/core/test_config_hot_reload.py::test_emit_config_change_events PASSED [ 24%]
+tests/core/test_config_hot_reload.py::test_windows_config_dir SKIPPED    [ 25%]
+tests/core/test_config_hot_reload.py::test_config_dir_detection PASSED   [ 25%]
+tests/core/test_config_hot_reload.py::test_file_watching PASSED          [ 26%]
+tests/core/test_config_hot_reload.py::test_config_changed_event_validation PASSED [ 26%]
+tests/core/test_errors.py::test_error_context PASSED                     [ 27%]
+tests/core/test_errors.py::test_application_error PASSED                 [ 27%]
+tests/core/test_errors.py::test_specific_errors PASSED                   [ 28%]
+tests/core/test_errors.py::test_error_manager_initialization PASSED      [ 28%]
+tests/core/test_errors.py::test_error_manager_handlers PASSED            [ 29%]
+tests/core/test_errors.py::test_error_manager_recovery PASSED            [ 29%]
+tests/core/test_errors.py::test_error_manager_history PASSED             [ 30%]
+tests/core/test_errors.py::test_error_manager_exception_conversion PASSED [ 30%]
+tests/core/test_errors.py::test_error_manager_handler_inheritance PASSED [ 31%]
+tests/core/test_events.py::TestEventBase::test_to_dict PASSED            [ 31%]
+tests/core/test_events.py::TestEventBase::test_to_json PASSED            [ 32%]
+tests/core/test_events.py::TestErrorEvent::test_validation PASSED        [ 32%]
+tests/core/test_events.py::TestErrorEvent::test_to_dict PASSED           [ 33%]
+tests/core/test_events.py::TestEventBusBasics::test_initialization PASSED [ 33%]
+tests/core/test_events.py::TestEventBusBasics::test_simple_publish_subscribe PASSED [ 34%]
+tests/core/test_events.py::TestEventBusBasics::test_multiple_handlers PASSED [ 34%]
+tests/core/test_events.py::TestEventBusBasics::test_unsubscribe PASSED   [ 35%]
+tests/core/test_events.py::TestEventHistoryManagement::test_event_history_management PASSED [ 35%]
+tests/core/test_events.py::TestEventHistoryManagement::test_record_history_setting PASSED [ 36%]
+tests/core/test_events.py::TestEventHistoryManagement::test_invalid_history_size PASSED [ 36%]
+tests/core/test_events.py::TestEventDelivery::test_priority_ordering PASSED [ 37%]
+tests/core/test_events.py::TestEventDelivery::test_error_handling PASSED [ 37%]
+tests/core/test_events.py::TestEventDelivery::test_nested_error_handling PASSED [ 38%]
+tests/core/test_events.py::TestEventDelivery::test_event_delivery_modes PASSED [ 38%]
+tests/core/test_events.py::TestEventDelivery::test_auto_detect_delivery_mode PASSED [ 39%]
+tests/core/test_events.py::TestAsyncEventHandling::test_async_handlers PASSED [ 39%]
+tests/core/test_events.py::TestAsyncEventHandling::test_no_event_loop_error PASSED [ 40%]
+tests/core/test_events.py::TestHandlerTypes::test_callable_handlers PASSED [ 40%]
+tests/core/test_events.py::TestHandlerTypes::test_invalid_handler_types PASSED [ 41%]
+tests/core/test_events.py::TestHandlerTypes::test_handler_type_checking PASSED [ 41%]
+tests/core/test_events.py::TestHandlerTypes::test_deliver_to_correct_handler_types PASSED [ 42%]
+tests/core/test_events.py::TestEventInheritance::test_inheritance_subscription PASSED [ 42%]
+tests/core/test_events.py::TestEventInheritance::test_event_source_auto_detection PASSED [ 43%]
+tests/core/test_filesystem.py::TestFileSystemEvent::test_initialization PASSED [ 43%]
+tests/core/test_filesystem.py::TestFileSystemEvent::test_to_dict PASSED  [ 44%]
+tests/core/test_filesystem.py::TestFileChangeEvent::test_initialization PASSED [ 44%]
+tests/core/test_filesystem.py::TestFileChangeEvent::test_to_dict PASSED  [ 45%]
+tests/core/test_filesystem.py::TestOtherEventTypes::test_bookmark_event PASSED [ 45%]
+tests/core/test_filesystem.py::TestOtherEventTypes::test_cloud_storage_event PASSED [ 46%]
+tests/core/test_filesystem.py::TestOtherEventTypes::test_directory_limit_event PASSED [ 46%]
+tests/core/test_filesystem.py::TestOtherEventTypes::test_file_permission_event PASSED [ 47%]
+tests/core/test_filesystem.py::TestOtherEventTypes::test_filesystem_error_event PASSED [ 47%]
+tests/core/test_filesystem.py::TestOtherEventTypes::test_watched_paths_changed_event PASSED [ 48%]
+tests/core/test_filesystem.py::TestFilesystemIntegration::test_file_access_integration PASSED [ 48%]
+tests/core/test_filesystem.py::TestFilesystemIntegration::test_macos_symlink_resolution PASSED [ 49%]
+tests/core/test_filesystem.py::TestFilesystemIntegration::test_path_manager_integration PASSED [ 50%]
+tests/core/test_filesystem.py::TestFilesystemComponentIntegration::test_watcher_events_path_manager FAILED [ 50%]
+tests/core/test_filesystem.py::TestFilesystemComponentIntegration::test_access_bookmarks_cloud_detection FAILED [ 51%]
+tests/core/test_filesystem.py::TestFilesystemComponentIntegration::test_full_permission_flow FAILED [ 51%]
+ERROR: Coverage failure: total of 65 is less than fail-under=80
+
 
 =================================== FAILURES ===================================
-_____________________ TestUIIntegration.test_app_lifecycle _____________________
+_____ TestFilesystemComponentIntegration.test_watcher_events_path_manager ______
 
-self = <test_ui_integration.TestUIIntegration object at 0x106494580>
-mock_shared_app = <MagicMock name='sharedApplication' id='4403542912'>
-mock_nsapp = <MagicMock name='NSApp' id='4405800864'>
+self = <tests.core.test_filesystem.TestFilesystemComponentIntegration object at 0x112273280>
+watch_service = <src.panoptikon.filesystem.watcher.FileSystemWatchService object at 0x1123d3fd0>
+path_manager = <src.panoptikon.filesystem.paths.PathManager object at 0x1123d3e50>
+mock_event_bus = <MagicMock spec='EventBus' id='4602107840'>
+temp_dir = PosixPath('/var/folders/_3/txtv4qn97sq809q4q2z4mzf40000gn/T/tmpp9y7lldy')
 
-    @patch("AppKit.NSApp")
-    @patch("AppKit.NSApplication.sharedApplication")
-    def test_app_lifecycle(self, mock_shared_app, mock_nsapp) -> None:
-        """Test the show method of FileSearchApp."""
-        mock_app = MagicMock()
-        mock_shared_app.return_value = mock_app
-        app = FileSearchApp()
-        app._window = MagicMock()
-        app.show()
->       app._window.makeKeyAndOrderFront_.assert_called_once()
-
-tests/ui/test_ui_integration.py:88: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <MagicMock name='mock.makeKeyAndOrderFront_' id='4406381536'>
-
-    def assert_called_once(self):
-        """assert that the mock was called only once.
-        """
-        if not self.call_count == 1:
-            msg = ("Expected '%s' to have been called once. Called %s times.%s"
-                   % (self._mock_name or 'mock',
-                      self.call_count,
-                      self._calls_repr()))
->           raise AssertionError(msg)
-E           AssertionError: Expected 'makeKeyAndOrderFront_' to have been called once. Called 0 times.
-
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:886: AssertionError
------------------------------ Captured stdout call -----------------------------
-PyObjC not available - UI features disabled
-Cannot show UI - PyObjC not available
-____________ TestUIComponentIntegration.test_component_integration _____________
-
-self = <test_ui_integration.TestUIComponentIntegration object at 0x106494070>
-mock_table_alloc = <MagicMock name='alloc' id='4408293600'>
-mock_segment_alloc = <MagicMock name='alloc' id='4405704160'>
-mock_search_alloc = <MagicMock name='alloc' id='4406359040'>
-mock_shared_app = <MagicMock name='sharedApplication' id='4406178672'>
-mock_nsapp = <MagicMock name='NSApp' id='4405961056'>
-
-    @patch("AppKit.NSApp")
-    @patch("AppKit.NSApplication.sharedApplication")
-    @patch("AppKit.NSSearchField.alloc")
-    @patch("AppKit.NSSegmentedControl.alloc")
-    @patch("AppKit.NSTableView.alloc")
-    def test_component_integration(
+    def test_watcher_events_path_manager(
         self,
-        mock_table_alloc,
-        mock_segment_alloc,
-        mock_search_alloc,
-        mock_shared_app,
-        mock_nsapp,
+        watch_service: FileSystemWatchService,
+        path_manager: PathManager,
+        mock_event_bus: MagicMock,
+        temp_dir: Path,
     ) -> None:
-        """Test UI component instantiation and delegate setup."""
-        mock_search_field = MagicMock()
-        mock_search_alloc.return_value.init.return_value = mock_search_field
-        mock_segment_control = MagicMock()
-        mock_segment_alloc.return_value.init.return_value = mock_segment_control
-        mock_table_view = MagicMock()
-        mock_table_alloc.return_value.init.return_value = mock_table_view
-        app = FileSearchApp()
-        # Test that the wrappers were instantiated
->       assert hasattr(app, "_search_field")
+        """Test that adding a watch triggers the correct event and PathManager matches the path."""
+        path = temp_dir / "watched"
+        path.mkdir()
+        path_manager.create_rule_set("test").add_include(str(path / "**"))
+        watch_service.add_watch(path)
+        # Check that an event was published
+        mock_event_bus.publish.assert_called()
+        event = mock_event_bus.publish.call_args[0][0]
+        from src.panoptikon.filesystem.events import WatchedPathsChangedEvent
+    
+        assert isinstance(event, WatchedPathsChangedEvent)
+        assert path.resolve() in event.added_paths
+        # PathManager should match the watched path using the public API
+        # Use PathManager.match_rule_set if available, else check inclusion
+        if hasattr(path_manager, "match_rule_set"):
+            assert path_manager.match_rule_set("test", path / "foo.txt")
+        else:
+            rule_set = path_manager.get_rule_set("test")
+            assert rule_set is not None
+            # Try common include attributes
+            if hasattr(rule_set, "include_rules"):
+>               assert any(
+                    str(path / "foo.txt").startswith(str(rule.pattern))
+                    for rule in rule_set.include_rules
+                )
+E               assert False
+E                +  where False = any(<generator object TestFilesystemComponentIntegration.test_watcher_events_path_manager.<locals>.<genexpr> at 0x11254d270>)
+
+tests/core/test_filesystem.py:550: AssertionError
+___ TestFilesystemComponentIntegration.test_access_bookmarks_cloud_detection ___
+
+self = <tests.core.test_filesystem.TestFilesystemComponentIntegration object at 0x1122732e0>
+file_access_service = <src.panoptikon.filesystem.access.FileAccessService object at 0x1123cbf70>
+bookmark_service = <src.panoptikon.filesystem.bookmarks.BookmarkService object at 0x112558c70>
+cloud_service = <src.panoptikon.filesystem.cloud.CloudStorageService object at 0x112558cd0>
+temp_dir = PosixPath('/var/folders/_3/txtv4qn97sq809q4q2z4mzf40000gn/T/tmpa3w7ql1f')
+mocker = <pytest_mock.plugin.MockerFixture object at 0x1123cbdc0>
+
+    def test_access_bookmarks_cloud_detection(
+        self,
+        file_access_service: FileAccessService,
+        bookmark_service: BookmarkService,
+        cloud_service: CloudStorageService,
+        temp_dir: Path,
+        mocker,
+    ) -> None:
+        """Test that FileAccessService uses BookmarkService and CloudStorageService for a cloud path."""
+        # Simulate a cloud path
+        cloud_path = temp_dir / "cloudfile.txt"
+        cloud_path.write_text("cloud data")
+        # Spy on methods to check calls
+        provider = mocker.Mock()
+        spy_get_provider = mocker.spy(cloud_service, "get_provider_for_path")
+        spy_create_bookmark = mocker.spy(bookmark_service, "create_bookmark")
+        spy_start_access = mocker.spy(bookmark_service, "start_access")
+        mocker.patch.object(
+            cloud_service, "get_provider_for_path", return_value=provider
+        )
+        mocker.patch.object(bookmark_service, "has_bookmark", return_value=False)
+        mocker.patch.object(bookmark_service, "create_bookmark", return_value=True)
+        mocker.patch.object(bookmark_service, "start_access", return_value=True)
+        # Request access
+        from src.panoptikon.filesystem.access import (
+            AccessRequest,
+            AccessType,
+            PermissionStrategy,
+        )
+    
+        request = AccessRequest(
+            path=cloud_path,
+            access_type=AccessType.READ,
+            strategy=PermissionStrategy.PROGRESSIVE,
+        )
+        result = file_access_service.request_access(request)
+        assert result.success
+        # Check that the spies were called with the expected arguments
+>       assert any(
+            call[0][0] == cloud_path.resolve()
+            for call in spy_create_bookmark.call_args_list
+        )
+E       assert False
+E        +  where False = any(<generator object TestFilesystemComponentIntegration.test_access_bookmarks_cloud_detection.<locals>.<genexpr> at 0x1123dcdd0>)
+
+tests/core/test_filesystem.py:596: AssertionError
+_________ TestFilesystemComponentIntegration.test_full_permission_flow _________
+
+self = <tests.core.test_filesystem.TestFilesystemComponentIntegration object at 0x1122733a0>
+file_access_service = <src.panoptikon.filesystem.access.FileAccessService object at 0x1125e7040>
+bookmark_service = <src.panoptikon.filesystem.bookmarks.BookmarkService object at 0x1123bca00>
+temp_dir = PosixPath('/var/folders/_3/txtv4qn97sq809q4q2z4mzf40000gn/T/tmpkgshibi3')
+mocker = <pytest_mock.plugin.MockerFixture object at 0x1125e7160>
+
+    def test_full_permission_flow(
+        self,
+        file_access_service: FileAccessService,
+        bookmark_service: BookmarkService,
+        temp_dir: Path,
+        mocker,
+    ) -> None:
+        """Test a full permission flow: create file, check permission, create bookmark, access, delete."""
+        test_file = temp_dir / "permtest.txt"
+        # Patch bookmark_service to always succeed
+        mocker.patch.object(bookmark_service, "has_bookmark", return_value=False)
+        mocker.patch.object(bookmark_service, "create_bookmark", return_value=True)
+        mocker.patch.object(bookmark_service, "start_access", return_value=True)
+        # Create file
+        assert file_access_service.create_directory(temp_dir)
+        assert file_access_service.write_file(test_file, b"data")
+        # Check can_read and can_write
+>       assert file_access_service.can_read(test_file)
 E       AssertionError: assert False
-E        +  where False = hasattr(<panoptikon.ui.macos_app.FileSearchApp object at 0x106b6d640>, '_search_field')
+E        +  where False = can_read(PosixPath('/var/folders/_3/txtv4qn97sq809q4q2z4mzf40000gn/T/tmpkgshibi3/permtest.txt'))
+E        +    where can_read = <src.panoptikon.filesystem.access.FileAccessService object at 0x1125e7040>.can_read
 
-tests/ui/test_ui_integration.py:118: AssertionError
------------------------------ Captured stdout call -----------------------------
-PyObjC not available - UI features disabled
-_______________ TestUIEventIntegration.test_ui_event_integration _______________
-
-self = <test_ui_integration.TestUIEventIntegration object at 0x106494c70>
-mock_shared_app = <MagicMock name='sharedApplication' id='4403008176'>
-mock_nsapp = <MagicMock name='NSApp' id='4402899168'>
-
-    @patch("AppKit.NSApp")
-    @patch("AppKit.NSApplication.sharedApplication")
-    def test_ui_event_integration(self, mock_shared_app, mock_nsapp) -> None:
-        """Test that show does not error when PyObjC is available."""
-        mock_app = MagicMock()
-        mock_shared_app.return_value = mock_app
-        app = FileSearchApp()
-        app._window = MagicMock()
-        app.show()
->       app._window.makeKeyAndOrderFront_.assert_called_once()
-
-tests/ui/test_ui_integration.py:135: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <MagicMock name='mock.makeKeyAndOrderFront_' id='4402954592'>
-
-    def assert_called_once(self):
-        """assert that the mock was called only once.
-        """
-        if not self.call_count == 1:
-            msg = ("Expected '%s' to have been called once. Called %s times.%s"
-                   % (self._mock_name or 'mock',
-                      self.call_count,
-                      self._calls_repr()))
->           raise AssertionError(msg)
-E           AssertionError: Expected 'makeKeyAndOrderFront_' to have been called once. Called 0 times.
-
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:886: AssertionError
------------------------------ Captured stdout call -----------------------------
-PyObjC not available - UI features disabled
-Cannot show UI - PyObjC not available
-________________ TestUIFileSystemIntegration.test_file_display _________________
-
-self = <test_ui_integration.TestUIFileSystemIntegration object at 0x1064873d0>
-mock_shared_app = <MagicMock name='sharedApplication' id='4408138672'>
-mock_nsapp = <MagicMock name='NSApp' id='4407843280'>
-
-    @patch("AppKit.NSApp")
-    @patch("AppKit.NSApplication.sharedApplication")
-    def test_file_display(self, mock_shared_app, mock_nsapp) -> None:
-        """Test display of filesystem items in the UI."""
-        # Create app
-        app = FileSearchApp()
-    
-        # Setup test files
-        test_files = [
-            str(Path("/test/dir1/file1.txt")),
-            str(Path("/test/dir1/file2.txt")),
-            str(Path("/test/dir2/file3.txt")),
-        ]
-    
-        # Set files
-        app.set_files(test_files)
-    
-        # Test basic search
->       app.search("file1")
-E       AttributeError: 'FileSearchApp' object has no attribute 'search'
-
-tests/ui/test_ui_integration.py:161: AttributeError
------------------------------ Captured stdout call -----------------------------
-PyObjC not available - UI features disabled
-_______________ TestFileSearchAppMocked.test_app_initialization ________________
-
-args = (<test_ui_integration.TestFileSearchAppMocked object at 0x106487970>,)
-keywargs = {}
-
-    @wraps(func)
-    def patched(*args, **keywargs):
->       with self.decoration_helper(patched,
-                                    args,
-                                    keywargs) as (newargs, newkeywargs):
-
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1333: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:119: in __enter__
-    return next(self.gen)
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1315: in decoration_helper
-    arg = exit_stack.enter_context(patching)
-../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:448: in enter_context
-    result = _cm_type.__enter__(cm)
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1404: in __enter__
-    original, local = self.get_original()
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <unittest.mock._patch object at 0x106605d30>
-
-    def get_original(self):
-        target = self.getter()
-        name = self.attribute
-    
-        original = DEFAULT
-        local = False
-    
-        try:
-            original = target.__dict__[name]
-        except (AttributeError, KeyError):
-            original = getattr(target, name, DEFAULT)
-        else:
-            local = True
-    
-        if name in _builtins and isinstance(target, ModuleType):
-            self.create = True
-    
-        if not self.create and original is DEFAULT:
->           raise AttributeError(
-                "%s does not have the attribute %r" % (target, name)
-            )
-E           AttributeError: <module 'panoptikon.ui.macos_app' from '/Users/james/Documents/GitHub/panoptikon/src/panoptikon/ui/macos_app.py'> does not have the attribute 'Foundation'
-
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1377: AttributeError
-_____________ TestFileSearchAppMocked.test_file_loading_and_search _____________
-
-args = (<test_ui_integration.TestFileSearchAppMocked object at 0x1064946d0>,)
-keywargs = {}
-
-    @wraps(func)
-    def patched(*args, **keywargs):
->       with self.decoration_helper(patched,
-                                    args,
-                                    keywargs) as (newargs, newkeywargs):
-
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1333: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:119: in __enter__
-    return next(self.gen)
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1315: in decoration_helper
-    arg = exit_stack.enter_context(patching)
-../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:448: in enter_context
-    result = _cm_type.__enter__(cm)
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1404: in __enter__
-    original, local = self.get_original()
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <unittest.mock._patch object at 0x106490eb0>
-
-    def get_original(self):
-        target = self.getter()
-        name = self.attribute
-    
-        original = DEFAULT
-        local = False
-    
-        try:
-            original = target.__dict__[name]
-        except (AttributeError, KeyError):
-            original = getattr(target, name, DEFAULT)
-        else:
-            local = True
-    
-        if name in _builtins and isinstance(target, ModuleType):
-            self.create = True
-    
-        if not self.create and original is DEFAULT:
->           raise AttributeError(
-                "%s does not have the attribute %r" % (target, name)
-            )
-E           AttributeError: <module 'panoptikon.ui.macos_app' from '/Users/james/Documents/GitHub/panoptikon/src/panoptikon/ui/macos_app.py'> does not have the attribute 'Foundation'
-
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1377: AttributeError
-___________ TestFileSearchAppMocked.test_ui_delegates_and_datasource ___________
-
-args = (<test_ui_integration.TestFileSearchAppMocked object at 0x106487160>,)
-keywargs = {}
-
-    @wraps(func)
-    def patched(*args, **keywargs):
->       with self.decoration_helper(patched,
-                                    args,
-                                    keywargs) as (newargs, newkeywargs):
-
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1333: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:119: in __enter__
-    return next(self.gen)
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1315: in decoration_helper
-    arg = exit_stack.enter_context(patching)
-../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:448: in enter_context
-    result = _cm_type.__enter__(cm)
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1404: in __enter__
-    original, local = self.get_original()
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <unittest.mock._patch object at 0x106490b80>
-
-    def get_original(self):
-        target = self.getter()
-        name = self.attribute
-    
-        original = DEFAULT
-        local = False
-    
-        try:
-            original = target.__dict__[name]
-        except (AttributeError, KeyError):
-            original = getattr(target, name, DEFAULT)
-        else:
-            local = True
-    
-        if name in _builtins and isinstance(target, ModuleType):
-            self.create = True
-    
-        if not self.create and original is DEFAULT:
->           raise AttributeError(
-                "%s does not have the attribute %r" % (target, name)
-            )
-E           AttributeError: <module 'panoptikon.ui.macos_app' from '/Users/james/Documents/GitHub/panoptikon/src/panoptikon/ui/macos_app.py'> does not have the attribute 'Foundation'
-
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1377: AttributeError
-________________ TestSearchIntegration.test_search_capabilities ________________
-
-args = (<test_ui_integration.TestSearchIntegration object at 0x106487820>,)
-keywargs = {}
-
-    @wraps(func)
-    def patched(*args, **keywargs):
->       with self.decoration_helper(patched,
-                                    args,
-                                    keywargs) as (newargs, newkeywargs):
-
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1333: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:119: in __enter__
-    return next(self.gen)
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1315: in decoration_helper
-    arg = exit_stack.enter_context(patching)
-../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:448: in enter_context
-    result = _cm_type.__enter__(cm)
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1404: in __enter__
-    original, local = self.get_original()
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <unittest.mock._patch object at 0x1064907c0>
-
-    def get_original(self):
-        target = self.getter()
-        name = self.attribute
-    
-        original = DEFAULT
-        local = False
-    
-        try:
-            original = target.__dict__[name]
-        except (AttributeError, KeyError):
-            original = getattr(target, name, DEFAULT)
-        else:
-            local = True
-    
-        if name in _builtins and isinstance(target, ModuleType):
-            self.create = True
-    
-        if not self.create and original is DEFAULT:
->           raise AttributeError(
-                "%s does not have the attribute %r" % (target, name)
-            )
-E           AttributeError: <module 'panoptikon.ui.macos_app' from '/Users/james/Documents/GitHub/panoptikon/src/panoptikon/ui/macos_app.py'> does not have the attribute 'Foundation'
-
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1377: AttributeError
-_________________ TestEventBusIntegration.test_event_handling __________________
-
-args = (<test_ui_integration.TestEventBusIntegration object at 0x106487c70>,)
-keywargs = {}
-
-    @wraps(func)
-    def patched(*args, **keywargs):
->       with self.decoration_helper(patched,
-                                    args,
-                                    keywargs) as (newargs, newkeywargs):
-
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1333: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:119: in __enter__
-    return next(self.gen)
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1315: in decoration_helper
-    arg = exit_stack.enter_context(patching)
-../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:448: in enter_context
-    result = _cm_type.__enter__(cm)
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1404: in __enter__
-    original, local = self.get_original()
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <unittest.mock._patch object at 0x1064904c0>
-
-    def get_original(self):
-        target = self.getter()
-        name = self.attribute
-    
-        original = DEFAULT
-        local = False
-    
-        try:
-            original = target.__dict__[name]
-        except (AttributeError, KeyError):
-            original = getattr(target, name, DEFAULT)
-        else:
-            local = True
-    
-        if name in _builtins and isinstance(target, ModuleType):
-            self.create = True
-    
-        if not self.create and original is DEFAULT:
->           raise AttributeError(
-                "%s does not have the attribute %r" % (target, name)
-            )
-E           AttributeError: <module 'panoptikon.ui.macos_app' from '/Users/james/Documents/GitHub/panoptikon/src/panoptikon/ui/macos_app.py'> does not have the attribute 'Foundation'
-
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1377: AttributeError
-=============================== warnings summary ===============================
-tests/conftest.py:24
-  /Users/james/Documents/GitHub/panoptikon/tests/conftest.py:24: PytestCollectionWarning: cannot collect test class 'TestConfigSection' because it has a __init__ constructor (from: tests/core/test_bootstrap.py)
-    class TestConfigSection(ConfigSection):
-
-tests/conftest.py:24
-  /Users/james/Documents/GitHub/panoptikon/tests/conftest.py:24: PytestCollectionWarning: cannot collect test class 'TestConfigSection' because it has a __init__ constructor (from: tests/core/test_config.py)
-    class TestConfigSection(ConfigSection):
-
-tests/conftest.py:24
-  /Users/james/Documents/GitHub/panoptikon/tests/conftest.py:24: PytestCollectionWarning: cannot collect test class 'TestConfigSection' because it has a __init__ constructor (from: tests/core/test_config_hot_reload.py)
-    class TestConfigSection(ConfigSection):
-
-tests/core/test_events.py:26
-  /Users/james/Documents/GitHub/panoptikon/tests/core/test_events.py:26: PytestCollectionWarning: cannot collect test class 'TestEvent' because it has a __init__ constructor (from: tests/core/test_events.py)
-    @dataclass
-
-tests/core/test_events.py:34
-  /Users/james/Documents/GitHub/panoptikon/tests/core/test_events.py:34: PytestCollectionWarning: cannot collect test class 'TestEventHandler' because it has a __init__ constructor (from: tests/core/test_events.py)
-    class TestEventHandler(EventHandler[TestEvent]):
-
-tests/core/test_events.py:46
-  /Users/james/Documents/GitHub/panoptikon/tests/core/test_events.py:46: PytestCollectionWarning: cannot collect test class 'TestAsyncEventHandler' because it has a __init__ constructor (from: tests/core/test_events.py)
-    class TestAsyncEventHandler(AsyncEventHandler[TestEvent]):
-
-tests/core/test_events.py:58
-  /Users/james/Documents/GitHub/panoptikon/tests/core/test_events.py:58: PytestCollectionWarning: cannot collect test class 'TestErrorEventHandler' because it has a __init__ constructor (from: tests/core/test_events.py)
-    class TestErrorEventHandler(EventHandler[ErrorEvent]):
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+tests/core/test_filesystem.py:626: AssertionError
 ================================ tests coverage ================================
 _______________ coverage: platform darwin, python 3.9.18-final-0 _______________
 
 Name                                     Stmts   Miss  Cover
 ------------------------------------------------------------
 src/panoptikon/__init__.py                   1      0   100%
-src/panoptikon/__main__.py                  32      0   100%
+src/panoptikon/__main__.py                  32     32     0%
 src/panoptikon/core/__init__.py              0      0   100%
 src/panoptikon/core/config.py              245     37    85%
 src/panoptikon/core/errors.py              178     21    88%
 src/panoptikon/core/events.py              168      9    95%
-src/panoptikon/core/lifecycle.py           135      7    95%
-src/panoptikon/core/service.py             108      5    95%
+src/panoptikon/core/lifecycle.py           135     29    79%
+src/panoptikon/core/service.py             108     19    82%
 src/panoptikon/database/__init__.py          0      0   100%
 src/panoptikon/filesystem/__init__.py        7      0   100%
-src/panoptikon/filesystem/access.py        275     81    71%
+src/panoptikon/filesystem/access.py        287    134    53%
 src/panoptikon/filesystem/bookmarks.py     214     42    80%
 src/panoptikon/filesystem/cloud.py         139     12    91%
 src/panoptikon/filesystem/events.py        107      3    97%
-src/panoptikon/filesystem/paths.py         106     12    89%
-src/panoptikon/filesystem/watcher.py       296    119    60%
+src/panoptikon/filesystem/paths.py         106     46    57%
+src/panoptikon/filesystem/watcher.py       296    175    41%
 src/panoptikon/search/__init__.py            0      0   100%
 src/panoptikon/typings/__init__.py           0      0   100%
 src/panoptikon/ui/__init__.py                0      0   100%
-src/panoptikon/ui/macos_app.py             127     26    80%
-src/panoptikon/ui/objc_wrappers.py          79     10    87%
-src/panoptikon/ui/validators.py             37      1    97%
+src/panoptikon/ui/macos_app.py             127    127     0%
+src/panoptikon/ui/objc_wrappers.py          79     79     0%
+src/panoptikon/ui/validators.py             37     26    30%
 src/panoptikon/utils/__init__.py             0      0   100%
 ------------------------------------------------------------
-TOTAL                                     2254    385    83%
+TOTAL                                     2266    791    65%
 Coverage HTML written to dir htmlcov
 Coverage XML written to file coverage.xml
-Required test coverage of 80% reached. Total coverage: 82.92%
+FAIL Required test coverage of 80% not reached. Total coverage: 65.09%
 =========================== short test summary info ============================
-FAILED tests/ui/test_ui_integration.py::TestUIIntegration::test_app_lifecycle
-FAILED tests/ui/test_ui_integration.py::TestUIComponentIntegration::test_component_integration
-FAILED tests/ui/test_ui_integration.py::TestUIEventIntegration::test_ui_event_integration
-FAILED tests/ui/test_ui_integration.py::TestUIFileSystemIntegration::test_file_display
-FAILED tests/ui/test_ui_integration.py::TestFileSearchAppMocked::test_app_initialization
-FAILED tests/ui/test_ui_integration.py::TestFileSearchAppMocked::test_file_loading_and_search
-FAILED tests/ui/test_ui_integration.py::TestFileSearchAppMocked::test_ui_delegates_and_datasource
-FAILED tests/ui/test_ui_integration.py::TestSearchIntegration::test_search_capabilities
-FAILED tests/ui/test_ui_integration.py::TestEventBusIntegration::test_event_handling
-============= 9 failed, 188 passed, 4 skipped, 7 warnings in 2.59s =============
+FAILED tests/core/test_filesystem.py::TestFilesystemComponentIntegration::test_watcher_events_path_manager
+FAILED tests/core/test_filesystem.py::TestFilesystemComponentIntegration::test_access_bookmarks_cloud_detection
+FAILED tests/core/test_filesystem.py::TestFilesystemComponentIntegration::test_full_permission_flow
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 3 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+============= 3 failed, 97 passed, 1 skipped, 7 warnings in 1.21s ==============
