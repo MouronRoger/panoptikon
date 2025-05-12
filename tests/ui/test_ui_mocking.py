@@ -143,10 +143,7 @@ def ui_patches():
     # Mock NSWindow
     def mock_window_alloc():
         return MockNSObject(
-            initWithContentRect_styleMask_backing_defer_=lambda rect,
-            style,
-            backing,
-            defer: MockNSWindow()
+            initWithContentRect_styleMask_backing_defer_=lambda rect, style, backing, defer: MockNSWindow()
         )
 
     window_patch = patch("AppKit.NSWindow.alloc", return_value=mock_window_alloc())

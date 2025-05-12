@@ -4,14 +4,13 @@ These tests verify that the wrappers correctly interact with PyObjC
 and catch interface errors early.
 """
 
-
 import pytest
 
 # Skip the tests if PyObjC is not installed
 try:
     import Foundation  # type: ignore
     import objc  # type: ignore
-    
+
     PYOBJC_AVAILABLE = True
 except ImportError:
     PYOBJC_AVAILABLE = False
@@ -29,9 +28,7 @@ from panoptikon.ui.validators import (
 )
 
 # Mark all tests in this file as requiring PyObjC
-pytestmark = pytest.mark.skipif(
-    not PYOBJC_AVAILABLE, reason="PyObjC not installed"
-)
+pytestmark = pytest.mark.skipif(not PYOBJC_AVAILABLE, reason="PyObjC not installed")
 
 
 class MockTableDataSource(Foundation.NSObject):
@@ -44,10 +41,10 @@ class MockTableDataSource(Foundation.NSObject):
             return None
         self.data = []
         return self
-    
+
     def initWithData_(self, data):
         """Initialize with data.
-        
+
         Args:
             data: A 2D array representing table data
         """
@@ -106,7 +103,7 @@ class TestTableViewWrapper:
             ["File 2", "20 KB"],
             ["File 3", "30 KB"],
         ]
-        
+
         # Use proper PyObjC initialization
         data_source = MockTableDataSource.alloc().initWithData_(data)
 
@@ -221,4 +218,4 @@ def test_objc_method_validation() -> None:
 
     # Test assert method with non-existent method (should raise AssertionError)
     with pytest.raises(AssertionError):
-        assert_objc_method_exists(ns_object, "nonExistentMethod_") 
+        assert_objc_method_exists(ns_object, "nonExistentMethod_")

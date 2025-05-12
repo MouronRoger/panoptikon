@@ -5,15 +5,15 @@ settings (defaults, user, runtime), schema validation, and hot reloading
 of configuration changes.
 """
 
-from datetime import datetime
-from enum import Enum, auto
 import json
 import logging
 import os
-from pathlib import Path
 import threading
-from typing import Any, Optional
 import uuid
+from datetime import datetime
+from enum import Enum, auto
+from pathlib import Path
+from typing import Any, Optional
 
 from pydantic import BaseModel, ConfigDict, ValidationError
 
@@ -232,14 +232,14 @@ class ConfigurationSystem(ServiceInterface):
         for field_name, field in schema.model_fields.items():
             if field.default_factory is not None:
                 try:
-                    self._default_config[section_name][field_name] = (
-                        field.default_factory()
-                    )
+                    self._default_config[section_name][
+                        field_name
+                    ] = field.default_factory()
                 except TypeError:
                     # Handle case where default_factory is a type or requires arguments
-                    self._default_config[section_name][field_name] = (
-                        field.default_factory
-                    )
+                    self._default_config[section_name][
+                        field_name
+                    ] = field.default_factory
             elif field.default is not None:
                 self._default_config[section_name][field_name] = field.default
 

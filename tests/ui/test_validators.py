@@ -85,10 +85,12 @@ def test_assert_objc_protocol_conformance() -> None:
 def test_validate_table_data_source() -> None:
     """Test validation of NSTableViewDataSource conformance."""
     # Test with required methods
-    obj = MockObjC([
-        "numberOfRowsInTableView_",
-        "tableView_objectValueForTableColumn_row_",
-    ])
+    obj = MockObjC(
+        [
+            "numberOfRowsInTableView_",
+            "tableView_objectValueForTableColumn_row_",
+        ]
+    )
     assert validate_table_data_source(obj)
 
     # Test with missing method
@@ -99,10 +101,12 @@ def test_validate_table_data_source() -> None:
 def test_validate_table_delegate() -> None:
     """Test validation of NSTableViewDelegate conformance."""
     # Test with all common methods
-    obj = MockObjC([
-        "tableViewSelectionDidChange_",
-        "tableView_shouldSelectRow_",
-    ])
+    obj = MockObjC(
+        [
+            "tableViewSelectionDidChange_",
+            "tableView_shouldSelectRow_",
+        ]
+    )
     assert validate_table_delegate(obj)
 
     # Test with one common method
@@ -117,10 +121,12 @@ def test_validate_table_delegate() -> None:
 def test_validate_search_field_delegate() -> None:
     """Test validation of NSSearchFieldDelegate conformance."""
     # Test with all common methods
-    obj = MockObjC([
-        "controlTextDidChange_",
-        "controlTextDidEndEditing_",
-    ])
+    obj = MockObjC(
+        [
+            "controlTextDidChange_",
+            "controlTextDidEndEditing_",
+        ]
+    )
     assert validate_search_field_delegate(obj)
 
     # Test with one common method
@@ -157,4 +163,4 @@ def test_validated_objc_call() -> None:
     def no_args() -> None:
         pass
 
-    no_args()  # Should not raise 
+    no_args()  # Should not raise

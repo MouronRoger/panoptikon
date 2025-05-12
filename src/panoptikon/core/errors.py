@@ -5,12 +5,12 @@ structured error types, error reporting, recovery mechanisms, and
 diagnostic information collection.
 """
 
-from dataclasses import dataclass, field
-from datetime import datetime
-from enum import Enum, auto
 import logging
 import sys
 import traceback
+from dataclasses import dataclass, field
+from datetime import datetime
+from enum import Enum, auto
 from typing import Any, Callable, Optional, Union
 
 from ..core.events import ErrorEvent, EventBus

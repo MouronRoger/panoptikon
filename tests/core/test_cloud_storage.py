@@ -4,9 +4,9 @@ These tests focus on improving coverage for the cloud storage detection and
 handling functionality.
 """
 
-from pathlib import Path
 import platform
 import tempfile
+from pathlib import Path
 from typing import Optional
 from unittest.mock import MagicMock, patch
 

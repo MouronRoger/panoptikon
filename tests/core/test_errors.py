@@ -121,7 +121,9 @@ def test_specific_errors() -> None:
     validation_error = ValidationError("validation error")
     assert validation_error.category == ErrorCategory.VALIDATION
     assert validation_error.error_code.startswith("VAL-ValidationError")
-    assert validation_error.severity == ErrorSeverity.WARNING  # Different default severity
+    assert (
+        validation_error.severity == ErrorSeverity.WARNING
+    )  # Different default severity
 
 
 @pytest.fixture
@@ -170,6 +172,7 @@ def test_error_manager_handlers(error_manager: ErrorManager) -> None:
 
 def test_error_manager_recovery(error_manager: ErrorManager) -> None:
     """Test error recovery handling."""
+
     def recovery_handler() -> str:
         return "recovered"
 
@@ -256,4 +259,4 @@ def test_error_manager_handler_inheritance(error_manager: ErrorManager) -> None:
     assert len(handled_base) == 1
     assert len(handled_specific) == 1
     assert handled_base[0] == error
-    assert handled_specific[0] == error 
+    assert handled_specific[0] == error

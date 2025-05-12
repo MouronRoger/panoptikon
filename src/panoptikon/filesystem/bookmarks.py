@@ -5,11 +5,11 @@ bookmarks, which allow sandboxed applications to retain access to user-selected
 files and directories between launches.
 """
 
+import logging
+import platform
 from dataclasses import dataclass
 from datetime import datetime
-import logging
 from pathlib import Path
-import platform
 from typing import Optional
 
 from ..core.events import EventBus

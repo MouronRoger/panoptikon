@@ -4,12 +4,12 @@ This module provides utilities for path normalization, comparison,
 and rule-based path filtering.
 """
 
-from enum import Enum
 import fnmatch
-from functools import lru_cache
 import os
-from pathlib import Path
 import re
+from enum import Enum
+from functools import lru_cache
+from pathlib import Path
 from re import Pattern
 from typing import Optional, Union
 

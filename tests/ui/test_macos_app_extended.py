@@ -4,8 +4,8 @@ These tests focus on the delegate classes and methods that weren't fully covered
 in the main test file.
 """
 
-from collections.abc import Generator
 import sys
+from collections.abc import Generator
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -20,23 +20,24 @@ def mock_objc_setup() -> Generator[dict[str, MagicMock], None, None]:
     app_kit_mock = MagicMock()
     foundation_mock = MagicMock()
     objc_mock = MagicMock()
-    
+
     # Mock PyObjC class machinery
     table_data_source_mock = MagicMock()
     table_delegate_mock = MagicMock()
     search_delegate_mock = MagicMock()
-    
+
     # Create the patching system
     with (
-        patch.dict(sys.modules, {
-            "AppKit": app_kit_mock,
-            "Foundation": foundation_mock,
-            "objc": objc_mock
-        }),
+        patch.dict(
+            sys.modules,
+            {"AppKit": app_kit_mock, "Foundation": foundation_mock, "objc": objc_mock},
+        ),
         patch("src.panoptikon.ui.macos_app.SearchFieldWrapper"),
         patch("src.panoptikon.ui.macos_app.SegmentedControlWrapper"),
         patch("src.panoptikon.ui.macos_app.TableViewWrapper"),
-        patch("src.panoptikon.ui.macos_app.validate_table_data_source", return_value=True),
+        patch(
+            "src.panoptikon.ui.macos_app.validate_table_data_source", return_value=True
+        ),
         patch("src.panoptikon.ui.macos_app._TableDataSource", table_data_source_mock),
         patch("src.panoptikon.ui.macos_app._TableDelegate", table_delegate_mock),
         patch("src.panoptikon.ui.macos_app._SearchFieldDelegate", search_delegate_mock),
@@ -50,75 +51,77 @@ def mock_objc_setup() -> Generator[dict[str, MagicMock], None, None]:
 
 class TestImprovedCoverage:
     """Tests to improve coverage of the macos_app.py module."""
-    
+
     def test_delegates_creation(self, mock_objc_setup: dict) -> None:
         """Test the creation and setup of delegates."""
         # Create app and patch the setup_ui method
         with patch.object(FileSearchApp, "_setup_ui"):
             app = FileSearchApp()
             app._pyobjc_available = True
-            
+
             # Now add required attributes that would be created by _setup_ui
             app._table_view = MagicMock()
             app._search_field = MagicMock()
             app._search_options = MagicMock()
-            
+
             # Test _set_up_delegates
             app._set_up_delegates()
-            
+
             # Check that delegates were created
             mock_objc_setup["table_data_source"].alloc.assert_called_once()
             mock_objc_setup["table_delegate"].alloc.assert_called_once()
             mock_objc_setup["search_delegate"].alloc.assert_called_once()
-    
+
     def test_delegate_methods(self, mock_objc_setup: dict) -> None:
         """Test delegate method calls."""
         # Set up a more detailed mock for the search delegate
         search_delegate_instance = MagicMock()
-        mock_objc_setup["search_delegate"].alloc.return_value.init.return_value = search_delegate_instance
-        
+        mock_objc_setup["search_delegate"].alloc.return_value.init.return_value = (
+            search_delegate_instance
+        )
+
         # Create app and test callback setting
         with patch.object(FileSearchApp, "_setup_ui"):
             app = FileSearchApp()
             app._pyobjc_available = True
-            
+
             # Mock the table view and other components
             app._table_view = MagicMock()
             app._search_field = MagicMock()
             app._search_options = MagicMock()
             app._search_options.get_selected_segment.return_value = 1
-            
+
             # Setup delegates
             app._set_up_delegates()
-            
+
             # Verify search delegate was set up with app as callback
             search_delegate_instance.setCallback_.assert_called_once_with(app)
-            
+
             # Test search methods
             with patch("builtins.print"):
                 app.on_search_changed("test")
                 app.on_search_submitted("submit")
                 app.onSearchOptionChanged(None)
-    
+
     def test_table_data_source_methods(self) -> None:
         """Test table data source methods separately with direct mocking."""
         # We'll manually recreate essential functionality to test the data-handling logic
-        
+
         # Create a simple class that mimics PyObjC data source
         class MockTableDataSource:
             def __init__(self):
                 self.files = []
-                
+
             def setFiles_(self, files):
                 self.files = files
-                
+
             def numberOfRowsInTableView_(self, table_view):
                 return len(self.files)
-                
+
             def tableView_objectValueForTableColumn_row_(self, table_view, column, row):
                 if row >= len(self.files):
                     return ""
-                    
+
                 col_id = column.identifier()
                 if col_id == "0" and len(self.files[row]) > 0:
                     return self.files[row][0]
@@ -129,54 +132,61 @@ class TestImprovedCoverage:
                 elif col_id == "3" and len(self.files[row]) > 3:
                     return self.files[row][3]
                 return ""
-        
+
         # Now test the logic
         data_source = MockTableDataSource()
-        
+
         # Test empty
         assert data_source.numberOfRowsInTableView_(None) == 0
-        
+
         # Test with data
         test_files = [
             ["file1.txt", "/path/1", "10KB", "2023-01"],
             ["file2.txt", "/path/2", "20KB", "2023-02"],
         ]
         data_source.setFiles_(test_files)
-        
+
         # Verify row count
         assert data_source.numberOfRowsInTableView_(None) == 2
-        
+
         # Create mock columns
         col0 = MagicMock()
         col0.identifier.return_value = "0"
         col1 = MagicMock()
         col1.identifier.return_value = "1"
-        
+
         # Test retrieving values
-        assert data_source.tableView_objectValueForTableColumn_row_(None, col0, 0) == "file1.txt"
-        assert data_source.tableView_objectValueForTableColumn_row_(None, col1, 1) == "/path/2"
-        
+        assert (
+            data_source.tableView_objectValueForTableColumn_row_(None, col0, 0)
+            == "file1.txt"
+        )
+        assert (
+            data_source.tableView_objectValueForTableColumn_row_(None, col1, 1)
+            == "/path/2"
+        )
+
         # Test out of range
         assert data_source.tableView_objectValueForTableColumn_row_(None, col0, 5) == ""
-    
+
     def test_table_delegate_methods(self) -> None:
         """Test table delegate methods with direct mocking."""
+
         # Create mock for table selection
         class MockTableDelegate:
             def tableViewSelectionDidChange_(self, notification):
                 table_view = notification.object()
                 selected_row = table_view.selectedRow()
                 return f"Selected row: {selected_row}"
-        
+
         # Test the delegate
         delegate = MockTableDelegate()
-        
+
         # Create a notification and table view
         notification = MagicMock()
         table_view = MagicMock()
         notification.object.return_value = table_view
         table_view.selectedRow.return_value = 5
-        
+
         # Verify behavior
         result = delegate.tableViewSelectionDidChange_(notification)
         assert result == "Selected row: 5"
@@ -188,16 +198,17 @@ def test_main_function() -> None:
     with patch("src.panoptikon.ui.macos_app.FileSearchApp") as mock_app:
         app_instance = MagicMock()
         mock_app.return_value = app_instance
-        
+
         # Patch the set_files method to verify it's called with something
         with patch.object(app_instance, "set_files") as mock_set_files:
             with patch.object(app_instance, "show"):
                 # Import locally to avoid circular import issues
                 from src.panoptikon.ui.macos_app import main
+
                 main()
-                
+
                 # Verify app was shown
                 app_instance.show.assert_called_once()
-                
+
                 # Verify some kind of files were set (we don't care about the exact content)
-                mock_set_files.assert_called_once() 
+                mock_set_files.assert_called_once()

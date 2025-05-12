@@ -7,14 +7,14 @@ This module contains tests for all filesystem components:
 - Integration tests between filesystem components
 """
 
-from collections.abc import Generator
 import os
-from pathlib import Path
 import platform
 import tempfile
 import time
-from typing import Dict
 import unittest
+from collections.abc import Generator
+from pathlib import Path
+from typing import Dict
 from unittest.mock import MagicMock, patch
 
 import pytest

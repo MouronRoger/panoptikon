@@ -4,11 +4,11 @@ This module provides a comprehensive yet maintainable set of tests for the Bookm
 which manages security-scoped bookmarks for macOS applications.
 """
 
+import platform
+import tempfile
 from collections.abc import Generator
 from datetime import datetime
 from pathlib import Path
-import platform
-import tempfile
 from unittest.mock import MagicMock, patch
 
 import pytest

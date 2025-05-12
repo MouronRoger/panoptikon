@@ -197,12 +197,12 @@ class ServiceContainer:
         """
         # First set the initialized flag so that new services will be initialized as they're resolved
         self._initialized = True
-        
+
         # Initialize all singleton services that may have been resolved before
         for service in self._instances.values():
             if isinstance(service, ServiceInterface):
                 service.initialize()
-            
+
         # Make sure all singletons are created and initialized
         for service_type, registration in self._registrations.items():
             if registration["lifetime"] == ServiceLifetime.SINGLETON:
@@ -234,10 +234,10 @@ class ServiceContainer:
 
     def _get_service_name(self, service_type: type[Any]) -> str:
         """Get a readable name for a service type.
-        
+
         Args:
             service_type: The service type.
-            
+
         Returns:
             A string representation of the service type.
         """
@@ -245,29 +245,31 @@ class ServiceContainer:
             return service_type.__name__
         return str(service_type)
 
-    def _format_dependency_path(self, visited: set[type[Any]], end_type: type[Any]) -> str:
+    def _format_dependency_path(
+        self, visited: set[type[Any]], end_type: type[Any]
+    ) -> str:
         """Format a dependency path for error messages.
-        
+
         Args:
             visited: The set of visited service types.
             end_type: The end point of the dependency path.
-            
+
         Returns:
             A formatted dependency path string.
         """
         path_names = []
         for s in visited:
             path_names.append(self._get_service_name(s))
-            
+
         path_names.append(self._get_service_name(end_type))
         return " -> ".join(path_names)
 
     def _normalize_type(self, service_type: Any) -> Any:
         """Normalize a type, handling Optional and other container types.
-        
+
         Args:
             service_type: The type to normalize.
-            
+
         Returns:
             The normalized type.
         """
@@ -306,7 +308,7 @@ class ServiceContainer:
 
         # Get service registration
         registration = self._registrations[service_type]
-        
+
         # Skip validation for factory-created services
         if registration["factory"] is not None:
             return

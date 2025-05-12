@@ -1,9 +1,9 @@
 """Tests for the path manager module."""
 
-from pathlib import Path
 import tempfile
-from typing import Union
 import unittest
+from pathlib import Path
+from typing import Union
 
 from src.panoptikon.filesystem.paths import (
     PathManager,

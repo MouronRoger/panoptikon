@@ -26,7 +26,9 @@ def service_container() -> ServiceContainer:
 
 
 @pytest.fixture
-def lifecycle(service_container: ServiceContainer, event_bus: EventBus) -> ApplicationLifecycle:
+def lifecycle(
+    service_container: ServiceContainer, event_bus: EventBus
+) -> ApplicationLifecycle:
     """Create an application lifecycle manager for testing."""
     lifecycle = ApplicationLifecycle(service_container, event_bus)
     lifecycle.initialize()
@@ -94,7 +96,9 @@ def test_shutdown_hook_registration(lifecycle: ApplicationLifecycle) -> None:
     assert lifecycle.get_state() == ApplicationState.STOPPED
 
 
-def test_state_transitions(lifecycle: ApplicationLifecycle, event_bus: EventBus) -> None:
+def test_state_transitions(
+    lifecycle: ApplicationLifecycle, event_bus: EventBus
+) -> None:
     """Test application state transitions."""
     state_changes: list[ApplicationStateChangedEvent] = []
 
@@ -183,7 +187,9 @@ def test_invalid_state_transitions(lifecycle: ApplicationLifecycle) -> None:
     assert lifecycle.get_state() == ApplicationState.STOPPED
 
 
-def test_service_initialization(lifecycle: ApplicationLifecycle, service_container: ServiceContainer) -> None:
+def test_service_initialization(
+    lifecycle: ApplicationLifecycle, service_container: ServiceContainer
+) -> None:
     """Test service initialization during startup."""
     initialized = threading.Event()
     shutdown = threading.Event()
@@ -205,4 +211,4 @@ def test_service_initialization(lifecycle: ApplicationLifecycle, service_contain
 
     # Stop the application
     lifecycle.stop()
-    assert shutdown.wait(timeout=1.0) 
+    assert shutdown.wait(timeout=1.0)

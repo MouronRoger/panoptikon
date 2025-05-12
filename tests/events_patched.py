@@ -5,16 +5,16 @@ through publish/subscribe patterns, supporting both synchronous and
 asynchronous event handling.
 """
 
-from abc import ABC, abstractmethod
 import asyncio
-from dataclasses import asdict, is_dataclass
-from datetime import datetime
-from enum import Enum, auto
 import json
 import logging
 import traceback
-from typing import Any, Callable, Generic, Optional, TypeVar, Union
 import uuid
+from abc import ABC, abstractmethod
+from dataclasses import asdict, is_dataclass
+from datetime import datetime
+from enum import Enum, auto
+from typing import Any, Callable, Generic, Optional, TypeVar, Union
 
 
 class ServiceInterface:
@@ -234,7 +234,7 @@ class EventBus(ServiceInterface):
             self._event_history.append(event)
             # Trim history if needed
             if len(self._event_history) > self._max_history_size:
-                self._event_history = self._event_history[-self._max_history_size:]
+                self._event_history = self._event_history[-self._max_history_size :]
 
         # Find all matching subscriptions
         subscriptions = self._get_matching_subscriptions(type(event))
@@ -436,4 +436,4 @@ class EventBus(ServiceInterface):
             self._event_loop.create_task(handler(event))
         else:
             # Fallback to synchronous delivery
-            self._deliver_synchronous(event, handler) 
+            self._deliver_synchronous(event, handler)

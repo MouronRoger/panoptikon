@@ -4,11 +4,11 @@ This module provides abstractions for watching filesystem changes using
 FSEvents (on macOS) with a fallback polling-based mechanism.
 """
 
+import logging
+import threading
 from abc import ABC, abstractmethod
 from enum import Enum, auto
-import logging
 from pathlib import Path
-import threading
 from typing import Callable, Dict, List, Optional, Set
 
 from ..core.events import EventBus
@@ -235,9 +235,9 @@ class PollingWatcher(FSWatcher):
         """
         self._event_callback = event_callback
         self._interval = interval
-        self._watches: Dict[
-            Path, Dict[Path, float]
-        ] = {}  # Path -> {file_path -> mtime}
+        self._watches: Dict[Path, Dict[Path, float]] = (
+            {}
+        )  # Path -> {file_path -> mtime}
         self._recursive_watches: Set[Path] = set()
         self._stop_event = threading.Event()
         self._thread: Optional[threading.Thread] = None

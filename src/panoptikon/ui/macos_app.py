@@ -9,10 +9,7 @@ from __future__ import annotations
 
 import importlib
 from types import ModuleType
-from typing import (
-    Any,
-    Protocol,
-)
+from typing import Any, Protocol
 
 # All PyObjC imports are contained in the wrapper classes
 # or used with type: ignore to maintain clean type checking
@@ -72,7 +69,7 @@ class FileSearchApp:
                 except (ImportError, AttributeError):
                     # Either module not found or has invalid structure
                     raise ImportError(f"Failed to import {name}")
-            
+
             self._pyobjc_available = True
         except ImportError:
             # Any problem importing (or validating) the modules means PyObjC
@@ -93,18 +90,20 @@ class FileSearchApp:
             return
 
         # Import PyObjC modules only within the methods that use them
-        import AppKit  # type: ignore
-        import Foundation  # type: ignore
+        import AppKit  # type: ignore[import-untyped]
+        import Foundation  # type: ignore[import-untyped]
 
         # Create a window
         frame = (200, 200, 800, 600)  # x, y, width, height
-        self._window = AppKit.NSWindow.alloc().initWithContentRect_styleMask_backing_defer_(
-            Foundation.NSMakeRect(*frame),
-            AppKit.NSWindowStyleMaskTitled
-            | AppKit.NSWindowStyleMaskClosable
-            | AppKit.NSWindowStyleMaskResizable,
-            AppKit.NSBackingStoreBuffered,
-            False,
+        self._window = (
+            AppKit.NSWindow.alloc().initWithContentRect_styleMask_backing_defer_(
+                Foundation.NSMakeRect(*frame),
+                AppKit.NSWindowStyleMaskTitled
+                | AppKit.NSWindowStyleMaskClosable
+                | AppKit.NSWindowStyleMaskResizable,
+                AppKit.NSBackingStoreBuffered,
+                False,
+            )
         )
         self._window.setTitle_("Panoptikon File Search")
         self._window.setReleasedWhenClosed_(False)
@@ -116,12 +115,12 @@ class FileSearchApp:
         search_frame = (20, frame[3] - 60, frame[2] - 40, 30)
         self._search_field = SearchFieldWrapper(search_frame)
         self._search_field.set_placeholder("Search files...")
-        
+
         # Create segmented control for search options
         segments = ["Name", "Content", "Date", "Size"]
         segment_frame = (20, frame[3] - 100, 300, 24)
         self._search_options = SegmentedControlWrapper(segments, segment_frame, 1)
-        
+
         # Create table view for results
         table_frame = (20, 20, frame[2] - 40, frame[3] - 140)
         self._table_view = TableViewWrapper(table_frame)
@@ -129,12 +128,12 @@ class FileSearchApp:
         self._table_view.add_column("1", "Path", 200)
         self._table_view.add_column("2", "Size", 100)
         self._table_view.add_column("3", "Date", 150)
-        
+
         # Add components to window
         content_view.addSubview_(self._search_field.ns_object)
         content_view.addSubview_(self._search_options.ns_object)
         content_view.addSubview_(self._table_view.ns_scroll_view)
-        
+
         # Set up delegates
         self._set_up_delegates()
 
@@ -145,25 +144,24 @@ class FileSearchApp:
 
         # Import PyObjC modules only within the methods that use them
 
-        # Create and set table data source
-        self._table_delegate = _TableDelegate.alloc().init()
-        self._table_data_source = _TableDataSource.alloc().init()
+        self._table_delegate = _TableDelegate()
+        self._table_data_source = _TableDataSource()
         self._table_data_source.setFiles_(self._files)
-        
+
         # Validate delegates before setting them
         assert validate_table_data_source(self._table_data_source)
-        
+
         # Set delegates
         self._table_view.set_delegate(self._table_delegate)
         self._table_view.set_data_source(self._table_data_source)
-        
+
         # Create and set search field delegate
-        self._search_delegate = _SearchFieldDelegate.alloc().init()
+        self._search_delegate = _SearchFieldDelegate()
         self._search_delegate.setCallback_(self)
         self._search_field.set_delegate(self._search_delegate)
-        
+
         # Set up segmented control action
-        self._search_options.set_target_action(self, "onSearchOptionChanged")
+        self._search_options.set_target_action(self, "on_search_option_changed")
 
     def show(self) -> None:
         """Show the application window."""
@@ -172,9 +170,10 @@ class FileSearchApp:
             return
 
         self._window.makeKeyAndOrderFront_(None)
-        
+
         # Get the shared application and run it
-        import AppKit  # type: ignore
+        import AppKit  # type: ignore[import-untyped]
+
         app = AppKit.NSApplication.sharedApplication()
         app.activateIgnoringOtherApps_(True)
         app.run()
@@ -208,8 +207,7 @@ class FileSearchApp:
         print(f"Search submitted: {search_text}")
         # In a real implementation, this would perform the search
 
-    # This method will be called via PyObjC
-    def onSearchOptionChanged(self, sender: Any) -> None:  # type: ignore
+    def on_search_option_changed(self, sender: Any) -> None:
         """Called when search option segment changes.
 
         Args:
@@ -227,18 +225,14 @@ class FileSearchApp:
 
 # Note: In a real implementation, these would be defined using
 # proper PyObjC subclassing techniques. This is a simplified example.
-class _TableDataSource:  # type: ignore
+class _TableDataSource:
     """NSTableViewDataSource implementation."""
 
-    def init(self):
+    def __init__(self) -> None:
         """Initialize the data source."""
-        self = objc.super(_TableDataSource, self).init()
-        if self is None:
-            return None
-        self.files = []
-        return self
+        self.files: list[list[str]] = []
 
-    def setFiles_(self, files):
+    def setFiles_(self, files: list[list[str]]) -> None:
         """Set the files data.
 
         Args:
@@ -246,22 +240,24 @@ class _TableDataSource:  # type: ignore
         """
         self.files = files
 
-    def numberOfRowsInTableView_(self, tableView):
+    def numberOfRowsInTableView_(self, table_view: Any) -> int:
         """Return the number of rows.
 
         Args:
-            tableView: The NSTableView
+            table_view: The NSTableView
 
         Returns:
             The number of rows
         """
         return len(self.files)
 
-    def tableView_objectValueForTableColumn_row_(self, tableView, column, row):
+    def tableView_objectValueForTableColumn_row_(
+        self, table_view: Any, column: Any, row: int
+    ) -> str:
         """Return data for a table cell.
 
         Args:
-            tableView: The NSTableView
+            table_view: The NSTableView
             column: The NSTableColumn
             row: The row index
 
@@ -274,33 +270,31 @@ class _TableDataSource:  # type: ignore
         return ""
 
 
-class _TableDelegate:  # type: ignore
+class _TableDelegate:
     """NSTableViewDelegate implementation."""
 
-    def tableViewSelectionDidChange_(self, notification):
+    def __init__(self) -> None:
+        pass
+
+    def tableViewSelectionDidChange_(self, notification: Any) -> None:
         """Handle selection changes.
 
         Args:
             notification: The notification object
         """
-        tableView = notification.object()
-        selectedRow = tableView.selectedRow()
-        if selectedRow >= 0:
-            print(f"Selected row: {selectedRow}")
+        table_view = notification.object()
+        selected_row = table_view.selectedRow()
+        if selected_row >= 0:
+            print(f"Selected row: {selected_row}")
 
 
-class _SearchFieldDelegate:  # type: ignore
+class _SearchFieldDelegate:
     """NSSearchFieldDelegate implementation."""
 
-    def init(self):
-        """Initialize the delegate."""
-        self = objc.super(_SearchFieldDelegate, self).init()
-        if self is None:
-            return None
-        self.callback = None
-        return self
+    def __init__(self) -> None:
+        self.callback: Any = None
 
-    def setCallback_(self, callback):
+    def setCallback_(self, callback: Any) -> None:
         """Set the callback object.
 
         Args:
@@ -308,7 +302,7 @@ class _SearchFieldDelegate:  # type: ignore
         """
         self.callback = callback
 
-    def controlTextDidChange_(self, notification):
+    def controlTextDidChange_(self, notification: Any) -> None:
         """Handle text changes.
 
         Args:
@@ -319,7 +313,7 @@ class _SearchFieldDelegate:  # type: ignore
             text = search_field.stringValue()
             self.callback.on_search_changed(text)
 
-    def controlTextDidEndEditing_(self, notification):
+    def controlTextDidEndEditing_(self, notification: Any) -> None:
         """Handle end of editing (Enter key).
 
         Args:
@@ -336,7 +330,7 @@ class _SearchFieldDelegate:  # type: ignore
 def main() -> None:
     """Run the application."""
     app = FileSearchApp()
-    
+
     # Set up some sample data
     sample_files = [
         ["document.txt", "/Users/user/Documents/document.txt", "10 KB", "2023-01-15"],
@@ -344,10 +338,10 @@ def main() -> None:
         ["notes.md", "/Users/user/Documents/notes.md", "5 KB", "2023-03-10"],
     ]
     app.set_files(sample_files)
-    
+
     # Show the application
     app.show()
 
 
 if __name__ == "__main__":
-    main() 
+    main()

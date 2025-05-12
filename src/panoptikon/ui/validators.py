@@ -163,4 +163,4 @@ def validated_objc_call(func: Callable[..., T]) -> Callable[..., T]:
 
         return func(*args, **kwargs)
 
-    return wrapper 
+    return wrapper

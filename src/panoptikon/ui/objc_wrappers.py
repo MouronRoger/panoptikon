@@ -187,11 +187,11 @@ class SegmentedControlWrapper:
             self._control = AppKit.NSSegmentedControl.alloc().init()
 
         self._control.setSegmentCount_(len(segments))
-        
+
         for i, name in enumerate(segments):
             self._control.setLabel_forSegment_(name, i)
             self._control.setWidth_forSegment_(0, i)  # 0 means auto-size
-        
+
         self._control.setTrackingMode_(tracking_mode)
         self._control.setSegmentStyle_(AppKit.NSSegmentStyleRounded)
         self._control.sizeToFit()
@@ -230,4 +230,4 @@ class SegmentedControlWrapper:
         Returns:
             The raw NSSegmentedControl object
         """
-        return self._control 
+        return self._control

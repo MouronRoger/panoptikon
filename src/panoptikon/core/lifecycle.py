@@ -6,16 +6,16 @@ and resource cleanup.
 """
 
 import atexit
-from dataclasses import dataclass, field
-from datetime import datetime
-from enum import Enum, auto
 import logging
 import signal
 import sys
 import threading
 import time
-from typing import Any, Callable, Optional
 import uuid
+from dataclasses import dataclass, field
+from datetime import datetime
+from enum import Enum, auto
+from typing import Any, Callable, Optional
 
 from ..core.events import EventBase, EventBus
 from ..core.service import ServiceContainer, ServiceInterface
