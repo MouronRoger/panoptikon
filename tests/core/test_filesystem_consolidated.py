@@ -39,7 +39,6 @@ from src.panoptikon.filesystem.events import (
     FilePermissionEvent,
     FileSystemErrorEvent,
     FileSystemEvent,
-    PermissionStatus,
     WatchedPathsChangedEvent,
 )
 from src.panoptikon.filesystem.paths import PathManager
@@ -66,6 +65,12 @@ def event_bus() -> EventBus:
     bus = EventBus()
     bus.initialize()
     return bus
+
+
+@pytest.fixture
+def mock_event_bus() -> MagicMock:
+    """Create a mock event bus."""
+    return MagicMock(spec=EventBus)
 
 
 @pytest.fixture
@@ -140,9 +145,9 @@ def cloud_service(
 
 
 @pytest.fixture
-def watch_service(event_bus: MagicMock) -> FileSystemWatchService:
+def watch_service(mock_event_bus: MagicMock) -> FileSystemWatchService:
     """Create a file system watch service."""
-    service = FileSystemWatchService(event_bus)
+    service = FileSystemWatchService(mock_event_bus)
     service.initialize()
     yield service
     service.shutdown()
@@ -754,7 +759,10 @@ class TestFileSystemWatchService:
         assert watch_service._watcher is not None
 
     def test_add_watch(
-        self, watch_service: FileSystemWatchService, temp_dir: str, event_bus: MagicMock
+        self,
+        watch_service: FileSystemWatchService,
+        temp_dir: Path,
+        mock_event_bus: MagicMock,
     ) -> None:
         """Test watching a path."""
         path = Path(temp_dir)
@@ -764,30 +772,33 @@ class TestFileSystemWatchService:
         assert path.resolve() in watch_service._watched_paths
 
         # Check that an event with the right type and added paths was published
-        event_bus.publish.assert_called()
+        mock_event_bus.publish.assert_called()
 
         # Extract the event that was published
-        event = event_bus.publish.call_args[0][0]
+        event = mock_event_bus.publish.call_args[0][0]
 
         # Verify it's the right type with the right path
         assert isinstance(event, WatchedPathsChangedEvent)
         assert path.resolve() in event.added_paths
 
     def test_remove_watch(
-        self, watch_service: FileSystemWatchService, temp_dir: str, event_bus: MagicMock
+        self,
+        watch_service: FileSystemWatchService,
+        temp_dir: Path,
+        mock_event_bus: MagicMock,
     ) -> None:
         """Test unwatching a path."""
         path = Path(temp_dir)
         watch_service.add_watch(path)
 
         # Reset mock to clear the add_watch event
-        event_bus.reset_mock()
+        mock_event_bus.reset_mock()
 
         watch_service.remove_watch(path)
         assert path.resolve() not in watch_service._watched_paths
 
         # Verify an event was published with the removed path
-        event = event_bus.publish.call_args[0][0]
+        event = mock_event_bus.publish.call_args[0][0]
         assert isinstance(event, WatchedPathsChangedEvent)
         assert path.resolve() in event.removed_paths
 
