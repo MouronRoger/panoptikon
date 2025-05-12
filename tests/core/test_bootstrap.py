@@ -83,3 +83,24 @@ def test_system_bootstrap_and_minimal_flow() -> None:
 
     # Clean shutdown
     container.shutdown_all()
+
+    def test_bootstrap_runs(self) -> None:
+        """Test that the bootstrap script runs without error."""
+        # This test is intentionally minimal; it just ensures the script can be imported and run.
+        import importlib
+        import sys
+
+        # Patch sys.argv to simulate command-line arguments
+        argv_backup = sys.argv
+        sys.argv = ["run.py", "--test"]
+
+        # Patch __name__ to simulate running as __main__
+        module = importlib.import_module("src.panoptikon.__main__")
+        module.__name__ = "__main__"
+
+        # Run the main function
+        try:
+            result = module.main()
+            assert isinstance(result, int)
+        finally:
+            sys.argv = argv_backup

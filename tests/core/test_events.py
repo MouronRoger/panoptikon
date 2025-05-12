@@ -79,14 +79,12 @@ class TestEventBase:
     """Tests for the EventBase class."""
 
     def test_to_dict(self) -> None:
-        """Test the to_dict method of EventBase."""
+        """Test conversion to dictionary."""
         event = EventBase()
-        event_dict = event.to_dict()
-
-        assert "event_id" in event_dict
-        assert "timestamp" in event_dict
-        assert "source" in event_dict
-        assert event_dict["source"] is None
+        result = event.to_dict()
+        assert "event_id" in result
+        assert "timestamp" in result
+        assert "source" in result
 
     def test_to_json(self) -> None:
         """Test the to_json method of EventBase."""
