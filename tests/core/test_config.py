@@ -135,6 +135,9 @@ def test_save_and_reload(
     config_system._config_dir = temp_config_dir
     config_system._config_file = temp_config_dir / "config.json"
 
+    # Register the section before setting a value
+    config_system.register_section("test", TestConfigSection)
+
     # Set a value and save
     config_system.set("test", "string_value", "save test", source=ConfigSource.USER)
     config_system.save()

@@ -106,27 +106,35 @@ def test_state_transitions(
 
     event_bus.subscribe(ApplicationStateChangedEvent, on_state_change)
 
-    # Start in INITIALIZING
+    # Start in CREATED
+    assert lifecycle._state == ApplicationState.CREATED
+
+    # Transition to INITIALIZING
+    lifecycle._change_state(ApplicationState.INITIALIZING)
     assert lifecycle._state == ApplicationState.INITIALIZING
+    assert state_changes[-1].new_state == ApplicationState.INITIALIZING
 
     # Transition to RUNNING
-    lifecycle._set_state(ApplicationState.RUNNING)
+    lifecycle._change_state(ApplicationState.RUNNING)
     assert lifecycle._state == ApplicationState.RUNNING
     assert state_changes[-1].new_state == ApplicationState.RUNNING
 
-    # Transition to SHUTTING_DOWN
-    lifecycle._set_state(ApplicationState.SHUTTING_DOWN)
-    assert lifecycle._state == ApplicationState.SHUTTING_DOWN
-    assert state_changes[-1].new_state == ApplicationState.SHUTTING_DOWN
+    # Transition to STOPPING
+    lifecycle._change_state(ApplicationState.STOPPING)
+    assert lifecycle._state == ApplicationState.STOPPING
+    assert state_changes[-1].new_state == ApplicationState.STOPPING
 
     # Transition to STOPPED
-    lifecycle._set_state(ApplicationState.STOPPED)
+    lifecycle._change_state(ApplicationState.STOPPED)
     assert lifecycle._state == ApplicationState.STOPPED
     assert state_changes[-1].new_state == ApplicationState.STOPPED
 
 
 def test_shutdown_request(lifecycle: ApplicationLifecycle) -> None:
     """Test shutdown request handling."""
+    lifecycle.initialize()
+    # Add a dummy shutdown hook to ensure shutdown completes
+    lifecycle.register_shutdown_hook("dummy", lambda: None)
     lifecycle.start()
     assert lifecycle.get_state() == ApplicationState.RUNNING
 

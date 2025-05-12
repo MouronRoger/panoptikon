@@ -5,6 +5,7 @@ from panoptikon.core.errors import ApplicationError, ErrorHandlingService
 from panoptikon.core.events import EventBase, EventBus
 from panoptikon.core.lifecycle import ApplicationLifecycle
 from panoptikon.core.service import ServiceContainer, ServiceLifetime
+from tests.conftest import TestConfigSection
 
 
 def test_system_bootstrap_and_minimal_flow() -> None:
@@ -15,17 +16,17 @@ def test_system_bootstrap_and_minimal_flow() -> None:
     )
     container.register(
         ConfigurationSystem,
-        implementation_type=ConfigurationSystem,
+        factory=lambda c: ConfigurationSystem(c.resolve(EventBus)),
         lifetime=ServiceLifetime.SINGLETON,
     )
     container.register(
         ErrorHandlingService,
-        implementation_type=ErrorHandlingService,
+        factory=lambda c: ErrorHandlingService(c.resolve(EventBus)),
         lifetime=ServiceLifetime.SINGLETON,
     )
     container.register(
         ApplicationLifecycle,
-        implementation_type=ApplicationLifecycle,
+        factory=lambda c: ApplicationLifecycle(c, c.resolve(EventBus)),
         lifetime=ServiceLifetime.SINGLETON,
     )
 
@@ -58,9 +59,9 @@ def test_system_bootstrap_and_minimal_flow() -> None:
 
     # Minimal config test
     config.initialize()
-    config.register_section("smoke", dict, {"foo": "bar"})
-    config.set("smoke", "foo", "baz")
-    assert config.get("smoke", "foo") == "baz"
+    config.register_section("smoke", TestConfigSection, {"string_value": "bar"})
+    config.set("smoke", "string_value", "baz")
+    assert config.get("smoke", "string_value") == "baz"
 
     # Minimal error handling test
     errors = []
