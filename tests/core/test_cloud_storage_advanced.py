@@ -6,6 +6,7 @@ handling functionality.
 
 from pathlib import Path
 import platform
+import tempfile
 from typing import Optional
 from unittest.mock import MagicMock, patch
 
@@ -156,6 +157,58 @@ class TestCloudProviderDetectorAdvanced:
 
         # Restore original method
         detector._check_provider_online = original_check
+
+    def test_initialize_providers_mac_real_paths(self) -> None:
+        """Test provider initialization using a real temporary home on macOS."""
+        # Create a temporary home directory structure that mimics cloud layouts.
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = Path(temp_dir)
+
+            # Simulate a Dropbox folder with its marker file.
+            dropbox_path = temp_path / "Dropbox"
+            dropbox_path.mkdir()
+            (dropbox_path / ".dropbox").touch()
+
+            # Patch environment so the detector thinks this is the current home and
+            # we are running on macOS.
+            with (
+                patch("pathlib.Path.home", return_value=temp_path),
+                patch("platform.system", return_value="Darwin"),
+            ):
+                detector = CloudProviderDetector()
+
+            providers = detector.get_all_providers()
+            provider_types = {p.provider_type for p in providers}
+            assert CloudProviderType.DROPBOX in provider_types
+
+    def test_detect_provider_real_paths(self) -> None:
+        """Ensure detect_provider works with real on-disk structures."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = Path(temp_dir)
+
+            # Create Dropbox folder and marker.
+            dropbox_path = temp_path / "Dropbox"
+            dropbox_path.mkdir()
+            (dropbox_path / ".dropbox").touch()
+
+            # Create a test file inside the Dropbox folder.
+            test_file = dropbox_path / "test_file.txt"
+            test_file.write_text("Test content")
+
+            with (
+                patch("pathlib.Path.home", return_value=temp_path),
+                patch("platform.system", return_value="Darwin"),
+            ):
+                detector = CloudProviderDetector()
+
+                provider = detector.detect_provider(test_file)
+                assert provider is not None
+                assert provider.provider_type == CloudProviderType.DROPBOX
+
+                # A path outside any known provider should not be detected.
+                outside_path = temp_path / "outside.txt"
+                outside_path.write_text("Not in cloud")
+                assert detector.detect_provider(outside_path) is None
 
 
 class TestCloudStorageServiceAdvanced:
