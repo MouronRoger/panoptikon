@@ -701,4 +701,4 @@ class TestEventInheritance:
 
         # Source should have been set automatically
         assert event.source is not None
-        assert "test_events_consolidated.py" in event.source
+        assert "test_events.py" in event.source
