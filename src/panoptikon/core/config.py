@@ -5,15 +5,15 @@ settings (defaults, user, runtime), schema validation, and hot reloading
 of configuration changes.
 """
 
+from datetime import datetime
+from enum import Enum, auto
 import json
 import logging
 import os
-import threading
-import uuid
-from datetime import datetime
-from enum import Enum, auto
 from pathlib import Path
+import threading
 from typing import Any, Optional
+import uuid
 
 from pydantic import BaseModel, ConfigDict, ValidationError
 
@@ -232,14 +232,14 @@ class ConfigurationSystem(ServiceInterface):
         for field_name, field in schema.model_fields.items():
             if field.default_factory is not None:
                 try:
-                    self._default_config[section_name][
-                        field_name
-                    ] = field.default_factory()
+                    self._default_config[section_name][field_name] = (
+                        field.default_factory()
+                    )
                 except TypeError:
                     # Handle case where default_factory is a type or requires arguments
-                    self._default_config[section_name][
-                        field_name
-                    ] = field.default_factory
+                    self._default_config[section_name][field_name] = (
+                        field.default_factory
+                    )
             elif field.default is not None:
                 self._default_config[section_name][field_name] = field.default
 
@@ -415,7 +415,13 @@ class ConfigurationSystem(ServiceInterface):
         # Publish event
         if old_value != value:
             event = ConfigChangedEvent(
-                section=section, key=key, old_value=old_value, new_value=value
+                section=section,
+                key=key,
+                old_value=old_value,
+                new_value=value,
+                event_id=None,
+                timestamp=None,
+                source=None,
             )
             self._event_bus.publish(event)
 
@@ -601,6 +607,9 @@ class ConfigurationSystem(ServiceInterface):
                             key=key,
                             old_value=old_value,
                             new_value=new_value,
+                            event_id=None,
+                            timestamp=None,
+                            source=None,
                         )
                         self._event_bus.publish(event)
                 else:
@@ -610,6 +619,9 @@ class ConfigurationSystem(ServiceInterface):
                         key=key,
                         old_value=None,
                         new_value=new_value,
+                        event_id=None,
+                        timestamp=None,
+                        source=None,
                     )
                     self._event_bus.publish(event)
 
