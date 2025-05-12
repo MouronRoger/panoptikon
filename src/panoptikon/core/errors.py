@@ -14,6 +14,7 @@ import traceback
 from typing import Any, Callable, Optional, Union
 
 from ..core.events import ErrorEvent, EventBus
+from ..core.service import ServiceInterface
 
 logger = logging.getLogger(__name__)
 
@@ -518,3 +519,103 @@ class ErrorManager:
                         handler(error)
                     except Exception as e:
                         logger.error(f"Error in error handler: {e}", exc_info=True)
+
+
+class ErrorHandlingService(ServiceInterface):
+    """Service for centralized error handling across the application.
+
+    This service integrates with the service container and event system
+    to provide application-wide error handling capabilities.
+    """
+
+    def __init__(self, event_bus: EventBus) -> None:
+        """Initialize the error handling service.
+
+        Args:
+            event_bus: The event bus for publishing error events.
+        """
+        self._error_manager = ErrorManager(event_bus)
+        self._event_bus = event_bus
+
+    def initialize(self) -> None:
+        """Initialize the error handling service.
+
+        Sets up event subscriptions and prepares the error handling system.
+        """
+        logger.debug("Initializing ErrorHandlingService")
+
+    def shutdown(self) -> None:
+        """Shut down the error handling service."""
+        logger.debug("Shutting down ErrorHandlingService")
+
+    def handle_error(
+        self, error: Union[ApplicationError, Exception], reraise: bool = False
+    ) -> None:
+        """Handle an error through the error manager.
+
+        Args:
+            error: The error to handle.
+            reraise: Whether to reraise the error after handling.
+        """
+        self._error_manager.handle_error(error, reraise)
+
+    def register_error_handler(
+        self,
+        error_type: type[ApplicationError],
+        handler: Callable[[ApplicationError], None],
+    ) -> None:
+        """Register a handler for a specific error type.
+
+        Args:
+            error_type: Type of error to handle.
+            handler: Function to call when error occurs.
+        """
+        self._error_manager.register_error_handler(error_type, handler)
+
+    def register_recovery_handler(
+        self, error_code: str, handler: Callable[[], Any]
+    ) -> None:
+        """Register a recovery handler for a specific error code.
+
+        Args:
+            error_code: Error code to handle.
+            handler: Function to call for recovery.
+        """
+        self._error_manager.register_recovery_handler(error_code, handler)
+
+    def recover_from_error(self, error: ApplicationError) -> Any:
+        """Attempt to recover from an error.
+
+        Args:
+            error: The error to recover from.
+
+        Returns:
+            Result of the recovery handler.
+
+        Raises:
+            ValueError: If no recovery handler is registered for the error.
+        """
+        return self._error_manager.recover_from_error(error)
+
+    def get_error_history(self) -> list[ApplicationError]:
+        """Get the history of errors.
+
+        Returns:
+            List of errors that have occurred.
+        """
+        return self._error_manager.get_error_history()
+
+    def clear_error_history(self) -> None:
+        """Clear the error history."""
+        self._error_manager.clear_error_history()
+
+    def set_max_history_size(self, size: int) -> None:
+        """Set the maximum number of errors to keep in history.
+
+        Args:
+            size: Maximum number of errors to keep.
+
+        Raises:
+            ValueError: If size is not positive.
+        """
+        self._error_manager.set_max_history_size(size)

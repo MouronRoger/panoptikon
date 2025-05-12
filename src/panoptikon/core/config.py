@@ -5,6 +5,7 @@ settings (defaults, user, runtime), schema validation, and hot reloading
 of configuration changes.
 """
 
+from datetime import datetime
 from enum import Enum, auto
 import json
 import logging
@@ -12,8 +13,9 @@ import os
 from pathlib import Path
 import threading
 from typing import Any, Optional
+import uuid
 
-from pydantic import BaseModel, ConfigDict, ValidationError, dataclasses
+from pydantic import BaseModel, ConfigDict, ValidationError
 
 from ..core.events import EventBase, EventBus
 from ..core.service import ServiceInterface
@@ -21,25 +23,61 @@ from ..core.service import ServiceInterface
 logger = logging.getLogger(__name__)
 
 
-@dataclasses.dataclass
 class ConfigChangedEvent(EventBase):
     """Event issued when configuration values change."""
 
-    section: str = ""
-    key: str = ""
-    old_value: Optional[Any] = None
-    new_value: Optional[Any] = None
+    def __init__(
+        self,
+        section: str,
+        key: str,
+        old_value: Optional[Any] = None,
+        new_value: Optional[Any] = None,
+        event_id: Optional[str] = None,
+        timestamp: Optional[datetime] = None,
+        source: Optional[str] = None,
+    ) -> None:
+        """Initialize a configuration changed event.
 
-    def __post_init__(self) -> None:
-        """Validate required fields after initialization.
-
-        Raises:
-            ValueError: If section or key is empty.
+        Args:
+            section: The configuration section that changed.
+            key: The configuration key that changed.
+            old_value: The previous value (if any).
+            new_value: The new value.
+            event_id: Optional event ID, auto-generated if not provided.
+            timestamp: Optional timestamp, defaults to current time.
+            source: Optional source identifier.
         """
+        super().__init__(
+            event_id=event_id or str(uuid.uuid4()),
+            timestamp=timestamp or datetime.now(),
+            source=source,
+        )
+        self.section = section
+        self.key = key
+        self.old_value = old_value
+        self.new_value = new_value
+
         if not self.section:
             raise ValueError("section is required")
         if not self.key:
             raise ValueError("key is required")
+
+    def to_dict(self) -> dict[str, Any]:
+        """Convert event to dictionary representation.
+
+        Returns:
+            Dictionary representation of the event.
+        """
+        result = super().to_dict()
+        result.update(
+            {
+                "section": self.section,
+                "key": self.key,
+                "old_value": self.old_value,
+                "new_value": self.new_value,
+            }
+        )
+        return result
 
 
 class ConfigSource(Enum):
@@ -194,10 +232,14 @@ class ConfigurationSystem(ServiceInterface):
         for field_name, field in schema.model_fields.items():
             if field.default_factory is not None:
                 try:
-                    self._default_config[section_name][field_name] = field.default_factory()
+                    self._default_config[section_name][field_name] = (
+                        field.default_factory()
+                    )
                 except TypeError:
                     # Handle case where default_factory is a type or requires arguments
-                    self._default_config[section_name][field_name] = field.default_factory
+                    self._default_config[section_name][field_name] = (
+                        field.default_factory
+                    )
             elif field.default is not None:
                 self._default_config[section_name][field_name] = field.default
 
@@ -373,10 +415,7 @@ class ConfigurationSystem(ServiceInterface):
         # Publish event
         if old_value != value:
             event = ConfigChangedEvent(
-                section=section,
-                key=key,
-                old_value=old_value,
-                new_value=value
+                section=section, key=key, old_value=old_value, new_value=value
             )
             self._event_bus.publish(event)
 
@@ -444,7 +483,7 @@ class ConfigurationSystem(ServiceInterface):
 
         Args:
             section: Optional section to reset. If None, resets all sections.
-            
+
         Note:
             This method only clears runtime configuration. User configuration
             (saved values) are preserved.
@@ -535,25 +574,44 @@ class ConfigurationSystem(ServiceInterface):
         old_config: dict[str, dict[str, Any]],
         new_config: dict[str, dict[str, Any]],
     ) -> None:
-        """Emit events for configuration changes.
+        """Emit events for configuration changes between old and new configs.
 
         Args:
             old_config: Previous configuration.
             new_config: New configuration.
         """
+        # Process each section
         for section, section_data in new_config.items():
-            if section in self._schemas:
-                old_section_data = old_config.get(section, {})
-                for key, value in section_data.items():
-                    if key not in old_section_data or old_section_data[key] != value:
-                        old_value = old_section_data.get(key)
+            # Skip if section not in schemas
+            if section not in self._schemas:
+                continue
+
+            # Get old section data (if it exists)
+            old_section_data = old_config.get(section, {})
+
+            # Check each key in section
+            for key, new_value in section_data.items():
+                # Different handling based on whether key exists in old config
+                if key in old_section_data:
+                    # Key exists in old config - check if value changed
+                    old_value = old_section_data[key]
+                    if old_value != new_value:
                         event = ConfigChangedEvent(
                             section=section,
                             key=key,
                             old_value=old_value,
-                            new_value=value
+                            new_value=new_value,
                         )
                         self._event_bus.publish(event)
+                else:
+                    # Key is new - emit event with None as old value
+                    event = ConfigChangedEvent(
+                        section=section,
+                        key=key,
+                        old_value=None,
+                        new_value=new_value,
+                    )
+                    self._event_bus.publish(event)
 
     def _validate_section(self, section: str) -> None:
         """Validate a configuration section against its schema.

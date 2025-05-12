@@ -107,11 +107,13 @@ class ErrorEvent(EventBase):
         # Build upon parent's to_dict method
         result = super().to_dict()
         # Add error-specific fields
-        result.update({
-            "error_type": self.error_type,
-            "message": self.message,
-            "severity": self.severity,
-        })
+        result.update(
+            {
+                "error_type": self.error_type,
+                "message": self.message,
+                "severity": self.severity,
+            }
+        )
         if self.traceback:
             result["traceback"] = self.traceback
         return result
@@ -257,8 +259,16 @@ class EventBus(ServiceInterface):
             Subscription ID that can be used to unsubscribe.
 
         Raises:
-            ValueError: If handler type is invalid.
+            TypeError: If handler type is invalid.
         """
+        # Validate handler type
+        if not (
+            callable(handler) or isinstance(handler, (EventHandler, AsyncEventHandler))
+        ):
+            raise TypeError(
+                f"Handler must be callable or EventHandler/AsyncEventHandler, got: {type(handler)}"
+            )
+
         # Determine delivery mode if not specified
         if delivery_mode is None:
             if isinstance(handler, AsyncEventHandler) or (
@@ -411,8 +421,14 @@ class EventBus(ServiceInterface):
         Args:
             event: The event to deliver.
             handler: The handler to deliver to.
+
+        Raises:
+            TypeError: If handler is not callable or EventHandler.
         """
         if isinstance(handler, EventHandler):
+            # Check if handle method exists and is callable
+            if not hasattr(handler, "handle") or not callable(handler.handle):
+                raise TypeError("EventHandler missing callable handle method")
             handler.handle(event)
         elif callable(handler):
             handler(event)
@@ -428,11 +444,15 @@ class EventBus(ServiceInterface):
 
         Raises:
             RuntimeError: If event loop is not available.
+            TypeError: If handler is not callable or AsyncEventHandler.
         """
         if not self._event_loop:
             raise RuntimeError("No event loop available for asynchronous delivery")
 
         if isinstance(handler, AsyncEventHandler):
+            # Check if handle method exists and is callable
+            if not hasattr(handler, "handle") or not callable(handler.handle):
+                raise TypeError("AsyncEventHandler missing callable handle method")
             asyncio.run_coroutine_threadsafe(handler.handle(event), self._event_loop)
         elif callable(handler) and asyncio.iscoroutinefunction(handler):
             asyncio.run_coroutine_threadsafe(handler(event), self._event_loop)
