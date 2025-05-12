@@ -130,6 +130,7 @@ ignore_missing_imports = true
 [tool.ruff]
 line-length = 88
 target-version = "py39"
+exclude = ["actions-runner/externals"]
 
 [tool.ruff.lint]
 select = [
