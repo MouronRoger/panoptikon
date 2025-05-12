@@ -145,7 +145,9 @@ def cloud_service(
 
 
 @pytest.fixture
-def watch_service(mock_event_bus: MagicMock) -> FileSystemWatchService:
+def watch_service(
+    mock_event_bus: MagicMock,
+) -> Generator[FileSystemWatchService, None, None]:
     """Create a file system watch service."""
     service = FileSystemWatchService(mock_event_bus)
     service.initialize()
