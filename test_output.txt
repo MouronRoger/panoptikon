@@ -1,0 +1,603 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.9.18, pytest-8.3.5, pluggy-1.5.0 -- /Users/james/Documents/GitHub/panoptikon/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /Users/james/Documents/GitHub/panoptikon
+configfile: pyproject.toml
+testpaths: tests
+plugins: asyncio-0.26.0, cov-6.1.1
+asyncio: mode=strict, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
+collecting ... collected 198 items
+
+tests/core/test_bookmarks.py::TestBookmarkDataClass::test_bookmark_creation PASSED [  0%]
+tests/core/test_bookmarks.py::TestBookmarkServiceBasics::test_initialization PASSED [  1%]
+tests/core/test_bookmarks.py::TestBookmarkServiceBasics::test_shutdown PASSED [  1%]
+tests/core/test_bookmarks.py::TestBookmarkServiceBasics::test_has_bookmark PASSED [  2%]
+tests/core/test_bookmarks.py::TestBookmarkServiceBasics::test_is_valid PASSED [  2%]
+tests/core/test_bookmarks.py::TestBookmarkServiceBasics::test_get_bookmarked_paths PASSED [  3%]
+tests/core/test_bookmarks.py::TestBookmarkStorage::test_path_to_filename PASSED [  3%]
+tests/core/test_bookmarks.py::TestBookmarkStorage::test_save_and_read_bookmark PASSED [  4%]
+tests/core/test_bookmarks.py::TestBookmarkStorage::test_remove_bookmark PASSED [  4%]
+tests/core/test_bookmarks.py::TestBookmarkStorage::test_remove_bookmark_with_active_access PASSED [  5%]
+tests/core/test_bookmarks.py::TestBookmarkStorage::test_load_bookmarks PASSED [  5%]
+tests/core/test_bookmarks.py::TestMacOSBookmarkOperations::test_create_bookmark PASSED [  6%]
+tests/core/test_bookmarks.py::TestMacOSBookmarkOperations::test_create_bookmark_error PASSED [  6%]
+tests/core/test_bookmarks.py::TestMacOSBookmarkOperations::test_start_access PASSED [  7%]
+tests/core/test_bookmarks.py::TestMacOSBookmarkOperations::test_start_access_no_bookmark PASSED [  7%]
+tests/core/test_bookmarks.py::TestMacOSBookmarkOperations::test_start_access_already_active PASSED [  8%]
+tests/core/test_bookmarks.py::TestMacOSBookmarkOperations::test_stop_access PASSED [  8%]
+tests/core/test_bookmarks.py::TestMacOSBookmarkOperations::test_stop_access_not_active PASSED [  9%]
+tests/core/test_bookmarks.py::TestMacOSBookmarkOperations::test_verify_bookmark PASSED [  9%]
+tests/core/test_cloud_storage.py::TestCloudProviderDetectorAdvanced::test_initialize_providers_non_existent_paths PASSED [ 10%]
+tests/core/test_cloud_storage.py::TestCloudProviderDetectorAdvanced::test_check_provider_online_exceptions PASSED [ 10%]
+tests/core/test_cloud_storage.py::TestCloudProviderDetectorAdvanced::test_detect_provider_path_variants PASSED [ 11%]
+tests/core/test_cloud_storage.py::TestCloudProviderDetectorAdvanced::test_detect_provider_macos_private_prefix PASSED [ 11%]
+tests/core/test_cloud_storage.py::TestCloudProviderDetectorAdvanced::test_refresh_provider_status PASSED [ 12%]
+tests/core/test_cloud_storage.py::TestCloudProviderDetectorAdvanced::test_initialize_providers_mac_real_paths PASSED [ 12%]
+tests/core/test_cloud_storage.py::TestCloudProviderDetectorAdvanced::test_detect_provider_real_paths PASSED [ 13%]
+tests/core/test_cloud_storage.py::TestCloudStorageServiceAdvanced::test_initialize_publishes_events PASSED [ 13%]
+tests/core/test_cloud_storage.py::TestCloudStorageServiceAdvanced::test_get_provider_for_path_caching PASSED [ 14%]
+tests/core/test_cloud_storage.py::TestCloudStorageServiceAdvanced::test_get_provider_for_path_cache_limit PASSED [ 14%]
+tests/core/test_cloud_storage.py::TestCloudStorageServiceAdvanced::test_is_cloud_path PASSED [ 15%]
+tests/core/test_cloud_storage.py::TestCloudStorageServiceAdvanced::test_get_provider_type PASSED [ 15%]
+tests/core/test_cloud_storage.py::TestCloudStorageServiceAdvanced::test_is_provider_online PASSED [ 16%]
+tests/core/test_cloud_storage.py::TestCloudStorageServiceAdvanced::test_refresh_provider_status_publishes_events PASSED [ 16%]
+tests/core/test_cloud_storage.py::TestCloudStorageServiceAdvanced::test_get_all_providers PASSED [ 17%]
+tests/core/test_config.py::test_initialization PASSED                    [ 17%]
+tests/core/test_config.py::test_register_section PASSED                  [ 18%]
+tests/core/test_config.py::test_set_config_value PASSED                  [ 18%]
+tests/core/test_config.py::test_update_section PASSED                    [ 19%]
+tests/core/test_config.py::test_save_and_reload PASSED                   [ 19%]
+tests/core/test_config.py::test_reset_to_defaults PASSED                 [ 20%]
+tests/core/test_config.py::test_error_handling PASSED                    [ 20%]
+tests/core/test_config_hot_reload.py::test_config_validation PASSED      [ 21%]
+tests/core/test_config_hot_reload.py::test_get_as_model_validation PASSED [ 21%]
+tests/core/test_config_hot_reload.py::test_config_file_error_handling PASSED [ 22%]
+tests/core/test_config_hot_reload.py::test_load_invalid_config_file PASSED [ 22%]
+tests/core/test_config_hot_reload.py::test_hot_reload PASSED             [ 23%]
+tests/core/test_config_hot_reload.py::test_emit_config_change_events PASSED [ 23%]
+tests/core/test_config_hot_reload.py::test_windows_config_dir SKIPPED    [ 24%]
+tests/core/test_config_hot_reload.py::test_config_dir_detection PASSED   [ 24%]
+tests/core/test_config_hot_reload.py::test_file_watching PASSED          [ 25%]
+tests/core/test_config_hot_reload.py::test_config_changed_event_validation PASSED [ 25%]
+tests/core/test_errors.py::test_error_context PASSED                     [ 26%]
+tests/core/test_errors.py::test_application_error PASSED                 [ 26%]
+tests/core/test_errors.py::test_specific_errors PASSED                   [ 27%]
+tests/core/test_errors.py::test_error_manager_initialization PASSED      [ 27%]
+tests/core/test_errors.py::test_error_manager_handlers PASSED            [ 28%]
+tests/core/test_errors.py::test_error_manager_recovery PASSED            [ 28%]
+tests/core/test_errors.py::test_error_manager_history PASSED             [ 29%]
+tests/core/test_errors.py::test_error_manager_exception_conversion PASSED [ 29%]
+tests/core/test_errors.py::test_error_manager_handler_inheritance PASSED [ 30%]
+tests/core/test_events.py::TestEventBase::test_to_dict PASSED            [ 30%]
+tests/core/test_events.py::TestEventBase::test_to_json PASSED            [ 31%]
+tests/core/test_events.py::TestErrorEvent::test_validation PASSED        [ 31%]
+tests/core/test_events.py::TestErrorEvent::test_to_dict PASSED           [ 32%]
+tests/core/test_events.py::TestEventBusBasics::test_initialization PASSED [ 32%]
+tests/core/test_events.py::TestEventBusBasics::test_simple_publish_subscribe PASSED [ 33%]
+tests/core/test_events.py::TestEventBusBasics::test_multiple_handlers PASSED [ 33%]
+tests/core/test_events.py::TestEventBusBasics::test_unsubscribe PASSED   [ 34%]
+tests/core/test_events.py::TestEventHistoryManagement::test_event_history_management PASSED [ 34%]
+tests/core/test_events.py::TestEventHistoryManagement::test_record_history_setting PASSED [ 35%]
+tests/core/test_events.py::TestEventHistoryManagement::test_invalid_history_size PASSED [ 35%]
+tests/core/test_events.py::TestEventDelivery::test_priority_ordering PASSED [ 36%]
+tests/core/test_events.py::TestEventDelivery::test_error_handling PASSED [ 36%]
+tests/core/test_events.py::TestEventDelivery::test_nested_error_handling PASSED [ 37%]
+tests/core/test_events.py::TestEventDelivery::test_event_delivery_modes PASSED [ 37%]
+tests/core/test_events.py::TestEventDelivery::test_auto_detect_delivery_mode PASSED [ 38%]
+tests/core/test_events.py::TestAsyncEventHandling::test_async_handlers PASSED [ 38%]
+tests/core/test_events.py::TestAsyncEventHandling::test_no_event_loop_error PASSED [ 39%]
+tests/core/test_events.py::TestHandlerTypes::test_callable_handlers PASSED [ 39%]
+tests/core/test_events.py::TestHandlerTypes::test_invalid_handler_types PASSED [ 40%]
+tests/core/test_events.py::TestHandlerTypes::test_handler_type_checking PASSED [ 40%]
+tests/core/test_events.py::TestHandlerTypes::test_deliver_to_correct_handler_types PASSED [ 41%]
+tests/core/test_events.py::TestEventInheritance::test_inheritance_subscription PASSED [ 41%]
+tests/core/test_events.py::TestEventInheritance::test_event_source_auto_detection PASSED [ 42%]
+tests/core/test_filesystem.py::TestFileSystemEvent::test_initialization PASSED [ 42%]
+tests/core/test_filesystem.py::TestFileSystemEvent::test_to_dict PASSED  [ 43%]
+tests/core/test_filesystem.py::TestFileChangeEvent::test_initialization PASSED [ 43%]
+tests/core/test_filesystem.py::TestFileChangeEvent::test_to_dict PASSED  [ 44%]
+tests/core/test_filesystem.py::TestOtherEventTypes::test_bookmark_event PASSED [ 44%]
+tests/core/test_filesystem.py::TestOtherEventTypes::test_cloud_storage_event PASSED [ 45%]
+tests/core/test_filesystem.py::TestOtherEventTypes::test_directory_limit_event PASSED [ 45%]
+tests/core/test_filesystem.py::TestOtherEventTypes::test_file_permission_event PASSED [ 46%]
+tests/core/test_filesystem.py::TestOtherEventTypes::test_filesystem_error_event PASSED [ 46%]
+tests/core/test_filesystem.py::TestOtherEventTypes::test_watched_paths_changed_event PASSED [ 47%]
+tests/core/test_filesystem.py::TestBasicFileOperations::test_can_read_existing_file PASSED [ 47%]
+tests/core/test_filesystem.py::TestBasicFileOperations::test_can_write_existing_file PASSED [ 48%]
+tests/core/test_filesystem.py::TestBasicFileOperations::test_read_file_contents PASSED [ 48%]
+tests/core/test_filesystem.py::TestBasicFileOperations::test_write_file_contents PASSED [ 49%]
+tests/core/test_filesystem.py::TestBasicFileOperations::test_create_directory PASSED [ 50%]
+tests/core/test_filesystem.py::TestBasicFileOperations::test_delete_file PASSED [ 50%]
+tests/core/test_filesystem.py::TestBasicFileOperations::test_move_file PASSED [ 51%]
+tests/core/test_filesystem.py::TestFileOperationHandlers::test_standard_write_file_not_exists PASSED [ 51%]
+tests/core/test_filesystem.py::TestFileOperationHandlers::test_standard_delete_non_existent PASSED [ 52%]
+tests/core/test_filesystem.py::TestFileOperationHandlers::test_standard_rename_non_existent PASSED [ 52%]
+tests/core/test_filesystem.py::TestAccessRequestHandling::test_get_operation_handler_cloud_provider PASSED [ 53%]
+tests/core/test_filesystem.py::TestAccessRequestHandling::test_handle_bookmark_access_not_needed PASSED [ 53%]
+tests/core/test_filesystem.py::TestAccessRequestHandling::test_handle_bookmark_access_macos_home PASSED [ 54%]
+tests/core/test_filesystem.py::TestBookmarkIntegration::test_bookmark_integration PASSED [ 54%]
+tests/core/test_filesystem.py::TestFSWatcherBase::test_abstract_methods PASSED [ 55%]
+tests/core/test_filesystem.py::TestPollingWatcher::test_initialization PASSED [ 55%]
+tests/core/test_filesystem.py::TestPollingWatcher::test_start_stop PASSED [ 56%]
+tests/core/test_filesystem.py::TestPollingWatcher::test_add_remove_watch PASSED [ 56%]
+tests/core/test_filesystem.py::TestPollingWatcher::test_detect_file_creation PASSED [ 57%]
+tests/core/test_filesystem.py::TestFSEventsWatcher::test_initialization SKIPPED [ 57%]
+tests/core/test_filesystem.py::TestFSEventsWatcher::test_start_stop SKIPPED [ 58%]
+tests/core/test_filesystem.py::TestFSEventsWatcher::test_add_remove_watch SKIPPED [ 58%]
+tests/core/test_filesystem.py::TestFileSystemWatchService::test_initialization PASSED [ 59%]
+tests/core/test_filesystem.py::TestFileSystemWatchService::test_add_watch PASSED [ 59%]
+tests/core/test_filesystem.py::TestFileSystemWatchService::test_remove_watch PASSED [ 60%]
+tests/core/test_filesystem.py::TestFilesystemIntegration::test_file_access_integration PASSED [ 60%]
+tests/core/test_filesystem.py::TestFilesystemIntegration::test_macos_symlink_resolution PASSED [ 61%]
+tests/core/test_filesystem.py::TestFilesystemIntegration::test_path_manager_integration PASSED [ 61%]
+tests/core/test_integration.py::test_core_integration[EventBus-EventBase-core] PASSED [ 62%]
+tests/core/test_integration.py::test_core_integration[EventBus-EventBase-patched] PASSED [ 62%]
+tests/core/test_lifecycle.py::test_lifecycle_initialization PASSED       [ 63%]
+tests/core/test_lifecycle.py::test_startup_hook_registration PASSED      [ 63%]
+tests/core/test_lifecycle.py::test_shutdown_hook_registration PASSED     [ 64%]
+tests/core/test_lifecycle.py::test_state_transitions PASSED              [ 64%]
+tests/core/test_lifecycle.py::test_shutdown_request PASSED               [ 65%]
+tests/core/test_lifecycle.py::test_wait_for_shutdown_timeout PASSED      [ 65%]
+tests/core/test_lifecycle.py::test_hook_error_handling PASSED            [ 66%]
+tests/core/test_lifecycle.py::test_invalid_state_transitions PASSED      [ 66%]
+tests/core/test_lifecycle.py::test_service_initialization PASSED         [ 67%]
+tests/core/test_paths.py::TestPathManager::test_is_subpath PASSED        [ 67%]
+tests/core/test_paths.py::TestPathManager::test_normalize_path PASSED    [ 68%]
+tests/core/test_paths.py::TestPathManager::test_path_rule_matching PASSED [ 68%]
+tests/core/test_paths.py::TestPathManager::test_path_rule_set PASSED     [ 69%]
+tests/core/test_paths.py::TestPathManager::test_paths_equal PASSED       [ 69%]
+tests/core/test_paths.py::TestPathManager::test_rule_match_types PASSED  [ 70%]
+tests/core/test_paths.py::TestPathManager::test_rule_set_management PASSED [ 70%]
+tests/core/test_service.py::test_registration_and_resolution PASSED      [ 71%]
+tests/core/test_service.py::test_singleton_lifecycle PASSED              [ 71%]
+tests/core/test_service.py::test_transient_lifecycle PASSED              [ 72%]
+tests/core/test_service.py::test_factory_registration PASSED             [ 72%]
+tests/core/test_service.py::test_dependency_injection PASSED             [ 73%]
+tests/core/test_service.py::test_unregistered_service PASSED             [ 73%]
+tests/core/test_service.py::test_circular_dependency_detection PASSED    [ 74%]
+tests/core/test_service.py::test_dependency_validation PASSED            [ 74%]
+tests/core/test_service.py::test_invalid_registration PASSED             [ 75%]
+tests/core/test_ui.py::test_assert_objc_method_exists_success PASSED     [ 75%]
+tests/core/test_ui.py::test_assert_objc_method_exists_failure PASSED     [ 76%]
+tests/core/test_ui.py::test_assert_objc_protocol_conformance_success PASSED [ 76%]
+tests/core/test_ui.py::test_assert_objc_protocol_conformance_failure PASSED [ 77%]
+tests/core/test_ui.py::test_validate_search_field_delegate_true PASSED   [ 77%]
+tests/core/test_ui.py::test_validate_search_field_delegate_false PASSED  [ 78%]
+tests/core/test_ui.py::test_macos_app_pyobjc_unavailable PASSED          [ 78%]
+tests/test_core.py::test_placeholder PASSED                              [ 79%]
+tests/test_main.py::test_setup_logging PASSED                            [ 79%]
+tests/test_main.py::test_main_success PASSED                             [ 80%]
+tests/test_main.py::test_main_error PASSED                               [ 80%]
+tests/ui/test_macos_app.py::TestFileSearchApp::test_init_without_pyobjc PASSED [ 81%]
+tests/ui/test_macos_app.py::TestFileSearchApp::test_init_with_pyobjc PASSED [ 81%]
+tests/ui/test_macos_app.py::TestFileSearchApp::test_set_files PASSED     [ 82%]
+tests/ui/test_macos_app.py::TestFileSearchApp::test_search_functions PASSED [ 82%]
+tests/ui/test_macos_app.py::TestFileSearchApp::test_search_option_changed PASSED [ 83%]
+tests/ui/test_macos_app.py::TestFileSearchApp::test_show_with_pyobjc PASSED [ 83%]
+tests/ui/test_macos_app.py::TestFileSearchApp::test_show_without_pyobjc PASSED [ 84%]
+tests/ui/test_macos_app.py::test_search_functions PASSED                 [ 84%]
+tests/ui/test_macos_app_extended.py::TestImprovedCoverage::test_delegates_creation PASSED [ 85%]
+tests/ui/test_macos_app_extended.py::TestImprovedCoverage::test_delegate_methods PASSED [ 85%]
+tests/ui/test_macos_app_extended.py::TestImprovedCoverage::test_table_data_source_methods PASSED [ 86%]
+tests/ui/test_macos_app_extended.py::TestImprovedCoverage::test_table_delegate_methods PASSED [ 86%]
+tests/ui/test_macos_app_extended.py::test_main_function PASSED           [ 87%]
+tests/ui/test_objc_integration.py::TestTableViewWrapper::test_create_table_view PASSED [ 87%]
+tests/ui/test_objc_integration.py::TestSearchFieldWrapper::test_search_field PASSED [ 88%]
+tests/ui/test_objc_integration.py::TestSegmentedControlWrapper::test_segmented_control PASSED [ 88%]
+tests/ui/test_objc_integration.py::test_objc_method_validation PASSED    [ 89%]
+tests/ui/test_ui_integration.py::TestUIIntegration::test_app_lifecycle FAILED [ 89%]
+tests/ui/test_ui_integration.py::TestUIComponentIntegration::test_component_integration FAILED [ 90%]
+tests/ui/test_ui_integration.py::TestUIEventIntegration::test_ui_event_integration FAILED [ 90%]
+tests/ui/test_ui_integration.py::TestUIFileSystemIntegration::test_file_display FAILED [ 91%]
+tests/ui/test_ui_integration.py::TestFileSearchAppMocked::test_app_initialization FAILED [ 91%]
+
+=================================== FAILURES ===================================
+_____________________ TestUIIntegration.test_app_lifecycle _____________________
+
+self = <test_ui_integration.TestUIIntegration object at 0x10c369340>
+mock_shared_app = <MagicMock name='sharedApplication' id='4514726336'>
+mock_nsapp = <MagicMock name='NSApp' id='4514528848'>
+
+    @patch("AppKit.NSApp")
+    @patch("AppKit.NSApplication.sharedApplication")
+    def test_app_lifecycle(self, mock_shared_app, mock_nsapp) -> None:
+        """Test the full lifecycle of the FileSearchApp."""
+        # Setup mocks
+        mock_app = MagicMock()
+        mock_shared_app.return_value = mock_app
+    
+        # Create app and test initialization
+>       app = FileSearchApp()
+
+tests/ui/test_ui_integration.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/panoptikon/ui/macos_app.py:85: in __init__
+    self._setup_ui()
+src/panoptikon/ui/macos_app.py:117: in _setup_ui
+    self._search_field = SearchFieldWrapper(search_frame)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <panoptikon.ui.objc_wrappers.SearchFieldWrapper object at 0x10d221ee0>
+frame = (20, 540, 760, 30)
+
+    def __init__(self, frame: Rect | None = None) -> None:
+        """Initialize with an optional frame rectangle.
+    
+        Args:
+            frame: The frame rectangle as (x, y, width, height)
+        """
+        if frame is not None:
+>           self._search_field = AppKit.NSSearchField.alloc().initWithFrame_(
+                Foundation.NSMakeRect(*frame)
+            )
+E           objc.internal_error: Cannot calculate FFI type for {CGRect={CGPoint=dd}{CGSize=dd}}
+
+src/panoptikon/ui/objc_wrappers.py:33: internal_error
+____________ TestUIComponentIntegration.test_component_integration _____________
+
+self = <test_ui_integration.TestUIComponentIntegration object at 0x10c3696a0>
+mock_table_alloc = <MagicMock name='alloc' id='4515898272'>
+mock_segment_alloc = <MagicMock name='alloc' id='4518014880'>
+mock_search_alloc = <MagicMock name='alloc' id='4517361264'>
+mock_shared_app = <MagicMock name='sharedApplication' id='4502123424'>
+mock_nsapp = <MagicMock name='NSApp' id='4515018448'>
+
+    @patch("AppKit.NSApp")
+    @patch("AppKit.NSApplication.sharedApplication")
+    @patch("AppKit.NSSearchField.alloc")
+    @patch("AppKit.NSSegmentedControl.alloc")
+    @patch("AppKit.NSTableView.alloc")
+    def test_component_integration(
+        self,
+        mock_table_alloc,
+        mock_segment_alloc,
+        mock_search_alloc,
+        mock_shared_app,
+        mock_nsapp,
+    ) -> None:
+        """Test integration between UI components."""
+        # Setup mocks for components
+        mock_search_field = MagicMock()
+        mock_search_alloc.return_value.init.return_value = mock_search_field
+    
+        mock_segment_control = MagicMock()
+        mock_segment_alloc.return_value.init.return_value = mock_segment_control
+    
+        mock_table_view = MagicMock()
+        mock_table_alloc.return_value.init.return_value = mock_table_view
+    
+        # Create app
+>       app = FileSearchApp()
+
+tests/ui/test_ui_integration.py:79: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/panoptikon/ui/macos_app.py:85: in __init__
+    self._setup_ui()
+src/panoptikon/ui/macos_app.py:127: in _setup_ui
+    self._table_view = TableViewWrapper(table_frame)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <panoptikon.ui.objc_wrappers.TableViewWrapper object at 0x10d47c070>
+frame = (20, 20, 760, 460)
+
+    def __init__(self, frame: Rect | None = None) -> None:
+        """Initialize with an optional frame rectangle.
+    
+        Args:
+            frame: The frame rectangle as (x, y, width, height)
+        """
+        if frame is not None:
+            self._table_view = AppKit.NSTableView.alloc().initWithFrame_(
+                Foundation.NSMakeRect(*frame)
+            )
+        else:
+            self._table_view = AppKit.NSTableView.alloc().init()
+    
+        # Create a scroll view container
+        if frame is not None:
+>           self._scroll_view = AppKit.NSScrollView.alloc().initWithFrame_(
+                Foundation.NSMakeRect(*frame)
+            )
+E           AttributeError: 'OC_PythonObject' object has no attribute 'initWithFrame_'
+
+src/panoptikon/ui/objc_wrappers.py:100: AttributeError
+
+During handling of the above exception, another exception occurred:
+
+self = <contextlib.ExitStack object at 0x10d2b24c0>
+exc_details = (<class 'AttributeError'>, AttributeError("Cannot remove selector 'alloc' in 'NSTableView'"), <traceback object at 0x10d26e340>)
+received_exc = True
+_fix_exception_context = <function ExitStack.__exit__.<locals>._fix_exception_context at 0x10d22c820>
+suppressed_exc = False
+
+    def __exit__(self, *exc_details):
+        received_exc = exc_details[0] is not None
+    
+        # We manipulate the exception state so it behaves as though
+        # we were actually nesting multiple with statements
+        frame_exc = sys.exc_info()[1]
+        def _fix_exception_context(new_exc, old_exc):
+            # Context may not be correct, so find the end of the chain
+            while 1:
+                exc_context = new_exc.__context__
+                if exc_context is None or exc_context is old_exc:
+                    # Context is already set correctly (see issue 20317)
+                    return
+                if exc_context is frame_exc:
+                    break
+                new_exc = exc_context
+            # Change the end of the chain to point to the exception
+            # we expect it to reference
+            new_exc.__context__ = old_exc
+    
+        # Callbacks are invoked in LIFO order to match the behaviour of
+        # nested context managers
+        suppressed_exc = False
+        pending_raise = False
+        while self._exit_callbacks:
+            is_sync, cb = self._exit_callbacks.pop()
+            assert is_sync
+            try:
+>               if cb(*exc_details):
+
+../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:517: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <unittest.mock._patch object at 0x10c35a6d0>
+exc_info = (<class 'AttributeError'>, AttributeError("'OC_PythonObject' object has no attribute 'initWithFrame_'"), <traceback object at 0x10d26e480>)
+
+    def __exit__(self, *exc_info):
+        """Undo the patch."""
+        if self.is_local and self.temp_original is not DEFAULT:
+            setattr(self.target, self.attribute, self.temp_original)
+        else:
+>           delattr(self.target, self.attribute)
+E           AttributeError: Cannot remove selector 'alloc' in 'NSSearchField'
+
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1522: AttributeError
+
+During handling of the above exception, another exception occurred:
+
+self = <contextlib.ExitStack object at 0x10d2b24c0>
+exc_details = (<class 'AttributeError'>, AttributeError("Cannot remove selector 'alloc' in 'NSTableView'"), <traceback object at 0x10d26e340>)
+received_exc = True
+_fix_exception_context = <function ExitStack.__exit__.<locals>._fix_exception_context at 0x10d22c820>
+suppressed_exc = False
+
+    def __exit__(self, *exc_details):
+        received_exc = exc_details[0] is not None
+    
+        # We manipulate the exception state so it behaves as though
+        # we were actually nesting multiple with statements
+        frame_exc = sys.exc_info()[1]
+        def _fix_exception_context(new_exc, old_exc):
+            # Context may not be correct, so find the end of the chain
+            while 1:
+                exc_context = new_exc.__context__
+                if exc_context is None or exc_context is old_exc:
+                    # Context is already set correctly (see issue 20317)
+                    return
+                if exc_context is frame_exc:
+                    break
+                new_exc = exc_context
+            # Change the end of the chain to point to the exception
+            # we expect it to reference
+            new_exc.__context__ = old_exc
+    
+        # Callbacks are invoked in LIFO order to match the behaviour of
+        # nested context managers
+        suppressed_exc = False
+        pending_raise = False
+        while self._exit_callbacks:
+            is_sync, cb = self._exit_callbacks.pop()
+            assert is_sync
+            try:
+>               if cb(*exc_details):
+
+../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:517: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <unittest.mock._patch object at 0x10c35a760>
+exc_info = (<class 'AttributeError'>, AttributeError("Cannot remove selector 'alloc' in 'NSSearchField'"), <traceback object at 0x10d4bd240>)
+
+    def __exit__(self, *exc_info):
+        """Undo the patch."""
+        if self.is_local and self.temp_original is not DEFAULT:
+            setattr(self.target, self.attribute, self.temp_original)
+        else:
+>           delattr(self.target, self.attribute)
+E           AttributeError: Cannot remove selector 'alloc' in 'NSSegmentedControl'
+
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1522: AttributeError
+
+During handling of the above exception, another exception occurred:
+
+args = (<test_ui_integration.TestUIComponentIntegration object at 0x10c3696a0>,)
+keywargs = {}
+newargs = (<test_ui_integration.TestUIComponentIntegration object at 0x10c3696a0>, <MagicMock name='alloc' id='4515898272'>, <Ma...lloc' id='4517361264'>, <MagicMock name='sharedApplication' id='4502123424'>, <MagicMock name='NSApp' id='4515018448'>)
+newkeywargs = {}
+
+    @wraps(func)
+    def patched(*args, **keywargs):
+        with self.decoration_helper(patched,
+                                    args,
+                                    keywargs) as (newargs, newkeywargs):
+>           return func(*newargs, **newkeywargs)
+
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1336: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:137: in __exit__
+    self.gen.throw(typ, value, traceback)
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1322: in decoration_helper
+    yield (args, keywargs)
+../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:532: in __exit__
+    raise exc_details[1]
+../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:517: in __exit__
+    if cb(*exc_details):
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <unittest.mock._patch object at 0x10c35a7f0>
+exc_info = (<class 'AttributeError'>, AttributeError("Cannot remove selector 'alloc' in 'NSSegmentedControl'"), <traceback object at 0x10d26e440>)
+
+    def __exit__(self, *exc_info):
+        """Undo the patch."""
+        if self.is_local and self.temp_original is not DEFAULT:
+            setattr(self.target, self.attribute, self.temp_original)
+        else:
+>           delattr(self.target, self.attribute)
+E           AttributeError: Cannot remove selector 'alloc' in 'NSTableView'
+
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1522: AttributeError
+_______________ TestUIEventIntegration.test_ui_event_integration _______________
+
+self = <test_ui_integration.TestUIEventIntegration object at 0x10c369a60>
+mock_shared_app = <MagicMock name='sharedApplication' id='4559499712'>
+mock_nsapp = <MagicMock name='NSApp' id='4516029968'>
+
+    @patch("AppKit.NSApp")
+    @patch("AppKit.NSApplication.sharedApplication")
+    def test_ui_event_integration(self, mock_shared_app, mock_nsapp) -> None:
+        """Test that UI components respond to events correctly."""
+        # Create event bus
+        event_bus = EventBus()
+    
+        # Create app with event bus
+>       app = FileSearchApp(event_bus)
+E       TypeError: __init__() takes 1 positional argument but 2 were given
+
+tests/ui/test_ui_integration.py:124: TypeError
+________________ TestUIFileSystemIntegration.test_file_display _________________
+
+self = <test_ui_integration.TestUIFileSystemIntegration object at 0x10c369e20>
+mock_shared_app = <MagicMock name='sharedApplication' id='4562385840'>
+mock_nsapp = <MagicMock name='NSApp' id='4515969584'>
+
+    @patch("AppKit.NSApp")
+    @patch("AppKit.NSApplication.sharedApplication")
+    def test_file_display(self, mock_shared_app, mock_nsapp) -> None:
+        """Test display of filesystem items in the UI."""
+        # Create app
+>       app = FileSearchApp()
+
+tests/ui/test_ui_integration.py:160: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/panoptikon/ui/macos_app.py:85: in __init__
+    self._setup_ui()
+src/panoptikon/ui/macos_app.py:127: in _setup_ui
+    self._table_view = TableViewWrapper(table_frame)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <panoptikon.ui.objc_wrappers.TableViewWrapper object at 0x10d2f94f0>
+frame = (20, 20, 760, 460)
+
+    def __init__(self, frame: Rect | None = None) -> None:
+        """Initialize with an optional frame rectangle.
+    
+        Args:
+            frame: The frame rectangle as (x, y, width, height)
+        """
+        if frame is not None:
+            self._table_view = AppKit.NSTableView.alloc().initWithFrame_(
+                Foundation.NSMakeRect(*frame)
+            )
+        else:
+            self._table_view = AppKit.NSTableView.alloc().init()
+    
+        # Create a scroll view container
+        if frame is not None:
+>           self._scroll_view = AppKit.NSScrollView.alloc().initWithFrame_(
+                Foundation.NSMakeRect(*frame)
+            )
+E           AttributeError: 'OC_PythonObject' object has no attribute 'initWithFrame_'
+
+src/panoptikon/ui/objc_wrappers.py:100: AttributeError
+_______________ TestFileSearchAppMocked.test_app_initialization ________________
+
+args = (<test_ui_integration.TestFileSearchAppMocked object at 0x10c3731f0>,)
+keywargs = {}
+
+    @wraps(func)
+    def patched(*args, **keywargs):
+>       with self.decoration_helper(patched,
+                                    args,
+                                    keywargs) as (newargs, newkeywargs):
+
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1333: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:119: in __enter__
+    return next(self.gen)
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1315: in decoration_helper
+    arg = exit_stack.enter_context(patching)
+../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:448: in enter_context
+    result = _cm_type.__enter__(cm)
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1404: in __enter__
+    original, local = self.get_original()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <unittest.mock._patch object at 0x10c35aac0>
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+    
+        original = DEFAULT
+        local = False
+    
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+    
+        if name in _builtins and isinstance(target, ModuleType):
+            self.create = True
+    
+        if not self.create and original is DEFAULT:
+>           raise AttributeError(
+                "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: <module 'panoptikon.ui.macos_app' from '/Users/james/Documents/GitHub/panoptikon/src/panoptikon/ui/macos_app.py'> does not have the attribute 'Foundation'
+
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1377: AttributeError
+================================ tests coverage ================================
+_______________ coverage: platform darwin, python 3.9.18-final-0 _______________
+
+Name                                     Stmts   Miss  Cover   Missing
+----------------------------------------------------------------------
+src/panoptikon/__init__.py                   1      0   100%
+src/panoptikon/__main__.py                  32      0   100%
+src/panoptikon/core/__init__.py              0      0   100%
+src/panoptikon/core/config.py              246     48    80%   71-80, 174, 194, 238-240, 252, 305-313, 332, 363, 392, 409-410, 444, 512-515, 521-527, 555-566, 568, 587, 626, 658-665
+src/panoptikon/core/errors.py              178     23    87%   126, 132, 310, 393, 440, 459-460, 487, 489, 491, 494-495, 509-510, 520-521, 560, 573, 584, 598, 606, 610, 621
+src/panoptikon/core/events.py              168      9    95%   61, 341, 431, 436, 450, 455, 459-463
+src/panoptikon/core/lifecycle.py           135      7    95%   223, 359-362, 367-368
+src/panoptikon/core/service.py             109      5    95%   125-129, 246, 304-305
+src/panoptikon/database/__init__.py          0      0   100%
+src/panoptikon/filesystem/__init__.py        7      0   100%
+src/panoptikon/filesystem/access.py        271     80    70%   203, 205-206, 233-237, 255-256, 274-275, 288, 295-300, 315, 323-326, 337-342, 366-372, 398-399, 403, 417, 426, 435, 459, 469, 496-499, 518-531, 564-568, 582-586, 600-604, 618-622, 642, 647-648, 672, 678-679, 699, 704-705, 707-708, 728, 733-734, 759, 768, 773-775, 778, 781-782
+src/panoptikon/filesystem/bookmarks.py     214     42    80%   29-31, 63-64, 93-94, 97-98, 139-144, 157, 183-190, 195-201, 210-214, 223, 242-243, 292, 337-338, 350, 405-407, 420, 449-450, 453-455
+src/panoptikon/filesystem/cloud.py         139     12    91%   74, 88, 95, 102, 114, 121, 215-221, 276
+src/panoptikon/filesystem/events.py        107      3    97%   164, 205, 282
+src/panoptikon/filesystem/paths.py         106     12    89%   78-80, 174, 285-302
+src/panoptikon/filesystem/watcher.py       296    119    60%   22, 106-113, 117-128, 132-139, 148-186, 194-202, 213, 221, 249, 281-282, 285-288, 305-306, 341-342, 351-354, 359-360, 378-380, 390-391, 403-404, 425-431, 446-449, 457, 476, 538-553, 557-558, 562-563, 608-610, 618-620, 628, 635-636, 640-644, 653
+src/panoptikon/search/__init__.py            0      0   100%
+src/panoptikon/typings/__init__.py           0      0   100%
+src/panoptikon/ui/__init__.py                0      0   100%
+src/panoptikon/ui/macos_app.py             134     34    75%   39, 47, 93, 144, 235-239, 247, 258, 271-274, 286-289, 297-301, 309, 317-320, 328-333
+src/panoptikon/ui/objc_wrappers.py          79      6    92%   54, 136, 166, 222-224
+src/panoptikon/ui/validators.py             37     15    59%   104-108, 144-166
+src/panoptikon/utils/__init__.py             0      0   100%
+----------------------------------------------------------------------
+TOTAL                                     2259    415    82%
+Coverage HTML written to dir htmlcov
+Coverage XML written to file coverage.xml
+Required test coverage of 80% reached. Total coverage: 81.63%
+=========================== short test summary info ============================
+FAILED tests/ui/test_ui_integration.py::TestUIIntegration::test_app_lifecycle
+FAILED tests/ui/test_ui_integration.py::TestUIComponentIntegration::test_component_integration
+FAILED tests/ui/test_ui_integration.py::TestUIEventIntegration::test_ui_event_integration
+FAILED tests/ui/test_ui_integration.py::TestUIFileSystemIntegration::test_file_display
+FAILED tests/ui/test_ui_integration.py::TestFileSearchAppMocked::test_app_initialization
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 5 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+============= 5 failed, 173 passed, 4 skipped, 9 warnings in 2.46s =============
