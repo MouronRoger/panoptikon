@@ -4,8 +4,9 @@ This module provides configuration models and utilities for database settings.
 """
 
 from pathlib import Path
+from typing import Any, Dict
 
-from pydantic import ConfigDict, validator
+from pydantic import ConfigDict, Field, validator
 
 from ..core.config import ConfigSection
 
@@ -23,6 +24,10 @@ class DatabaseConfig(ConfigSection):
         pragma_temp_store: SQLite temp store setting (0=DEFAULT, 1=FILE, 2=MEMORY).
         pragma_cache_size: SQLite cache size in kilobytes.
         create_if_missing: Whether to create the database if it doesn't exist.
+        max_connections: Maximum number of connections in the pool.
+        min_connections: Minimum number of connections to maintain.
+        connection_max_age: Maximum age of a connection in seconds before recycling.
+        health_check_interval: Interval between health checks in seconds.
     """
 
     path: Path
@@ -32,6 +37,10 @@ class DatabaseConfig(ConfigSection):
     pragma_temp_store: int = 2  # MEMORY
     pragma_cache_size: int = 2000  # 2MB
     create_if_missing: bool = True
+    max_connections: int = Field(default=10, ge=1)
+    min_connections: int = Field(default=1, ge=0)
+    connection_max_age: float = Field(default=600.0, gt=0)  # 10 minutes
+    health_check_interval: float = Field(default=60.0, gt=0)  # 1 minute
 
     model_config = ConfigDict(
         validate_assignment=True,
@@ -111,6 +120,28 @@ class DatabaseConfig(ConfigSection):
             raise ValueError("pragma_cache_size must be non-negative")
         return v
 
+    @classmethod
+    @validator("min_connections")
+    def validate_min_connections(cls, v: int, values: Dict[str, Any]) -> int:
+        """Validate the min_connections setting.
+
+        Args:
+            v: The value to validate.
+            values: Dictionary containing previously validated values.
+
+        Returns:
+            The validated value.
+
+        Raises:
+            ValueError: If the value is not valid.
+        """
+        max_connections = values.get("max_connections", 10)
+        if v > max_connections:
+            raise ValueError(
+                f"min_connections ({v}) must not be greater than max_connections ({max_connections})"
+            )
+        return v
+
 
 def get_default_config() -> dict[str, object]:
     """Get the default database configuration.
@@ -128,4 +159,8 @@ def get_default_config() -> dict[str, object]:
         "pragma_temp_store": 2,  # MEMORY
         "pragma_cache_size": 2000,  # 2MB
         "create_if_missing": True,
+        "max_connections": 10,
+        "min_connections": 1,
+        "connection_max_age": 600.0,  # 10 minutes
+        "health_check_interval": 60.0,  # 1 minute
     }

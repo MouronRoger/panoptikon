@@ -5,18 +5,34 @@ from typing import Optional
 
 from .config import DatabaseConfig, get_default_config
 from .connection import DatabaseConnection, DatabaseConnectionService
+from .pool import (
+    ConnectionHealthStatus,
+    ConnectionPool,
+    PooledConnection,
+    PoolManager,
+    TransactionIsolationLevel,
+    get_pool_manager,
+)
+from .pool_service import DatabasePoolService
 from .schema import DatabaseSchemaService, SchemaManager
 from .service import DatabaseService
 
 __all__ = [
+    "ConnectionHealthStatus",
+    "ConnectionPool",
     "DatabaseConnection",
     "DatabaseConnectionService",
     "DatabaseConfig",
+    "DatabasePoolService",
     "DatabaseSchemaService",
     "DatabaseService",
+    "PoolManager",
+    "PooledConnection",
     "SchemaManager",
+    "TransactionIsolationLevel",
     "get_default_config",
     "get_default_db_path",
+    "get_pool_manager",
 ]
 
 
