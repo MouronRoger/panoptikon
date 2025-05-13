@@ -5,279 +5,70 @@ rootdir: /Users/james/Documents/GitHub/panoptikon
 configfile: pyproject.toml
 plugins: asyncio-0.26.0, mock-3.14.0, cov-6.1.1
 asyncio: mode=strict, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
-collecting ... collected 196 items
+collecting ... collected 22 items
 
-tests/core/test_bookmarks.py::TestBookmarkDataClass::test_bookmark_creation PASSED [  0%]
-tests/core/test_bookmarks.py::TestBookmarkServiceBasics::test_initialization PASSED [  1%]
-tests/core/test_bookmarks.py::TestBookmarkServiceBasics::test_shutdown PASSED [  1%]
-tests/core/test_bookmarks.py::TestBookmarkServiceBasics::test_has_bookmark PASSED [  2%]
-tests/core/test_bookmarks.py::TestBookmarkServiceBasics::test_is_valid PASSED [  2%]
-tests/core/test_bookmarks.py::TestBookmarkServiceBasics::test_get_bookmarked_paths PASSED [  3%]
-tests/core/test_bookmarks.py::TestBookmarkStorage::test_path_to_filename PASSED [  3%]
-tests/core/test_bookmarks.py::TestBookmarkStorage::test_save_and_read_bookmark PASSED [  4%]
-tests/core/test_bookmarks.py::TestBookmarkStorage::test_remove_bookmark PASSED [  4%]
-tests/core/test_bookmarks.py::TestBookmarkStorage::test_remove_bookmark_with_active_access PASSED [  5%]
-tests/core/test_bookmarks.py::TestBookmarkStorage::test_load_bookmarks PASSED [  5%]
-tests/core/test_bookmarks.py::TestMacOSBookmarkOperations::test_create_bookmark PASSED [  6%]
-tests/core/test_bookmarks.py::TestMacOSBookmarkOperations::test_create_bookmark_error PASSED [  6%]
-tests/core/test_bookmarks.py::TestMacOSBookmarkOperations::test_start_access PASSED [  7%]
-tests/core/test_bookmarks.py::TestMacOSBookmarkOperations::test_start_access_no_bookmark PASSED [  7%]
-tests/core/test_bookmarks.py::TestMacOSBookmarkOperations::test_start_access_already_active PASSED [  8%]
-tests/core/test_bookmarks.py::TestMacOSBookmarkOperations::test_stop_access PASSED [  8%]
-tests/core/test_bookmarks.py::TestMacOSBookmarkOperations::test_stop_access_not_active PASSED [  9%]
-tests/core/test_bookmarks.py::TestMacOSBookmarkOperations::test_verify_bookmark PASSED [  9%]
-tests/core/test_bootstrap.py::test_system_bootstrap_and_minimal_flow PASSED [ 10%]
-tests/core/test_cloud_storage.py::TestCloudProviderDetectorAdvanced::test_initialize_providers_non_existent_paths PASSED [ 10%]
-tests/core/test_cloud_storage.py::TestCloudProviderDetectorAdvanced::test_check_provider_online_exceptions PASSED [ 11%]
-tests/core/test_cloud_storage.py::TestCloudProviderDetectorAdvanced::test_detect_provider_path_variants PASSED [ 11%]
-tests/core/test_cloud_storage.py::TestCloudProviderDetectorAdvanced::test_detect_provider_macos_private_prefix PASSED [ 12%]
-tests/core/test_cloud_storage.py::TestCloudProviderDetectorAdvanced::test_refresh_provider_status PASSED [ 12%]
-tests/core/test_cloud_storage.py::TestCloudProviderDetectorAdvanced::test_initialize_providers_mac_real_paths PASSED [ 13%]
-tests/core/test_cloud_storage.py::TestCloudProviderDetectorAdvanced::test_detect_provider_real_paths PASSED [ 13%]
-tests/core/test_cloud_storage.py::TestCloudStorageServiceAdvanced::test_initialize_publishes_events PASSED [ 14%]
-tests/core/test_cloud_storage.py::TestCloudStorageServiceAdvanced::test_get_provider_for_path_caching PASSED [ 14%]
-tests/core/test_cloud_storage.py::TestCloudStorageServiceAdvanced::test_get_provider_for_path_cache_limit PASSED [ 15%]
-tests/core/test_cloud_storage.py::TestCloudStorageServiceAdvanced::test_is_cloud_path PASSED [ 15%]
-tests/core/test_cloud_storage.py::TestCloudStorageServiceAdvanced::test_get_provider_type PASSED [ 16%]
-tests/core/test_cloud_storage.py::TestCloudStorageServiceAdvanced::test_is_provider_online PASSED [ 16%]
-tests/core/test_cloud_storage.py::TestCloudStorageServiceAdvanced::test_refresh_provider_status_publishes_events PASSED [ 17%]
-tests/core/test_cloud_storage.py::TestCloudStorageServiceAdvanced::test_get_all_providers PASSED [ 17%]
-tests/core/test_config.py::test_initialization PASSED                    [ 18%]
-tests/core/test_config.py::test_register_section PASSED                  [ 18%]
-tests/core/test_config.py::test_set_config_value PASSED                  [ 19%]
-tests/core/test_config.py::test_update_section PASSED                    [ 19%]
-tests/core/test_config.py::test_save_and_reload PASSED                   [ 20%]
-tests/core/test_config.py::test_reset_to_defaults PASSED                 [ 20%]
-tests/core/test_config.py::test_error_handling PASSED                    [ 21%]
-tests/core/test_config_hot_reload.py::test_config_validation PASSED      [ 21%]
-tests/core/test_config_hot_reload.py::test_get_as_model_validation PASSED [ 22%]
-tests/core/test_config_hot_reload.py::test_config_file_error_handling PASSED [ 22%]
-tests/core/test_config_hot_reload.py::test_load_invalid_config_file PASSED [ 23%]
-tests/core/test_config_hot_reload.py::test_hot_reload PASSED             [ 23%]
-tests/core/test_config_hot_reload.py::test_emit_config_change_events PASSED [ 24%]
-tests/core/test_config_hot_reload.py::test_windows_config_dir SKIPPED    [ 25%]
-tests/core/test_config_hot_reload.py::test_config_dir_detection PASSED   [ 25%]
-tests/core/test_config_hot_reload.py::test_file_watching PASSED          [ 26%]
-tests/core/test_config_hot_reload.py::test_config_changed_event_validation PASSED [ 26%]
-tests/core/test_errors.py::test_error_context PASSED                     [ 27%]
-tests/core/test_errors.py::test_application_error PASSED                 [ 27%]
-tests/core/test_errors.py::test_specific_errors PASSED                   [ 28%]
-tests/core/test_errors.py::test_error_manager_initialization PASSED      [ 28%]
-tests/core/test_errors.py::test_error_manager_handlers PASSED            [ 29%]
-tests/core/test_errors.py::test_error_manager_recovery PASSED            [ 29%]
-tests/core/test_errors.py::test_error_manager_history PASSED             [ 30%]
-tests/core/test_errors.py::test_error_manager_exception_conversion PASSED [ 30%]
-tests/core/test_errors.py::test_error_manager_handler_inheritance PASSED [ 31%]
-tests/core/test_events.py::TestEventBase::test_to_dict PASSED            [ 31%]
-tests/core/test_events.py::TestEventBase::test_to_json PASSED            [ 32%]
-tests/core/test_events.py::TestErrorEvent::test_validation PASSED        [ 32%]
-tests/core/test_events.py::TestErrorEvent::test_to_dict PASSED           [ 33%]
-tests/core/test_events.py::TestEventBusBasics::test_initialization PASSED [ 33%]
-tests/core/test_events.py::TestEventBusBasics::test_simple_publish_subscribe PASSED [ 34%]
-tests/core/test_events.py::TestEventBusBasics::test_multiple_handlers PASSED [ 34%]
-tests/core/test_events.py::TestEventBusBasics::test_unsubscribe PASSED   [ 35%]
-tests/core/test_events.py::TestEventHistoryManagement::test_event_history_management PASSED [ 35%]
-tests/core/test_events.py::TestEventHistoryManagement::test_record_history_setting PASSED [ 36%]
-tests/core/test_events.py::TestEventHistoryManagement::test_invalid_history_size PASSED [ 36%]
-tests/core/test_events.py::TestEventDelivery::test_priority_ordering PASSED [ 37%]
-tests/core/test_events.py::TestEventDelivery::test_error_handling PASSED [ 37%]
-tests/core/test_events.py::TestEventDelivery::test_nested_error_handling PASSED [ 38%]
-tests/core/test_events.py::TestEventDelivery::test_event_delivery_modes PASSED [ 38%]
-tests/core/test_events.py::TestEventDelivery::test_auto_detect_delivery_mode PASSED [ 39%]
-tests/core/test_events.py::TestAsyncEventHandling::test_async_handlers PASSED [ 39%]
-tests/core/test_events.py::TestAsyncEventHandling::test_no_event_loop_error PASSED [ 40%]
-tests/core/test_events.py::TestHandlerTypes::test_callable_handlers PASSED [ 40%]
-tests/core/test_events.py::TestHandlerTypes::test_invalid_handler_types PASSED [ 41%]
-tests/core/test_events.py::TestHandlerTypes::test_handler_type_checking PASSED [ 41%]
-tests/core/test_events.py::TestHandlerTypes::test_deliver_to_correct_handler_types PASSED [ 42%]
-tests/core/test_events.py::TestEventInheritance::test_inheritance_subscription PASSED [ 42%]
-tests/core/test_events.py::TestEventInheritance::test_event_source_auto_detection PASSED [ 43%]
-tests/core/test_filesystem.py::TestFileSystemEvent::test_initialization PASSED [ 43%]
-tests/core/test_filesystem.py::TestFileSystemEvent::test_to_dict PASSED  [ 44%]
-tests/core/test_filesystem.py::TestFileChangeEvent::test_initialization PASSED [ 44%]
-tests/core/test_filesystem.py::TestFileChangeEvent::test_to_dict PASSED  [ 45%]
-tests/core/test_filesystem.py::TestOtherEventTypes::test_bookmark_event PASSED [ 45%]
-tests/core/test_filesystem.py::TestOtherEventTypes::test_cloud_storage_event PASSED [ 46%]
-tests/core/test_filesystem.py::TestOtherEventTypes::test_directory_limit_event PASSED [ 46%]
-tests/core/test_filesystem.py::TestOtherEventTypes::test_file_permission_event PASSED [ 47%]
-tests/core/test_filesystem.py::TestOtherEventTypes::test_filesystem_error_event PASSED [ 47%]
-tests/core/test_filesystem.py::TestOtherEventTypes::test_watched_paths_changed_event PASSED [ 48%]
-tests/core/test_filesystem.py::TestFilesystemIntegration::test_file_access_integration PASSED [ 48%]
-tests/core/test_filesystem.py::TestFilesystemIntegration::test_macos_symlink_resolution PASSED [ 49%]
-tests/core/test_filesystem.py::TestFilesystemIntegration::test_path_manager_integration PASSED [ 50%]
-tests/core/test_filesystem.py::TestFilesystemComponentIntegration::test_watcher_events_path_manager FAILED [ 50%]
-tests/core/test_filesystem.py::TestFilesystemComponentIntegration::test_access_bookmarks_cloud_detection FAILED [ 51%]
-tests/core/test_filesystem.py::TestFilesystemComponentIntegration::test_full_permission_flow FAILED [ 51%]
-ERROR: Coverage failure: total of 65 is less than fail-under=80
+tests/core/test_db_pool.py::test_pool_initialization PASSED              [  4%]
+tests/core/test_db_pool.py::test_pool_get_connection PASSED              [  9%]
+tests/core/test_db_pool.py::test_pool_connection_reuse PASSED            [ 13%]
+tests/core/test_db_pool.py::test_pool_max_connections PASSED             [ 18%]
+tests/core/test_db_pool.py::test_pool_connection_health_check PASSED     [ 22%]
+tests/core/test_db_pool.py::test_pool_connection_max_age PASSED          [ 27%]
+tests/core/test_db_pool.py::test_pool_transaction PASSED                 [ 31%]
+tests/core/test_db_pool.py::test_pool_different_isolation_levels PASSED  [ 36%]
+tests/core/test_db_pool.py::test_pool_savepoint PASSED                   [ 40%]
+tests/core/test_db_pool.py::test_pool_savepoint_context_manager PASSED   [ 45%]
+tests/core/test_db_pool.py::test_pool_concurrent_access_param[10] PASSED [ 50%]
+tests/core/test_db_pool.py::test_pool_concurrent_access_param[50] PASSED [ 54%]
+tests/core/test_db_pool.py::test_pool_concurrent_access_param[100] PASSED [ 59%]
+tests/core/test_db_pool.py::test_pool_concurrent_access_param[150] PASSED [ 63%]
+tests/core/test_db_pool.py::test_pool_writer_contention PASSED           [ 68%]
+tests/core/test_db_pool.py::test_pool_stress_leak_prevention PASSED      [ 72%]
+tests/core/test_db_pool.py::test_pool_manager PASSED                     [ 77%]
+tests/core/test_db_pool.py::test_pool_thread_safety PASSED               [ 81%]
+tests/core/test_db_pool.py::test_connection_health_status PASSED         [ 86%]
+tests/core/test_db_pool.py::test_transaction_isolation_level PASSED      [ 90%]
+tests/core/test_db_pool.py::test_pooled_connection PASSED                [ 95%]
+tests/core/test_db_pool.py::test_pool_invalid_params PASSED              [100%]
+ERROR: Coverage failure: total of 30 is less than fail-under=80
 
 
-=================================== FAILURES ===================================
-_____ TestFilesystemComponentIntegration.test_watcher_events_path_manager ______
-
-self = <tests.core.test_filesystem.TestFilesystemComponentIntegration object at 0x112273280>
-watch_service = <src.panoptikon.filesystem.watcher.FileSystemWatchService object at 0x1123d3fd0>
-path_manager = <src.panoptikon.filesystem.paths.PathManager object at 0x1123d3e50>
-mock_event_bus = <MagicMock spec='EventBus' id='4602107840'>
-temp_dir = PosixPath('/var/folders/_3/txtv4qn97sq809q4q2z4mzf40000gn/T/tmpp9y7lldy')
-
-    def test_watcher_events_path_manager(
-        self,
-        watch_service: FileSystemWatchService,
-        path_manager: PathManager,
-        mock_event_bus: MagicMock,
-        temp_dir: Path,
-    ) -> None:
-        """Test that adding a watch triggers the correct event and PathManager matches the path."""
-        path = temp_dir / "watched"
-        path.mkdir()
-        path_manager.create_rule_set("test").add_include(str(path / "**"))
-        watch_service.add_watch(path)
-        # Check that an event was published
-        mock_event_bus.publish.assert_called()
-        event = mock_event_bus.publish.call_args[0][0]
-        from src.panoptikon.filesystem.events import WatchedPathsChangedEvent
-    
-        assert isinstance(event, WatchedPathsChangedEvent)
-        assert path.resolve() in event.added_paths
-        # PathManager should match the watched path using the public API
-        # Use PathManager.match_rule_set if available, else check inclusion
-        if hasattr(path_manager, "match_rule_set"):
-            assert path_manager.match_rule_set("test", path / "foo.txt")
-        else:
-            rule_set = path_manager.get_rule_set("test")
-            assert rule_set is not None
-            # Try common include attributes
-            if hasattr(rule_set, "include_rules"):
->               assert any(
-                    str(path / "foo.txt").startswith(str(rule.pattern))
-                    for rule in rule_set.include_rules
-                )
-E               assert False
-E                +  where False = any(<generator object TestFilesystemComponentIntegration.test_watcher_events_path_manager.<locals>.<genexpr> at 0x11254d270>)
-
-tests/core/test_filesystem.py:550: AssertionError
-___ TestFilesystemComponentIntegration.test_access_bookmarks_cloud_detection ___
-
-self = <tests.core.test_filesystem.TestFilesystemComponentIntegration object at 0x1122732e0>
-file_access_service = <src.panoptikon.filesystem.access.FileAccessService object at 0x1123cbf70>
-bookmark_service = <src.panoptikon.filesystem.bookmarks.BookmarkService object at 0x112558c70>
-cloud_service = <src.panoptikon.filesystem.cloud.CloudStorageService object at 0x112558cd0>
-temp_dir = PosixPath('/var/folders/_3/txtv4qn97sq809q4q2z4mzf40000gn/T/tmpa3w7ql1f')
-mocker = <pytest_mock.plugin.MockerFixture object at 0x1123cbdc0>
-
-    def test_access_bookmarks_cloud_detection(
-        self,
-        file_access_service: FileAccessService,
-        bookmark_service: BookmarkService,
-        cloud_service: CloudStorageService,
-        temp_dir: Path,
-        mocker,
-    ) -> None:
-        """Test that FileAccessService uses BookmarkService and CloudStorageService for a cloud path."""
-        # Simulate a cloud path
-        cloud_path = temp_dir / "cloudfile.txt"
-        cloud_path.write_text("cloud data")
-        # Spy on methods to check calls
-        provider = mocker.Mock()
-        spy_get_provider = mocker.spy(cloud_service, "get_provider_for_path")
-        spy_create_bookmark = mocker.spy(bookmark_service, "create_bookmark")
-        spy_start_access = mocker.spy(bookmark_service, "start_access")
-        mocker.patch.object(
-            cloud_service, "get_provider_for_path", return_value=provider
-        )
-        mocker.patch.object(bookmark_service, "has_bookmark", return_value=False)
-        mocker.patch.object(bookmark_service, "create_bookmark", return_value=True)
-        mocker.patch.object(bookmark_service, "start_access", return_value=True)
-        # Request access
-        from src.panoptikon.filesystem.access import (
-            AccessRequest,
-            AccessType,
-            PermissionStrategy,
-        )
-    
-        request = AccessRequest(
-            path=cloud_path,
-            access_type=AccessType.READ,
-            strategy=PermissionStrategy.PROGRESSIVE,
-        )
-        result = file_access_service.request_access(request)
-        assert result.success
-        # Check that the spies were called with the expected arguments
->       assert any(
-            call[0][0] == cloud_path.resolve()
-            for call in spy_create_bookmark.call_args_list
-        )
-E       assert False
-E        +  where False = any(<generator object TestFilesystemComponentIntegration.test_access_bookmarks_cloud_detection.<locals>.<genexpr> at 0x1123dcdd0>)
-
-tests/core/test_filesystem.py:596: AssertionError
-_________ TestFilesystemComponentIntegration.test_full_permission_flow _________
-
-self = <tests.core.test_filesystem.TestFilesystemComponentIntegration object at 0x1122733a0>
-file_access_service = <src.panoptikon.filesystem.access.FileAccessService object at 0x1125e7040>
-bookmark_service = <src.panoptikon.filesystem.bookmarks.BookmarkService object at 0x1123bca00>
-temp_dir = PosixPath('/var/folders/_3/txtv4qn97sq809q4q2z4mzf40000gn/T/tmpkgshibi3')
-mocker = <pytest_mock.plugin.MockerFixture object at 0x1125e7160>
-
-    def test_full_permission_flow(
-        self,
-        file_access_service: FileAccessService,
-        bookmark_service: BookmarkService,
-        temp_dir: Path,
-        mocker,
-    ) -> None:
-        """Test a full permission flow: create file, check permission, create bookmark, access, delete."""
-        test_file = temp_dir / "permtest.txt"
-        # Patch bookmark_service to always succeed
-        mocker.patch.object(bookmark_service, "has_bookmark", return_value=False)
-        mocker.patch.object(bookmark_service, "create_bookmark", return_value=True)
-        mocker.patch.object(bookmark_service, "start_access", return_value=True)
-        # Create file
-        assert file_access_service.create_directory(temp_dir)
-        assert file_access_service.write_file(test_file, b"data")
-        # Check can_read and can_write
->       assert file_access_service.can_read(test_file)
-E       AssertionError: assert False
-E        +  where False = can_read(PosixPath('/var/folders/_3/txtv4qn97sq809q4q2z4mzf40000gn/T/tmpkgshibi3/permtest.txt'))
-E        +    where can_read = <src.panoptikon.filesystem.access.FileAccessService object at 0x1125e7040>.can_read
-
-tests/core/test_filesystem.py:626: AssertionError
 ================================ tests coverage ================================
 _______________ coverage: platform darwin, python 3.9.18-final-0 _______________
 
-Name                                     Stmts   Miss  Cover
-------------------------------------------------------------
-src/panoptikon/__init__.py                   1      0   100%
-src/panoptikon/__main__.py                  32     32     0%
-src/panoptikon/core/__init__.py              0      0   100%
-src/panoptikon/core/config.py              245     37    85%
-src/panoptikon/core/errors.py              178     21    88%
-src/panoptikon/core/events.py              168      9    95%
-src/panoptikon/core/lifecycle.py           135     29    79%
-src/panoptikon/core/service.py             108     19    82%
-src/panoptikon/database/__init__.py          0      0   100%
-src/panoptikon/filesystem/__init__.py        7      0   100%
-src/panoptikon/filesystem/access.py        287    134    53%
-src/panoptikon/filesystem/bookmarks.py     214     42    80%
-src/panoptikon/filesystem/cloud.py         139     12    91%
-src/panoptikon/filesystem/events.py        107      3    97%
-src/panoptikon/filesystem/paths.py         106     46    57%
-src/panoptikon/filesystem/watcher.py       296    175    41%
-src/panoptikon/search/__init__.py            0      0   100%
-src/panoptikon/typings/__init__.py           0      0   100%
-src/panoptikon/ui/__init__.py                0      0   100%
-src/panoptikon/ui/macos_app.py             127    127     0%
-src/panoptikon/ui/objc_wrappers.py          79     79     0%
-src/panoptikon/ui/validators.py             37     26    30%
-src/panoptikon/utils/__init__.py             0      0   100%
-------------------------------------------------------------
-TOTAL                                     2266    791    65%
+Name                                      Stmts   Miss  Cover
+-------------------------------------------------------------
+src/panoptikon/__init__.py                    1      0   100%
+src/panoptikon/__main__.py                   32     32     0%
+src/panoptikon/core/__init__.py               0      0   100%
+src/panoptikon/core/config.py               245    199    19%
+src/panoptikon/core/errors.py               178     91    49%
+src/panoptikon/core/events.py               168    107    36%
+src/panoptikon/core/lifecycle.py            135    135     0%
+src/panoptikon/core/service.py              108     80    26%
+src/panoptikon/database/__init__.py          14      4    71%
+src/panoptikon/database/config.py            54     21    61%
+src/panoptikon/database/connection.py        87     63    28%
+src/panoptikon/database/pool.py             268     53    80%
+src/panoptikon/database/pool_service.py      95     67    29%
+src/panoptikon/database/schema.py           139    104    25%
+src/panoptikon/database/service.py           70     49    30%
+src/panoptikon/filesystem/__init__.py         7      0   100%
+src/panoptikon/filesystem/access.py         287    214    25%
+src/panoptikon/filesystem/bookmarks.py      214    174    19%
+src/panoptikon/filesystem/cloud.py          139    103    26%
+src/panoptikon/filesystem/events.py         107     61    43%
+src/panoptikon/filesystem/paths.py          106     68    36%
+src/panoptikon/filesystem/watcher.py        296    227    23%
+src/panoptikon/search/__init__.py             0      0   100%
+src/panoptikon/typings/__init__.py            0      0   100%
+src/panoptikon/ui/__init__.py                 0      0   100%
+src/panoptikon/ui/macos_app.py              127    127     0%
+src/panoptikon/ui/objc_wrappers.py           79     79     0%
+src/panoptikon/ui/validators.py              37     37     0%
+src/panoptikon/utils/__init__.py              0      0   100%
+-------------------------------------------------------------
+TOTAL                                      2993   2095    30%
 Coverage HTML written to dir htmlcov
 Coverage XML written to file coverage.xml
-FAIL Required test coverage of 80% not reached. Total coverage: 65.09%
-=========================== short test summary info ============================
-FAILED tests/core/test_filesystem.py::TestFilesystemComponentIntegration::test_watcher_events_path_manager
-FAILED tests/core/test_filesystem.py::TestFilesystemComponentIntegration::test_access_bookmarks_cloud_detection
-FAILED tests/core/test_filesystem.py::TestFilesystemComponentIntegration::test_full_permission_flow
-!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 3 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
-============= 3 failed, 97 passed, 1 skipped, 7 warnings in 1.21s ==============
+FAIL Required test coverage of 80% not reached. Total coverage: 30.00%
+============================== 22 passed in 6.87s ==============================

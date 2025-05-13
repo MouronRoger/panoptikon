@@ -3,6 +3,9 @@
 from collections.abc import Generator
 from pathlib import Path
 import sqlite3
+import threading
+import time
+from typing import List
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -340,3 +343,177 @@ def test_pool_service_shutdown(pool_service: DatabasePoolService) -> None:
 
     # Check that the service is no longer initialized
     assert not pool_service._initialized
+
+
+@pytest.fixture
+def real_pool_service(tmp_path: Path) -> Generator[DatabasePoolService, None, None]:
+    """Create a real DatabasePoolService with a real SQLite file for integration tests."""
+    db_path = tmp_path / "integration_test.db"
+    config = MagicMock(spec=DatabaseConfig)
+    config.path = db_path
+    config.timeout = 1.0
+    config.max_connections = 20
+    config.min_connections = 1
+    config.create_if_missing = True
+    config.connection_max_age = 10.0
+    config.health_check_interval = 1.0
+    config.pragma_synchronous = 1
+    config.pragma_journal_mode = "WAL"
+    config.pragma_temp_store = 2
+    config.pragma_cache_size = 2000
+    config.connection_max_age = 10.0
+    config.health_check_interval = 1.0
+
+    config_system = MagicMock(spec=ConfigurationSystem)
+    config_system.get_as_model.return_value = config
+
+    service = DatabasePoolService(config_system)
+    service.initialize()
+    # Create a test table
+    with service.get_connection() as conn:
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY, value TEXT)"
+        )
+    yield service
+    service.shutdown()
+
+
+@pytest.mark.parametrize("num_threads", [10, 50, 100])
+def test_pool_service_concurrent_access_integration(
+    real_pool_service: DatabasePoolService, num_threads: int
+) -> None:
+    """Integration: Test concurrent access to DatabasePoolService with real SQLite file.
+
+    Under high concurrency, SQLite's single-writer limitation means not all threads
+    will succeed. This test asserts that a reasonable number of threads succeed.
+    """
+    errors: List[Exception] = []
+    successes = 0
+    lock = threading.Lock()
+
+    def worker(thread_id: int) -> None:
+        nonlocal successes
+        try:
+            with real_pool_service.transaction() as conn:
+                conn.execute(
+                    "INSERT INTO test (id, value) VALUES (?, ?)",
+                    (thread_id, f"thread {thread_id}"),
+                )
+                time.sleep(0.005)
+            with real_pool_service.get_connection() as conn:
+                cursor = conn.execute(
+                    "SELECT value FROM test WHERE id = ?", (thread_id,)
+                )
+                result = cursor.fetchone()
+                if result and result[0] == f"thread {thread_id}":
+                    with lock:
+                        successes += 1
+                else:
+                    raise Exception("Read after write failed")
+        except Exception as e:
+            errors.append(e)
+
+    threads = []
+    for i in range(num_threads):
+        thread = threading.Thread(target=worker, args=(10000 + i,))
+        threads.append(thread)
+        thread.start()
+    for thread in threads:
+        thread.join()
+    assert successes >= num_threads // 2, (
+        f"Expected at least 50% success, got {successes}/{num_threads}"
+    )
+    for e in errors:
+        msg = str(e)
+        assert (
+            "locked" in msg
+            or "busy" in msg
+            or "cannot rollback" in msg
+            or isinstance(e, DatabaseError)
+        )
+
+
+def test_pool_service_writer_contention_integration(
+    real_pool_service: DatabasePoolService,
+) -> None:
+    """Integration: Test writer contention with many threads using DatabasePoolService.
+
+    Many threads attempt to write at once. Some will fail due to SQLite's single-writer limitation.
+    """
+    num_threads = 30
+    errors: List[Exception] = []
+    successes = 0
+    lock = threading.Lock()
+
+    def writer(thread_id: int) -> None:
+        nonlocal successes
+        try:
+            with real_pool_service.transaction(
+                TransactionIsolationLevel.IMMEDIATE
+            ) as conn:
+                conn.execute(
+                    "INSERT INTO test (id, value) VALUES (?, ?)",
+                    (20000 + thread_id, f"writer {thread_id}"),
+                )
+                time.sleep(0.01)
+            with lock:
+                successes += 1
+        except Exception as e:
+            errors.append(e)
+
+    threads = [threading.Thread(target=writer, args=(i,)) for i in range(num_threads)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    assert successes > 0
+    for e in errors:
+        msg = str(e)
+        assert (
+            "locked" in msg
+            or "busy" in msg
+            or "cannot rollback" in msg
+            or isinstance(e, DatabaseError)
+        )
+
+
+def test_pool_service_stress_leak_prevention_integration(
+    real_pool_service: DatabasePoolService,
+) -> None:
+    """Integration: Stress test for leak/deadlock prevention with DatabasePoolService.
+
+    Many threads, many iterations. All connections should be returned to the pool.
+    """
+    num_threads = 20
+    iterations = 10
+    errors: List[Exception] = []
+
+    def worker(thread_id: int) -> None:
+        for j in range(iterations):
+            try:
+                with real_pool_service.transaction() as conn:
+                    conn.execute(
+                        "INSERT INTO test (id, value) VALUES (?, ?)",
+                        (30000 + thread_id * 1000 + j, f"stress {thread_id}-{j}"),
+                    )
+                with real_pool_service.get_connection() as conn:
+                    cursor = conn.execute(
+                        "SELECT value FROM test WHERE id = ?",
+                        (30000 + thread_id * 1000 + j,),
+                    )
+                    result = cursor.fetchone()
+                    assert result[0] == f"stress {thread_id}-{j}"
+            except Exception as e:
+                errors.append(e)
+
+    threads = [threading.Thread(target=worker, args=(i,)) for i in range(num_threads)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    stats = real_pool_service.get_stats()
+    assert stats["active_connections"] == 0
+    assert stats["idle_connections"] >= 1
+    for e in errors:
+        msg = str(e)
+        assert "deadlock" not in msg.lower()

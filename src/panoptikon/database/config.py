@@ -4,9 +4,9 @@ This module provides configuration models and utilities for database settings.
 """
 
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Optional
 
-from pydantic import ConfigDict, Field, validator
+from pydantic import ConfigDict, Field, field_validator
 
 from ..core.config import ConfigSection
 
@@ -47,8 +47,8 @@ class DatabaseConfig(ConfigSection):
         frozen=True,
     )
 
+    @field_validator("pragma_synchronous")
     @classmethod
-    @validator("pragma_synchronous")
     def validate_pragma_synchronous(cls, v: int) -> int:
         """Validate the pragma_synchronous setting.
 
@@ -65,8 +65,8 @@ class DatabaseConfig(ConfigSection):
             raise ValueError("pragma_synchronous must be 0, 1, 2, or 3")
         return v
 
+    @field_validator("pragma_journal_mode")
     @classmethod
-    @validator("pragma_journal_mode")
     def validate_pragma_journal_mode(cls, v: str) -> str:
         """Validate the pragma_journal_mode setting.
 
@@ -84,8 +84,8 @@ class DatabaseConfig(ConfigSection):
             raise ValueError(f"pragma_journal_mode must be one of {valid_modes}")
         return v.upper()
 
+    @field_validator("pragma_temp_store")
     @classmethod
-    @validator("pragma_temp_store")
     def validate_pragma_temp_store(cls, v: int) -> int:
         """Validate the pragma_temp_store setting.
 
@@ -102,8 +102,8 @@ class DatabaseConfig(ConfigSection):
             raise ValueError("pragma_temp_store must be 0, 1, or 2")
         return v
 
+    @field_validator("pragma_cache_size")
     @classmethod
-    @validator("pragma_cache_size")
     def validate_pragma_cache_size(cls, v: int) -> int:
         """Validate the pragma_cache_size setting.
 
@@ -120,9 +120,11 @@ class DatabaseConfig(ConfigSection):
             raise ValueError("pragma_cache_size must be non-negative")
         return v
 
+    @field_validator("min_connections")
     @classmethod
-    @validator("min_connections")
-    def validate_min_connections(cls, v: int, values: Dict[str, Any]) -> int:
+    def validate_min_connections(
+        cls, v: int, values: Optional[dict[str, Any]] = None
+    ) -> int:
         """Validate the min_connections setting.
 
         Args:
@@ -135,7 +137,9 @@ class DatabaseConfig(ConfigSection):
         Raises:
             ValueError: If the value is not valid.
         """
-        max_connections = values.get("max_connections", 10)
+        max_connections = 10
+        if values is not None and "max_connections" in values:
+            max_connections = values["max_connections"]
         if v > max_connections:
             raise ValueError(
                 f"min_connections ({v}) must not be greater than max_connections ({max_connections})"

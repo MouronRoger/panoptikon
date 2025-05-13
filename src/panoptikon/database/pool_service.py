@@ -24,6 +24,22 @@ class DatabasePoolService(ServiceInterface):
 
     This service integrates connection pool management with the service container.
     It provides connection pooling, transaction management, and query execution.
+
+    Thread Safety:
+        - All public methods are thread-safe unless otherwise noted.
+        - Each thread is assigned its own connection when possible.
+        - The underlying pool is thread-safe and connections are not shared between threads.
+
+    Context Manager Usage:
+        - Use `with service.get_connection()` to safely acquire and release a connection.
+        - Use `with service.transaction()` to run a transaction with automatic commit/rollback.
+        - Use `with service.savepoint()` for nested transactions.
+
+    SQLite Single-Writer Limitation:
+        - SQLite allows only one writer at a time. Under high write concurrency,
+          some threads may experience 'database is locked' errors or timeouts.
+        - The pool will retry and recycle connections as needed, but users should
+          expect write contention and handle exceptions accordingly.
     """
 
     def __init__(self, config_system: ConfigurationSystem) -> None:
@@ -176,6 +192,12 @@ class DatabasePoolService(ServiceInterface):
     ) -> sqlite3.Cursor:
         """Execute a SQL query with parameters.
 
+        Thread Safety:
+            - Safe to call from multiple threads.
+
+        SQLite Limitation:
+            - Write queries may fail under high concurrency due to SQLite's single-writer limitation.
+
         Args:
             query: The SQL query to execute.
             parameters: Optional parameters for the query.
@@ -193,6 +215,12 @@ class DatabasePoolService(ServiceInterface):
         self, query: str, parameters: List[Union[Tuple[Any, ...], Dict[str, Any]]]
     ) -> sqlite3.Cursor:
         """Execute a SQL query with multiple parameter sets.
+
+        Thread Safety:
+            - Safe to call from multiple threads.
+
+        SQLite Limitation:
+            - Write queries may fail under high concurrency due to SQLite's single-writer limitation.
 
         Args:
             query: The SQL query to execute.
@@ -214,6 +242,17 @@ class DatabasePoolService(ServiceInterface):
     ) -> Generator[sqlite3.Connection, None, None]:
         """Start a transaction with the specified isolation level.
 
+        This method is a context manager. Use as:
+            with service.transaction() as conn:
+                ...
+
+        Thread Safety:
+            - Safe to call from multiple threads. Each thread gets its own transaction.
+
+        SQLite Limitation:
+            - Only one write transaction can be active at a time. Other threads may block or fail.
+            - Use IMMEDIATE or EXCLUSIVE isolation levels to control locking behavior.
+
         Args:
             isolation_level: Transaction isolation level.
 
@@ -230,6 +269,16 @@ class DatabasePoolService(ServiceInterface):
     @contextmanager
     def savepoint(self, name: str = "") -> Generator[sqlite3.Connection, None, None]:
         """Create a savepoint for nested transactions.
+
+        This method is a context manager. Use as:
+            with service.savepoint("sp_name") as conn:
+                ...
+
+        Thread Safety:
+            - Safe to call from multiple threads. Each thread gets its own savepoint.
+
+        SQLite Limitation:
+            - Savepoints are only effective within a transaction.
 
         Args:
             name: Optional savepoint name. If not provided, a unique name is generated.
@@ -250,6 +299,18 @@ class DatabasePoolService(ServiceInterface):
     ) -> Generator[sqlite3.Connection, None, None]:
         """Get a connection from the pool.
 
+        This method is a context manager. Use as:
+            with service.get_connection() as conn:
+                ...
+
+        Thread Safety:
+            - Safe to call from multiple threads. Each thread gets its own connection.
+            - Connections are not shared between threads.
+
+        SQLite Limitation:
+            - Under high concurrency, acquiring a connection may block or timeout.
+            - If all connections are in use, a ConnectionAcquisitionTimeout is raised.
+
         Args:
             timeout: Optional timeout override for connection acquisition.
 
@@ -266,6 +327,9 @@ class DatabasePoolService(ServiceInterface):
 
     def get_stats(self) -> dict[str, Any]:
         """Get statistics about the connection pool.
+
+        Thread Safety:
+            - Safe to call from multiple threads.
 
         Returns:
             Dictionary with connection pool statistics.

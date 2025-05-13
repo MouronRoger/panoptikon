@@ -7,7 +7,6 @@ transaction isolation level support.
 
 from collections import deque
 from collections.abc import Generator
-from contextlib import contextmanager
 from dataclasses import dataclass, field
 import enum
 import logging
@@ -61,11 +60,50 @@ class PooledConnection:
     thread_id: Optional[int] = None
 
 
+class ConnectionPoolError(DatabaseError):
+    """Base exception for connection pool errors."""
+
+    def __init__(self, message: str) -> None:
+        super().__init__(message)
+
+
+class ConnectionAcquisitionTimeout(ConnectionPoolError):
+    """Raised when a connection cannot be acquired within the timeout."""
+
+    def __init__(self, message: str) -> None:
+        super().__init__(message)
+
+
+class ConnectionHealthError(ConnectionPoolError):
+    """Raised when a connection is found to be unhealthy."""
+
+    def __init__(self, message: str) -> None:
+        super().__init__(message)
+
+
 class ConnectionPool:
     """Thread-safe connection pool for SQLite connections.
 
     This class manages a pool of SQLite connections, providing checkout/checkin
     functionality, health monitoring, and automatic reconnection.
+
+    Thread Safety:
+        - All public methods are thread-safe unless otherwise noted.
+        - Each thread is assigned its own connection when possible.
+        - The pool uses a reentrant lock to protect internal state.
+        - Connections are not shared between threads; attempting to use a connection
+          from a different thread will result in an error from SQLite.
+
+    Context Manager Usage:
+        - Use `with pool.get_connection()` to safely acquire and release a connection.
+        - Use `with pool.transaction()` to run a transaction with automatic commit/rollback.
+        - Use `with pool.savepoint()` for nested transactions.
+
+    SQLite Single-Writer Limitation:
+        - SQLite allows only one writer at a time. Under high write concurrency,
+          some threads may experience 'database is locked' errors or timeouts.
+        - The pool will retry and recycle connections as needed, but users should
+          expect write contention and handle exceptions accordingly.
 
     Attributes:
         db_path: Path to the SQLite database file.
@@ -135,7 +173,7 @@ class ConnectionPool:
         Creates the minimum number of connections.
 
         Raises:
-            DatabaseError: If there's an error initializing the pool.
+            ConnectionPoolError: If there's an error initializing the pool.
         """
         logger.debug(f"Initializing connection pool for {self.db_path}")
         with self._lock:
@@ -148,7 +186,9 @@ class ConnectionPool:
                     f"Connection pool initialized with {self.min_connections} connections"
                 )
             except Exception as e:
-                raise DatabaseError(f"Failed to initialize connection pool: {e}") from e
+                raise ConnectionPoolError(
+                    f"Failed to initialize connection pool: {e}"
+                ) from e
 
     def shutdown(self) -> None:
         """Shutdown the connection pool.
@@ -180,11 +220,22 @@ class ConnectionPool:
                 f"Closed: {self._total_closed}"
             )
 
-    @contextmanager
     def get_connection(
         self, timeout: Optional[float] = None
     ) -> Generator[sqlite3.Connection, None, None]:
         """Get a connection from the pool.
+
+        This method is a context manager. Use as:
+            with pool.get_connection() as conn:
+                ...
+
+        Thread Safety:
+            - Safe to call from multiple threads. Each thread gets its own connection.
+            - Connections are not shared between threads.
+
+        SQLite Limitation:
+            - Under high concurrency, acquiring a connection may block or timeout.
+            - If all connections are in use, a ConnectionAcquisitionTimeout is raised.
 
         Args:
             timeout: Optional timeout override for connection acquisition.
@@ -193,8 +244,8 @@ class ConnectionPool:
             A SQLite database connection.
 
         Raises:
-            DatabaseError: If there's an error getting a connection.
-            TimeoutError: If a connection couldn't be acquired within the timeout.
+            ConnectionPoolError: If there's an error getting a connection.
+            ConnectionAcquisitionTimeout: If a connection couldn't be acquired within the timeout.
         """
         conn = self._checkout_connection(timeout or self.connection_timeout)
         try:
@@ -202,12 +253,22 @@ class ConnectionPool:
         finally:
             self._checkin_connection(conn)
 
-    @contextmanager
     def transaction(
         self,
         isolation_level: TransactionIsolationLevel = TransactionIsolationLevel.DEFERRED,
     ) -> Generator[sqlite3.Connection, None, None]:
         """Execute a transaction with the specified isolation level.
+
+        This method is a context manager. Use as:
+            with pool.transaction() as conn:
+                ...
+
+        Thread Safety:
+            - Safe to call from multiple threads. Each thread gets its own transaction.
+
+        SQLite Limitation:
+            - Only one write transaction can be active at a time. Other threads may block or fail.
+            - Use IMMEDIATE or EXCLUSIVE isolation levels to control locking behavior.
 
         Args:
             isolation_level: Transaction isolation level.
@@ -216,7 +277,7 @@ class ConnectionPool:
             A SQLite connection within a transaction.
 
         Raises:
-            DatabaseError: If there's an error with the transaction.
+            ConnectionPoolError: If there's an error with the transaction.
         """
         with self.get_connection() as conn:
             try:
@@ -231,9 +292,18 @@ class ConnectionPool:
                 logger.debug(f"Transaction rolled back: {e}")
                 raise
 
-    @contextmanager
     def savepoint(self, name: str = "") -> Generator[sqlite3.Connection, None, None]:
         """Create a savepoint for nested transactions.
+
+        This method is a context manager. Use as:
+            with pool.savepoint("sp_name") as conn:
+                ...
+
+        Thread Safety:
+            - Safe to call from multiple threads. Each thread gets its own savepoint.
+
+        SQLite Limitation:
+            - Savepoints are only effective within a transaction.
 
         Args:
             name: Optional savepoint name. If not provided, a unique name is generated.
@@ -242,7 +312,7 @@ class ConnectionPool:
             A SQLite connection within a savepoint.
 
         Raises:
-            DatabaseError: If there's an error with the savepoint.
+            ConnectionPoolError: If there's an error with the savepoint.
         """
         # Generate a unique savepoint name if not provided
         if not name:
@@ -280,6 +350,12 @@ class ConnectionPool:
     ) -> sqlite3.Cursor:
         """Execute a SQL query with parameters.
 
+        Thread Safety:
+            - Safe to call from multiple threads.
+
+        SQLite Limitation:
+            - Write queries may fail under high concurrency due to SQLite's single-writer limitation.
+
         Args:
             query: The SQL query to execute.
             parameters: Optional parameters for the query.
@@ -288,7 +364,7 @@ class ConnectionPool:
             A SQLite cursor with the query results.
 
         Raises:
-            DatabaseError: If there's an error executing the query.
+            ConnectionPoolError: If there's an error executing the query.
         """
         with self.get_connection() as conn:
             try:
@@ -296,7 +372,7 @@ class ConnectionPool:
                     return conn.execute(query)
                 return conn.execute(query, parameters)
             except sqlite3.Error as e:
-                raise DatabaseError(
+                raise ConnectionPoolError(
                     f"Error executing query: {e}, Query: {query}"
                 ) from e
 
@@ -304,6 +380,12 @@ class ConnectionPool:
         self, query: str, parameters: list[Union[tuple[Any, ...], dict[str, Any]]]
     ) -> sqlite3.Cursor:
         """Execute a SQL query with multiple parameter sets.
+
+        Thread Safety:
+            - Safe to call from multiple threads.
+
+        SQLite Limitation:
+            - Write queries may fail under high concurrency due to SQLite's single-writer limitation.
 
         Args:
             query: The SQL query to execute.
@@ -313,18 +395,21 @@ class ConnectionPool:
             A SQLite cursor with the query results.
 
         Raises:
-            DatabaseError: If there's an error executing the query.
+            ConnectionPoolError: If there's an error executing the query.
         """
         with self.get_connection() as conn:
             try:
                 return conn.executemany(query, parameters)
             except sqlite3.Error as e:
-                raise DatabaseError(
+                raise ConnectionPoolError(
                     f"Error executing batch query: {e}, Query: {query}"
                 ) from e
 
     def get_stats(self) -> dict[str, Any]:
         """Get statistics about the connection pool.
+
+        Thread Safety:
+            - Safe to call from multiple threads.
 
         Returns:
             Dictionary with connection pool statistics.
@@ -346,7 +431,7 @@ class ConnectionPool:
             A new pooled connection.
 
         Raises:
-            DatabaseError: If there's an error creating the connection.
+            ConnectionPoolError: If there's an error creating the connection.
         """
         try:
             # Create a new connection
@@ -373,7 +458,7 @@ class ConnectionPool:
             return pooled_conn
 
         except sqlite3.Error as e:
-            raise DatabaseError(f"Error creating database connection: {e}") from e
+            raise ConnectionPoolError(f"Error creating database connection: {e}") from e
 
     def _close_connection(self, pooled_conn: PooledConnection) -> None:
         """Close a pooled connection.
@@ -398,8 +483,8 @@ class ConnectionPool:
             A pooled connection.
 
         Raises:
-            DatabaseError: If the pool is shutting down.
-            TimeoutError: If a connection couldn't be acquired within the timeout.
+            ConnectionPoolError: If the pool is shutting down.
+            ConnectionAcquisitionTimeout: If a connection couldn't be acquired within the timeout.
         """
         start_time = time.time()
         current_thread_id = threading.get_ident()
@@ -418,7 +503,7 @@ class ConnectionPool:
         while True:
             with self._lock:
                 if self._shutting_down:
-                    raise DatabaseError("Connection pool is shutting down")
+                    raise ConnectionPoolError("Connection pool is shutting down")
 
                 # Check for an existing idle connection
                 if self._idle_connections:
@@ -467,7 +552,7 @@ class ConnectionPool:
                     f"Couldn't acquire a connection within {timeout} seconds. "
                     f"Active connections: {len(self._active_connections)}"
                 )
-                raise TimeoutError(msg)
+                raise ConnectionAcquisitionTimeout(msg)
 
             # Wait and try again
             time.sleep(0.01)
