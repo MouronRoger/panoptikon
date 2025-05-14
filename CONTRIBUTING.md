@@ -1,5 +1,7 @@
 # Contributing to Panoptikon
 
+> **NOTE:** The MCP server (Qdrant Cloud) is the canonical knowledge node for all documentation sync and semantic search. Always sync and query from the MCP server, not a local Qdrant instance. See [AI_DOCUMENTATION_PROMPT.md](AI_DOCUMENTATION_PROMPT.md) for details.
+
 Thank you for considering contributing to Panoptikon! This document outlines the process for contributing to the project and the quality standards we maintain.
 
 ## Quality First Approach

@@ -5,8 +5,9 @@ connections, with health monitoring, automatic reconnection, and
 transaction isolation level support.
 """
 
-from collections import deque
+from collections import defaultdict, deque
 from collections.abc import Generator
+from contextlib import contextmanager
 from dataclasses import dataclass, field
 import enum
 import logging
@@ -14,6 +15,7 @@ from pathlib import Path
 import sqlite3
 import threading
 import time
+import traceback
 from typing import Any, Optional, Union
 
 from ..core.errors import DatabaseError
@@ -81,6 +83,32 @@ class ConnectionHealthError(ConnectionPoolError):
         super().__init__(message)
 
 
+class PerformanceTracker:
+    """Simple in-memory performance tracker for connection pool."""
+
+    def __init__(self, window_size: int = 1000) -> None:
+        self.window_size = window_size
+        self.acquisition_times: deque[float] = deque(maxlen=window_size)
+        self.error_counts: dict[str, int] = defaultdict(int)
+
+    def record_acquisition(self, duration: float) -> None:
+        self.acquisition_times.append(duration)
+
+    def record_error(self, error_type: str) -> None:
+        self.error_counts[error_type] += 1
+
+    def get_percentiles(self) -> dict[str, float]:
+        if not self.acquisition_times:
+            return {"p50": 0, "p90": 0, "p99": 0}
+        sorted_times = sorted(self.acquisition_times)
+        n = len(sorted_times)
+        return {
+            "p50": sorted_times[n // 2],
+            "p90": sorted_times[int(n * 0.9)],
+            "p99": sorted_times[int(n * 0.99)],
+        }
+
+
 class ConnectionPool:
     """Thread-safe connection pool for SQLite connections.
 
@@ -112,6 +140,7 @@ class ConnectionPool:
         connection_timeout: Timeout for connection acquisition in seconds.
         connection_max_age: Maximum age of a connection in seconds before recycling.
         health_check_interval: Interval between health checks in seconds.
+        debug_mode: Set to True to enable debug diagnostics
     """
 
     def __init__(
@@ -167,6 +196,18 @@ class ConnectionPool:
         # Thread-local storage for tracking connection state
         self._local = threading.local()
 
+        self._performance_tracker = PerformanceTracker()
+        self._total_acquisitions = 0
+        self._total_timeouts = 0
+        self._acquisition_times: deque[float] = deque(maxlen=1000)
+        self._max_acquisition_time = 0.0
+        self._failed_health_checks = 0
+        self._connection_errors = 0
+        self._last_error_time: Optional[float] = None
+        self._peak_connections = 0
+        self._connections_recycled = 0
+        self._stack_traces: dict[int, Any] = {}  # For debug mode
+
     def initialize(self) -> None:
         """Initialize the connection pool.
 
@@ -220,6 +261,7 @@ class ConnectionPool:
                 f"Closed: {self._total_closed}"
             )
 
+    @contextmanager
     def get_connection(
         self, timeout: Optional[float] = None
     ) -> Generator[sqlite3.Connection, None, None]:
@@ -247,12 +289,48 @@ class ConnectionPool:
             ConnectionPoolError: If there's an error getting a connection.
             ConnectionAcquisitionTimeout: If a connection couldn't be acquired within the timeout.
         """
-        conn = self._checkout_connection(timeout or self.connection_timeout)
+        start = time.perf_counter()
         try:
-            yield conn.connection
+            conn_obj = self._checkout_connection(timeout or self.connection_timeout)
+            elapsed = time.perf_counter() - start
+            self._total_acquisitions += 1
+            self._acquisition_times.append(elapsed * 1000)
+            self._performance_tracker.record_acquisition(elapsed * 1000)
+            if elapsed * 1000 > self._max_acquisition_time:
+                self._max_acquisition_time = elapsed * 1000
+            self._peak_connections = max(
+                self._peak_connections, len(self._active_connections)
+            )
+            logger.info(
+                "pool.connection.acquired",
+                extra={
+                    "pool_id": id(self),
+                    "acquisition_time_ms": elapsed * 1000,
+                    "idle_count": len(self._idle_connections),
+                    "active_count": len(self._active_connections),
+                },
+            )
+            if self.debug_mode:
+                stack = traceback.extract_stack()
+                self._stack_traces[id(conn_obj)] = stack
+            yield conn_obj.connection
+        except ConnectionAcquisitionTimeout:
+            self._total_timeouts += 1
+            self._performance_tracker.record_error("timeout")
+            logger.warning(
+                "pool.connection.timeout",
+                extra={
+                    "pool_id": id(self),
+                    "timeout_seconds": timeout or self.connection_timeout,
+                    "active_connections": len(self._active_connections),
+                },
+            )
+            raise
         finally:
-            self._checkin_connection(conn)
+            if "conn_obj" in locals():
+                self._checkin_connection(conn_obj)
 
+    @contextmanager
     def transaction(
         self,
         isolation_level: TransactionIsolationLevel = TransactionIsolationLevel.DEFERRED,
@@ -290,8 +368,20 @@ class ConnectionPool:
             except Exception as e:
                 conn.execute("ROLLBACK")
                 logger.debug(f"Transaction rolled back: {e}")
+                if self.debug_mode:
+                    logger.debug(
+                        "pool.state.transition",
+                        extra={
+                            "connection_id": id(conn),
+                            "from_state": "active",
+                            "to_state": "error",
+                            "thread_id": threading.get_ident(),
+                            "stack": traceback.extract_stack(),
+                        },
+                    )
                 raise
 
+    @contextmanager
     def savepoint(self, name: str = "") -> Generator[sqlite3.Connection, None, None]:
         """Create a savepoint for nested transactions.
 
@@ -406,22 +496,33 @@ class ConnectionPool:
                 ) from e
 
     def get_stats(self) -> dict[str, Any]:
-        """Get statistics about the connection pool.
-
-        Thread Safety:
-            - Safe to call from multiple threads.
-
-        Returns:
-            Dictionary with connection pool statistics.
-        """
+        """Get enhanced statistics about the connection pool."""
         with self._lock:
             return {
+                # Existing metrics
                 "idle_connections": len(self._idle_connections),
                 "active_connections": len(self._active_connections),
                 "total_created": self._total_created,
                 "total_closed": self._total_closed,
+                # New performance metrics
+                "total_acquisitions": self._total_acquisitions,
+                "total_acquisition_timeouts": self._total_timeouts,
+                "avg_acquisition_time_ms": self._calculate_avg_acquisition_time(),
+                "max_acquisition_time_ms": self._max_acquisition_time,
+                # Health metrics
+                "failed_health_checks": self._failed_health_checks,
+                "connection_errors": self._connection_errors,
+                "last_error_timestamp": self._last_error_time,
+                # Usage patterns
+                "peak_connections": self._peak_connections,
+                "connections_recycled": self._connections_recycled,
+                "oldest_connection_age_seconds": self._get_oldest_connection_age(),
+                # Configuration
                 "max_connections": self.max_connections,
                 "min_connections": self.min_connections,
+                "health_check_interval": self.health_check_interval,
+                # Performance percentiles
+                "acquisition_percentiles_ms": self._performance_tracker.get_percentiles(),
             }
 
     def _create_connection(self) -> PooledConnection:
@@ -531,6 +632,17 @@ class ConnectionPool:
                     self._active_connections[current_thread_id] = conn
                     self._local.connection_id = current_thread_id
                     self._local.current_connection = conn.connection
+                    if self.debug_mode:
+                        logger.debug(
+                            "pool.state.transition",
+                            extra={
+                                "connection_id": id(conn),
+                                "from_state": "created",
+                                "to_state": "active",
+                                "thread_id": current_thread_id,
+                                "stack": traceback.extract_stack(),
+                            },
+                        )
                     return conn
 
                 # If we haven't reached max connections, create a new one
@@ -544,6 +656,17 @@ class ConnectionPool:
                     self._active_connections[current_thread_id] = conn
                     self._local.connection_id = current_thread_id
                     self._local.current_connection = conn.connection
+                    if self.debug_mode:
+                        logger.debug(
+                            "pool.state.transition",
+                            extra={
+                                "connection_id": id(conn),
+                                "from_state": "created",
+                                "to_state": "active",
+                                "thread_id": current_thread_id,
+                                "stack": traceback.extract_stack(),
+                            },
+                        )
                     return conn
 
             # If we've reached the timeout, raise an exception
@@ -599,19 +722,33 @@ class ConnectionPool:
         Returns:
             The health status of the connection.
         """
-        # Skip health check if it was checked recently
-        if time.time() - conn.last_checked_at < self.health_check_interval:
-            return conn.health_status
-
         try:
-            # Execute a simple query to check connection
+            start_time = time.time()
             conn.connection.execute("SELECT 1").fetchone()
+            check_duration = time.time() - start_time
+            if check_duration > 0.1:
+                logger.warning(
+                    "pool.health_check.slow",
+                    extra={
+                        "duration_ms": check_duration * 1000,
+                        "connection_age": time.time() - conn.created_at,
+                    },
+                )
             conn.health_status = ConnectionHealthStatus.HEALTHY
-        except sqlite3.Error:
+            return conn.health_status
+        except sqlite3.Error as e:
+            self._failed_health_checks += 1
+            self._connection_errors += 1
+            self._last_error_time = time.time()
+            logger.error(
+                "pool.health_check.failed",
+                extra={
+                    "error": str(e),
+                    "connection_age": time.time() - conn.created_at,
+                },
+            )
             conn.health_status = ConnectionHealthStatus.UNHEALTHY
-
-        conn.last_checked_at = time.time()
-        return conn.health_status
+            return conn.health_status
 
     def _clean_idle_connections(self) -> None:
         """Clean up idle connections that are too old or exceed minimum count."""
@@ -644,6 +781,19 @@ class ConnectionPool:
                 if conn in self._idle_connections:
                     self._idle_connections.remove(conn)
                     self._close_connection(conn)
+
+    def _calculate_avg_acquisition_time(self) -> float:
+        if not self._acquisition_times:
+            return 0.0
+        return sum(self._acquisition_times) / len(self._acquisition_times)
+
+    def _get_oldest_connection_age(self) -> float:
+        now = time.time()
+        if not self._idle_connections and not self._active_connections:
+            return 0.0
+        ages = [now - c.created_at for c in self._idle_connections]
+        ages += [now - c.created_at for c in self._active_connections.values()]
+        return max(ages) if ages else 0.0
 
 
 class PoolManager:

@@ -1,0 +1,53 @@
+# Cursor AI Custom Rules - Panoptikon Project
+
+**IMPORTANT:** The project uses a unified Qdrant cloud instance as the canonical knowledge base. All documentation is synced to collection `panoptikon` and accessed via MCP server integration.
+
+## Core Rules
+
+- Always reference the current phase and subphase from docs/spec/phases, as indexed in the Qdrant cloud instance.
+- Track progress and next steps for the current phase in the documentation system.
+- Use tags/flags (e.g., #decision, #todo, #done, #rationale, #milestone, #bug) for all major actions and decisions.
+- Use ai_docs.md as a session log:
+  - At session start, read the latest phase and ai_docs.md to set context.
+  - At session end, append a summary of work, decisions, and next steps with tags.
+  - Sync to Qdrant using the documentation system in scripts/ai_docs.py.
+- Format all entries with timestamp, tags, and clear summaries.
+- If phases are broken down further, always update the reference and breadcrumbs.
+- If a new phase or subphase is started, log the transition in ai_docs.md and sync to Qdrant.
+
+## Documentation System
+
+Use the unified documentation system in scripts/ai_docs.py which:
+- Creates markdown files in appropriate categories
+- Automatically indexes content in Qdrant collection `panoptikon`
+- Provides semantic search capabilities
+- Syncs with MCP server for project state
+
+## Qdrant Integration
+
+- **Collection**: `panoptikon` (NOT panoptikon_docs)
+- **Scripts**: Located in scripts/qdrant/
+- **Indexing**: Use `./scripts/qdrant/qdrant.sh index` for manual indexing
+- **Search**: Use documentation system functions or `./scripts/qdrant/qdrant.sh search`
+
+## Key Commands
+
+```python
+from scripts.ai_docs import *
+
+# Search project state
+results = search_documentation("current phase status")
+
+# Update progress
+update_phase_progress("Phase 4", status="In Progress", ...)
+
+# Document decisions
+record_decision("Title", status="Accepted", ...)
+```
+
+## Important Notes
+
+- NEVER use local Qdrant instances - always use the cloud instance
+- All documentation operations should go through scripts/ai_docs.py
+- The MCP server provides semantic search via the Qdrant integration
+- Check scripts/qdrant/README.md for manual operations if needed
