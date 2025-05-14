@@ -122,3 +122,7 @@ See `docs/README.md` for a full mapping and onboarding guide.
 ## Dual Re-Indexing
 
 - `dual_reindex.py`: Scans all markdown docs in `docs/`, indexes them in Qdrant for semantic search, and exports them as JSON-LD nodes for knowledge graph ingestion. Ensures cross-references and canonical status are preserved. Run this script after any major documentation update to keep both search and KG in sync.
+
+## Metadata Audit & Fix
+
+- `audit_fix_metadata.py`: Audits the Qdrant collection for points missing required metadata (title, path, document). Attempts to fix them by re-parsing the corresponding markdown file and updating the point. Ensures all entries are MCP-compatible. Run this script after major doc changes or re-indexing to guarantee MCP compatibility.
