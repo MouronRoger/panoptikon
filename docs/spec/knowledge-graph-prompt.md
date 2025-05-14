@@ -10,7 +10,7 @@
 ⠀**🏷️ 3. Tagging & Contextual Labelling**
 * Auto-apply tags based on context:
   * #critical_path, #performance_risk, #macOS_api, #permissions, #cloud_sync, #UI_threading, etc.
-* Use phase and milestone references (Phase_2_Core, Milestone_FoundationReady) for time-specific tags.
+* Use stage and milestone references (Phase_2_Core, Milestone_FoundationReady) for time-specific tags.
 
 ⠀**♻️ 4. Dynamic Graph Update**
 * Insert or update nodes and edges in the knowledge graph:
@@ -19,9 +19,9 @@
 
 ⠀**🧪 5. Verification & Consistency Checks**
 * Confirm:
-  * All #dependencies are valid and resolvable across phases.
+  * All #dependencies are valid and resolvable across stages.
   * Tags reflect current **risk status**, **ownership**, and **implementation state**.
-  * Phase dependencies remain **acyclic** and **chronologically coherent**.
+  * Stage dependencies remain **acyclic** and **chronologically coherent**.
 
 ⠀**📤 6. Snapshot and Log**
 * Save the updated graph state as a timestamped JSON-LD or RDF snapshot.

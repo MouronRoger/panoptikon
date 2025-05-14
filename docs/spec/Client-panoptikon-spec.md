@@ -2,7 +2,7 @@
 
 ## 📋 **Release Strategy and Core Philosophy**
 
-**Phase 1 Focus - Minimal "Everything" Clone**: The initial release of Panoptikon will deliver a focused, high-performance file search application that indexes and searches by filename only, similar to the popular Windows utility "Everything". This approach prioritizes speed, reliability, and immediate utility while establishing the architectural foundation for future enhancements.
+**Stage 1 Focus - Minimal "Everything" Clone**: The initial release of Panoptikon will deliver a focused, high-performance file search application that indexes and searches by filename only, similar to the popular Windows utility "Everything". This approach prioritizes speed, reliability, and immediate utility while establishing the architectural foundation for future enhancements.
 
 **Core Design Philosophy**: "The idea of the Panoptikon is that it knows where everything is. It has no blindspots." The application must provide comprehensive visibility across all file storage locations with zero configuration, delivering instant results regardless of where files are stored.
 
@@ -36,7 +36,7 @@ A user invokes Panoptikon via a global hotkey, the menu-bar icon, or the Dock. W
 
 ## ⚙️ **Functional Requirements**
 
-**Search Filtering by Filename**: The search field filters by filename alone, updating results with no perceptible lag and smooth, flicker-free rendering. As the core functionality of Phase 1, this capability must be optimized for maximum performance and reliability.
+**Search Filtering by Filename**: The search field filters by filename alone, updating results with no perceptible lag and smooth, flicker-free rendering. As the core functionality of Stage 1, this capability must be optimized for maximum performance and reliability.
 
 **Basic Search Capabilities**: Panoptikon supports simple, intuitive search patterns that focus on filename matching. Core search functionality includes:
 
@@ -91,9 +91,9 @@ Panoptikon supports macOS 13 (Ventura) and later, on both Apple Silicon and Inte
 
 ## 🏗️ **Architectural Decisions**
 
-**Phase 1 Focus**: Phase 1 will implement fast, filename-only search with all advanced search filters—boolean logic, date range, and size range. The architecture will establish clear boundaries between index management, search operations, and UI components, with well-defined interfaces to support future capabilities.
+**Stage 1 Focus**: Stage 1 will implement fast, filename-only search with all advanced search filters—boolean logic, date range, and size range. The architecture will establish clear boundaries between index management, search operations, and UI components, with well-defined interfaces to support future capabilities.
 
-**Deferred Features**: Content indexing, OCR, and full-text search capabilities are deliberately deferred to future phases. However, the architecture will be designed with these capabilities in mind, with clear extension points identified during the design phase.
+**Deferred Features**: Content indexing, OCR, and full-text search capabilities are deliberately deferred to future stages. However, the architecture will be designed with these capabilities in mind, with clear extension points identified during the design phase.
 
 **Technical Foundations**: Offline network volumes and cloud‑only files leverage the lightweight database cache to guarantee sub‑100 ms response times. Duplicate filenames remain separate entries; grouping modes and further UI refinements will be revisited in post‑1.0 updates.
 
@@ -101,7 +101,7 @@ Panoptikon supports macOS 13 (Ventura) and later, on both Apple Silicon and Inte
 
 **Inline Preview Pane**: A resizable side panel displays Quick Look previews (text, PDF, image, audio waveforms, video thumbnails) for the selected file without opening a separate window.
 
-**Content Search Option (Future Phase)**: In future releases, Panoptikon will expand beyond filename search to include content indexing capabilities. This will enable users to search within file contents (text, PDF, Office docs) with appropriate resource management controls. Similarly, OCR-powered text extraction for images and scanned PDFs will be implemented in a future phase. The Phase 1 architecture will be designed with these capabilities in mind to ensure smooth integration when implemented.
+**Content Search Option (Future Phase)**: In future releases, Panoptikon will expand beyond filename search to include content indexing capabilities. This will enable users to search within file contents (text, PDF, Office docs) with appropriate resource management controls. Similarly, OCR-powered text extraction for images and scanned PDFs will be implemented in a future phase. The Stage 1 architecture will be designed with these capabilities in mind to ensure smooth integration when implemented.
 
 **Drag and Drop Support**: Comprehensive drag and drop functionality is supported throughout the application:
 * Drag files from results to Finder or other applications
@@ -146,16 +146,16 @@ These operations apply seamlessly to multiple selected files.
 
 ## ✅ **Success Criteria**
 
-**Phase 1 Success Criteria**: Panoptikon is production-ready when an unbiased tester with 250,000 files can:
+**Stage 1 Success Criteria**: Panoptikon is production-ready when an unbiased tester with 250,000 files can:
 1. Launch the search window
 2. Find a specified file by filename
 3. Open it in under one second end-to-end
 4. Successfully work with local, network, and cloud files without configuration
 5. Perform the above while macOS's Activity Monitor never flags Panoptikon as a top resource consumer
 
-This criterion focuses exclusively on filename-based search performance and comprehensive file system visibility, aligning with the "no blindspots" philosophy and Phase 1 scope.
+This criterion focuses exclusively on filename-based search performance and comprehensive file system visibility, aligning with the "no blindspots" philosophy and Stage 1 scope.
 
-**Future Phase Success Criteria**: Success criteria for content indexing and OCR capabilities will be defined in future specification updates. The architecture must be designed to accommodate these capabilities without compromising the core performance metrics established for Phase 1.
+**Future Stage Success Criteria**: Success criteria for content indexing and OCR capabilities will be defined in future specification updates. The architecture must be designed to accommodate these capabilities without compromising the core performance metrics established for Stage 1.
 
 **Additional Scalability Goal (Optional)**: The system should handle larger indexes gracefully for power users, scaling up to 1,000,000 files with proportional performance, documented as aspirational targets.
 

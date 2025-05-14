@@ -7,11 +7,12 @@
 """
 
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+import sys
+from typing import Any, Dict, List, Optional, Set
 
 import frontmatter  # type: ignore[import-untyped]
 from qdrant_client import QdrantClient
-from qdrant_client.models import PointStruct
+from qdrant_client.models import PointIdsList, PointStruct
 
 QDRANT_URL = (
     "https://29d119a0-8d2b-4275-a712-6dabdea4a8fa.europe-west3-0.gcp.cloud.qdrant.io"
@@ -86,14 +87,26 @@ def fix_point(point: Any, docs_dir: Path) -> Optional[PointStruct]:
     )
 
 
-def main() -> None:
-    """Audit and fix missing metadata in Qdrant."""
+def delete_points(client: QdrantClient, ids: Set[str]) -> None:
+    """Delete points from Qdrant by ID."""
+    if not ids:
+        print("No points to delete.")
+        return
+    print(f"Deleting {len(ids)} unresolved points from Qdrant...")
+    selector = PointIdsList(points=list(ids))
+    client.delete(collection_name=COLLECTION_NAME, points_selector=selector)
+    print(f"Deleted {len(ids)} points.")
+
+
+def main(delete_unresolved: bool = False) -> None:
+    """Audit and fix missing metadata in Qdrant. Optionally delete unresolved points."""
     client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
     print(f"Fetching all points from collection '{COLLECTION_NAME}'...")
     points = get_all_points(client)
     print(f"Found {len(points)} points.")
     to_fix = []
     unresolved = []
+    unresolved_ids = set()
     for point in points:
         payload = point.payload
         missing = [f for f in REQUIRED_FIELDS if f not in payload or not payload[f]]
@@ -103,6 +116,7 @@ def main() -> None:
                 to_fix.append(fixed)
             else:
                 unresolved.append(payload.get("path", f"ID {point.id}"))
+                unresolved_ids.add(point.id)
     if to_fix:
         print(f"Fixing {len(to_fix)} points with missing metadata...")
         batch_size = 50
@@ -116,9 +130,23 @@ def main() -> None:
         print("Unresolved points (missing markdown file):")
         for path in unresolved:
             print(f"- {path}")
+        if delete_unresolved:
+            delete_points(client, unresolved_ids)
+        else:
+            # Prompt user for deletion if running interactively
+            if sys.stdin.isatty():
+                resp = (
+                    input("Delete unresolved points from Qdrant? [y/N]: ")
+                    .strip()
+                    .lower()
+                )
+                if resp == "y":
+                    delete_points(client, unresolved_ids)
     else:
         print("All points are now MCP-compatible!")
 
 
 if __name__ == "__main__":
-    main()
+    # Allow --delete-unresolved as a CLI flag
+    delete_flag = "--delete-unresolved" in sys.argv
+    main(delete_unresolved=delete_flag)

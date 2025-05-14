@@ -49,4 +49,20 @@ repos:
         language: python
         types: [python]
         args: ["--min-coverage=95"]
-        exclude: '^tests/' 
+        exclude: '^tests/'
+
+    -   id: dual-reindex-docs
+        name: dual re-index documentation (Qdrant + KG)
+        entry: python scripts/dual_reindex.py
+        language: python
+        types: [python, markdown]
+        pass_filenames: false
+        always_run: true
+
+    -   id: audit-fix-qdrant-metadata
+        name: audit and fix Qdrant metadata (MCP compatibility)
+        entry: python scripts/qdrant/audit_fix_metadata.py --delete-unresolved
+        language: python
+        types: [python, markdown]
+        pass_filenames: false
+        always_run: true 

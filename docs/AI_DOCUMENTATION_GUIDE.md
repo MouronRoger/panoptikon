@@ -80,11 +80,11 @@ document_component(
 
 # Document a phase
 document_phase(
-    "Phase 4 - Database Implementation",
+    "Stage 4 - Database Implementation",
     objectives="Implement SQLite database layer",
     components=["Schema", "Connection Pool", "Migration System"],
     status="In Progress",
-    progress="Phase 4.1 complete, 4.2 needs testing"
+    progress="Stage 4.1 complete, 4.2 needs testing"
 )
 
 # Record an architecture decision
@@ -99,7 +99,7 @@ record_decision(
 
 # Update progress
 update_phase_progress(
-    "Phase 4",
+    "Stage 4",
     status="In Progress",
     completed=["Schema implementation", "Connection pool"],
     issues=["Missing test coverage"],
@@ -116,9 +116,9 @@ All functions automatically sync with the Qdrant cloud instance:
 3. `update_documentation(category, title, updates)` - Updates and re-indexes docs
 4. `search_documentation(query, limit=5)` - Semantic search via Qdrant
 5. `document_component(name, **details)` - Create component documentation
-6. `document_phase(name, **details)` - Create phase documentation
+6. `document_phase(name, **details)` - Create stage documentation
 7. `record_decision(title, **decision_details)` - Create ADR (Architecture Decision Record)
-8. `update_phase_progress(phase, **updates)` - Update phase progress tracking
+8. `update_phase_progress(phase, **updates)` - Update stage progress tracking
 
 ## Document Categories
 
@@ -126,7 +126,7 @@ All documents are organized in these directories and indexed in Qdrant:
 
 - `architecture` - System design documentation
 - `components` - Individual component docs
-- `phases` - Project phase documentation
+- `stages` - Project stage documentation
 - `testing` - Test plans and coverage
 - `api` - API documentation
 - `guides` - How-to guides

@@ -10,7 +10,7 @@ This directory contains all project documentation, organized by category. Each s
 |--------------|-------------------|--------------------------------------------------|
 | architecture  | docs/architecture | System and software architecture docs            |
 | components    | docs/components   | Documentation for individual components/modules   |
-| phases        | docs/phases       | Project phase and subphase documentation         |
+| stages        | docs/stages       | Project stage and substage documentation         |
 | testing       | docs/testing      | Test plans, coverage, and testing docs           |
 | api           | docs/api          | API documentation and references                 |
 | guides        | docs/guides       | How-to guides and tutorials                      |
@@ -27,7 +27,7 @@ This directory contains all project documentation, organized by category. Each s
 ## Example
 
 - To add a new component doc, place it in `docs/components/`.
-- To update project phase documentation, use `docs/phases/`.
+- To update project stage documentation, use `docs/stages/`.
 - All ADRs (decisions) go in `docs/decisions/`.
 
 ## Questions?

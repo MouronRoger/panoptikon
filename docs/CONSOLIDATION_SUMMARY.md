@@ -9,7 +9,7 @@ Created a clear directory structure:
 scripts/
 ├── documentation/           # AI and documentation management
 │   ├── ai_docs.py          # Main AI interface (uses panoptikon collection)
-│   ├── record_transition.py # Phase transition recording
+│   ├── record_transition.py # Stage transition recording
 │   ├── migrate_kg_to_docs.py # Knowledge graph migration
 │   ├── migrate_complete.py  # Complete migration pipeline
 │   └── simple_migrate.py    # Simple markdown generation

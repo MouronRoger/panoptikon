@@ -4,17 +4,17 @@ ai_generated: true
 category: decisions
 created: '2025-05-14T00:30:13.961072'
 status: Accepted
-title: ADR-20250514-Block Phase 4.3 Until Testing
+title: ADR-20250514-Block Stage 4.3 Until Testing
 updated: '2025-05-14T00:30:13.961080'
 ---
 
-# Block Phase 4.3 Until Testing
+# Block Stage 4.3 Until Testing
 
 ## Status
 Accepted
 
 ## Context
-Phase 4.2 has zero test coverage
+Stage 4.2 has zero test coverage
 
 ## Decision
 Must complete testing before migrations
