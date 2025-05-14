@@ -79,16 +79,16 @@ Always maintain documentation as you work. This helps track progress and provide
 # AI Documentation Prompt
 
 ## Purpose
-This file defines how the AI should document all progress, decisions, and rationale for the Panoptikon project. The AI should use this as a guide for writing and updating ai_docs.md and for session context management.
+This file defines how the AI should document all progress, decisions, and rationale for the Panoptikon project. The AI should use this as a guide for writing and updating docs/ai_docs.md and for session context management.
 
 ## Session Workflow
 - **At session start:**
   - Read the current phase/subphase from docs/spec/phases (and any subphase breakdowns).
-  - Read the latest entries from ai_docs.md to set context and surface open #todo/#decision items.
+  - Read the latest entries from docs/ai_docs.md to set context and surface open #todo/#decision items.
 - **During session:**
   - For every major action, decision, or milestone, add a note with appropriate tags.
 - **At session end:**
-  - Append a summary of work, decisions, and next steps to ai_docs.md, using the template below.
+  - Append a summary of work, decisions, and next steps to docs/ai_docs.md, using the template below.
   - If a new phase or subphase is started, log the transition.
 
 ## Entry Template
@@ -135,7 +135,7 @@ This file defines how the AI should document all progress, decisions, and ration
     - Add structured logging and enhanced metrics (#todo)
 ```
 
-## Updating ai_docs.md
+## Updating docs/ai_docs.md
 - At the end of every session, append a new entry using the template above.
 - If a phase/subphase is completed or started, log the transition.
 - If a #todo is completed, mark it as #done in the next entry.

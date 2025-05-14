@@ -10,6 +10,7 @@ The Panoptikon project uses a unified documentation system that integrates with 
 scripts/
 ├── documentation/         # AI documentation tools
 │   ├── ai_docs.py        # Main AI documentation interface
+│   ├── dual_reindex.py   # Dual re-index: Qdrant (semantic search) + KG (JSON-LD export)
 │   ├── record_transition.py
 │   ├── migrate_kg_to_docs.py
 │   ├── migrate_complete.py
@@ -93,3 +94,31 @@ python scripts/qdrant/index_docs.py
 2. **Automatic Indexing**: AI docs automatically index on create/update
 3. **MCP Compatible**: Full integration with MCP server
 4. **Semantic Search**: Powered by Qdrant cloud instance
+
+## Documentation Categories & Enforcement
+
+All documentation is organized into the following categories, which are strictly enforced by the documentation system (`ai_docs.py`). Any attempt to use an invalid category will result in an error.
+
+| Category      | Directory         | Description                                      |
+|--------------|-------------------|--------------------------------------------------|
+| architecture  | docs/architecture | System and software architecture docs            |
+| components    | docs/components   | Documentation for individual components/modules   |
+| phases        | docs/phases       | Project phase and subphase documentation         |
+| testing       | docs/testing      | Test plans, coverage, and testing docs           |
+| api           | docs/api          | API documentation and references                 |
+| guides        | docs/guides       | How-to guides and tutorials                      |
+| decisions     | docs/decisions    | Architecture Decision Records (ADRs)             |
+| progress      | docs/progress     | Progress tracking and milestone documentation    |
+
+See `docs/README.md` for a full mapping and onboarding guide.
+
+## Onboarding for New Contributors
+
+- Always use a valid category when creating or updating documentation.
+- Place new documentation files in the correct subdirectory under `docs/`.
+- Use the provided Python API or CLI for all documentation operations.
+- If unsure, use the `list_valid_categories()` function or consult the AI assistant.
+
+## Dual Re-Indexing
+
+- `dual_reindex.py`: Scans all markdown docs in `docs/`, indexes them in Qdrant for semantic search, and exports them as JSON-LD nodes for knowledge graph ingestion. Ensures cross-references and canonical status are preserved. Run this script after any major documentation update to keep both search and KG in sync.

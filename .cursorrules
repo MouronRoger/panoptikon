@@ -7,13 +7,13 @@
 - Always reference the current phase and subphase from docs/spec/phases, as indexed in the Qdrant cloud instance.
 - Track progress and next steps for the current phase in the documentation system.
 - Use tags/flags (e.g., #decision, #todo, #done, #rationale, #milestone, #bug) for all major actions and decisions.
-- Use ai_docs.md as a session log:
-  - At session start, read the latest phase and ai_docs.md to set context.
+- Use docs/ai_docs.md as a session log:
+  - At session start, read the latest phase and docs/ai_docs.md to set context.
   - At session end, append a summary of work, decisions, and next steps with tags.
   - Sync to Qdrant using the documentation system in scripts/ai_docs.py.
 - Format all entries with timestamp, tags, and clear summaries.
 - If phases are broken down further, always update the reference and breadcrumbs.
-- If a new phase or subphase is started, log the transition in ai_docs.md and sync to Qdrant.
+- If a new phase or subphase is started, log the transition in docs/ai_docs.md and sync to Qdrant.
 
 ## Documentation System
 

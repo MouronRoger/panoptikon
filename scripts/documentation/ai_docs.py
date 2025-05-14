@@ -8,7 +8,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Optional
 
-import frontmatter
+import frontmatter  # type: ignore[import]
 from qdrant_client import QdrantClient
 from sentence_transformers import SentenceTransformer
 
@@ -23,8 +23,14 @@ class AIDocumentationSystem:
         # For indexing
         self.model = SentenceTransformer("all-MiniLM-L6-v2")
         self.qdrant = QdrantClient(
-            url="https://29d119a0-8d2b-4275-a712-6dabdea4a8fa.europe-west3-0.gcp.cloud.qdrant.io",
-            api_key="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.9MIfh-2k_Xq-_yHXmlIErv-GaT0xjW5J4jo6j0_VVJw",
+            url=(
+                "https://29d119a0-8d2b-4275-a712-6dabdea4a8fa.europe-"
+                "west3-0.gcp.cloud.qdrant.io"
+            ),
+            api_key=(
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0."
+                "9MIfh-2k_Xq-_yHXmlIErv-GaT0xjW5J4jo6j0_VVJw"
+            ),
         )
         self.ensure_collection()
 
@@ -53,15 +59,24 @@ class AIDocumentationSystem:
             self.qdrant.create_collection(
                 collection_name="panoptikon",
                 vectors_config={
-                    "fast-all-minilm-l6-v2": VectorParams(size=384, distance=Distance.COSINE)
+                    "fast-all-minilm-l6-v2": VectorParams(
+                        size=384, distance=Distance.COSINE
+                    )
                 },
             )
             print("Created Qdrant collection: panoptikon with named vectors")
 
     def create_document(
-        self, category: str, title: str, content: str, metadata: dict[str, Any] = None
+        self,
+        category: str,
+        title: str,
+        content: str,
+        metadata: Optional[dict[str, Any]] = None,
     ) -> Path:
-        """Create a new documentation file."""
+        """Create a new documentation file in the specified category. Validates category."""
+        self.validate_category(category)
+        if metadata is None:
+            metadata = {}
         filename = title.lower().replace(" ", "-") + ".md"
         filepath = self.docs_root / category / filename
         meta = {
@@ -70,7 +85,7 @@ class AIDocumentationSystem:
             "created": datetime.now().isoformat(),
             "updated": datetime.now().isoformat(),
             "ai_generated": True,
-            **(metadata or {}),
+            **metadata,
         }
         post = frontmatter.Post(content, **meta)
         with open(filepath, "w", encoding="utf-8") as f:
@@ -95,15 +110,10 @@ class AIDocumentationSystem:
         return True
 
     def search_docs(self, query: str, limit: int = 5) -> list[dict[str, Any]]:
-        """Search documentation."""
+        """Search documentation using semantic search via Qdrant."""
         query_vector = self.model.encode(query).tolist()
         results = self.qdrant.search(
-            collection_name="panoptikon",
-            query_vector={
-                "name": "fast-all-minilm-l6-v2",
-                "vector": query_vector
-            },
-            limit=limit
+            collection_name="panoptikon", query_vector=query_vector, limit=limit
         )
         return [
             {
@@ -141,9 +151,7 @@ class AIDocumentationSystem:
             points=[
                 PointStruct(
                     id=doc_id,
-                    vector={
-                        "fast-all-minilm-l6-v2": embedding
-                    },
+                    vector={"fast-all-minilm-l6-v2": embedding},
                     payload=payload,
                 )
             ],
@@ -154,6 +162,7 @@ class AIDocumentationSystem:
         self, component_name: str, details: dict[str, Any]
     ) -> Path:
         """Create documentation for a component."""
+        self.validate_category("components")
         content = f"""# {component_name}
 
 ## Overview
@@ -191,6 +200,7 @@ class AIDocumentationSystem:
 
     def create_phase_doc(self, phase_name: str, details: dict[str, Any]) -> Path:
         """Create documentation for a project phase."""
+        self.validate_category("phases")
         content = f"""# {phase_name}
 
 ## Objectives
@@ -223,6 +233,7 @@ class AIDocumentationSystem:
 
     def create_decision_record(self, title: str, decision: dict[str, Any]) -> Path:
         """Create an Architecture Decision Record (ADR)."""
+        self.validate_category("decisions")
         content = f"""# {title}
 
 ## Status
@@ -255,6 +266,7 @@ class AIDocumentationSystem:
 
     def update_progress(self, phase: str, updates: dict[str, Any]) -> bool:
         """Update progress documentation."""
+        self.validate_category("progress")
         filepath = self.docs_root / "progress" / f"{phase.lower()}-progress.md"
         if not filepath.exists():
             content = f"# {phase} Progress\n\n"
@@ -274,10 +286,28 @@ class AIDocumentationSystem:
         post.content = new_entry + post.content
         return self.update_document(filepath, {"content": post.content})
 
+    def validate_category(self, category: str) -> None:
+        """Raise ValueError if category is not valid."""
+        VALID_CATEGORIES = [
+            "architecture",
+            "components",
+            "phases",
+            "testing",
+            "api",
+            "guides",
+            "decisions",
+            "progress",
+        ]
+        if category not in VALID_CATEGORIES:
+            raise ValueError(
+                f"Invalid category '{category}'. Valid categories: {', '.join(VALID_CATEGORIES)}"
+            )
+
 
 def read_documentation(category: str, title: str) -> Optional[dict[str, Any]]:
     """Read a specific documentation file."""
     docs = AIDocumentationSystem()
+    docs.validate_category(category)
     filepath = docs.docs_root / category / f"{title.lower().replace(' ', '-')}.md"
     if not filepath.exists():
         return None
@@ -294,6 +324,7 @@ def read_documentation(category: str, title: str) -> Optional[dict[str, Any]]:
 def update_documentation(category: str, title: str, updates: dict[str, Any]) -> bool:
     """Update existing documentation."""
     docs = AIDocumentationSystem()
+    docs.validate_category(category)
     filepath = docs.docs_root / category / f"{title.lower().replace(' ', '-')}.md"
     return docs.update_document(filepath, updates)
 
@@ -303,6 +334,7 @@ def create_documentation(
 ) -> str:
     """Create new documentation."""
     docs = AIDocumentationSystem()
+    docs.validate_category(category)
     filepath = docs.create_document(category, title, content, metadata)
     return str(filepath)
 
@@ -316,6 +348,7 @@ def search_documentation(query: str, limit: int = 5) -> list[dict[str, Any]]:
 def document_component(name: str, **details: Any) -> str:
     """Document a new component."""
     docs = AIDocumentationSystem()
+    docs.validate_category("components")
     filepath = docs.create_component_doc(name, details)
     return str(filepath)
 
@@ -323,6 +356,7 @@ def document_component(name: str, **details: Any) -> str:
 def document_phase(name: str, **details: Any) -> str:
     """Document a project phase."""
     docs = AIDocumentationSystem()
+    docs.validate_category("phases")
     filepath = docs.create_phase_doc(name, details)
     return str(filepath)
 
@@ -330,6 +364,7 @@ def document_phase(name: str, **details: Any) -> str:
 def record_decision(title: str, **decision_details: Any) -> str:
     """Record an architecture decision."""
     docs = AIDocumentationSystem()
+    docs.validate_category("decisions")
     filepath = docs.create_decision_record(title, decision_details)
     return str(filepath)
 
@@ -337,6 +372,7 @@ def record_decision(title: str, **decision_details: Any) -> str:
 def update_phase_progress(phase: str, **updates: Any) -> bool:
     """Update phase progress."""
     docs = AIDocumentationSystem()
+    docs.validate_category("progress")
     return docs.update_progress(phase, updates)
 
 
