@@ -10,7 +10,7 @@ from pathlib import Path
 import shutil
 import sqlite3
 import time
-from typing import Any
+from typing import Any, Optional
 
 from ..core.errors import DatabaseError
 from ..core.service import ServiceInterface
@@ -393,15 +393,20 @@ class SchemaManager:
         # In the future, this would implement more sophisticated version compatibility checks
         return version == CURRENT_SCHEMA_VERSION
 
-    def _backup_database(self) -> Path:
+    def _backup_database(self) -> Optional[Path]:
         """Create a backup of the database file before migration.
 
         Returns:
-            Path to the backup file.
+            Path to the backup file, or None if no backup was created.
 
         Raises:
-            DatabaseError: If backup fails.
+            DatabaseError: If backup fails (other than file not existing).
         """
+        if not self.db_path.exists():
+            logger.warning(
+                f"Database file {self.db_path} does not exist; skipping backup."
+            )
+            return None
         backup_path = self.db_path.with_suffix(self.db_path.suffix + ".bak")
         try:
             shutil.copy2(self.db_path, backup_path)
@@ -410,15 +415,11 @@ class SchemaManager:
         except Exception as e:
             raise DatabaseError(f"Failed to create database backup: {e}")
 
-    def _restore_database(self, backup_path: Path) -> None:
-        """Restore the database from a backup file.
-
-        Args:
-            backup_path: Path to the backup file.
-
-        Raises:
-            DatabaseError: If restore fails.
-        """
+    def _restore_database(self, backup_path: Optional[Path]) -> None:
+        """Restore the database from a backup file, if provided."""
+        if backup_path is None:
+            logger.warning("No backup file provided for restore; skipping restore.")
+            return
         try:
             shutil.copy2(backup_path, self.db_path)
             logger.warning(f"Database restored from backup at {backup_path}")

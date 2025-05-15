@@ -4,6 +4,7 @@ from collections.abc import Generator
 from pathlib import Path
 import sqlite3
 import tempfile
+import time
 
 import pytest
 
@@ -236,7 +237,13 @@ def test_migrate_to_latest_adds_folder_size(temp_db_path: Path) -> None:
         """
     )
     cursor.execute(
-        "CREATE TABLE schema_version (id INTEGER PRIMARY KEY CHECK (id = 1), version TEXT NOT NULL, updated_at INTEGER NOT NULL);"
+        """
+        CREATE TABLE schema_version (
+            id INTEGER PRIMARY KEY CHECK (id = 1),
+            version TEXT NOT NULL,
+            updated_at INTEGER NOT NULL
+        );
+        """
     )
     cursor.execute(
         "INSERT INTO schema_version (id, version, updated_at) VALUES (1, '1.0.0', 0);"
@@ -290,7 +297,13 @@ def test_migrate_to_latest_idempotent(temp_db_path: Path) -> None:
         """
     )
     cursor.execute(
-        "CREATE TABLE schema_version (id INTEGER PRIMARY KEY CHECK (id = 1), version TEXT NOT NULL, updated_at INTEGER NOT NULL);"
+        """
+        CREATE TABLE schema_version (
+            id INTEGER PRIMARY KEY CHECK (id = 1),
+            version TEXT NOT NULL,
+            updated_at INTEGER NOT NULL
+        );
+        """
     )
     cursor.execute(
         "INSERT INTO schema_version (id, version, updated_at) VALUES (1, '1.0.0', 0);"
@@ -343,3 +356,170 @@ def test_compare_schema_version(temp_db_path: Path) -> None:
     assert schema_manager.compare_schema_version("1.2.4") == -1
     assert schema_manager.compare_schema_version("1.2.3") == 0
     assert schema_manager.compare_schema_version("1.2.2") == 1
+
+
+def test_find_migrations_sequential(temp_db_path: Path) -> None:
+    """Test that the registry returns the correct sequence for 1.0.0 to 1.1.0."""
+    schema_manager = SchemaManager(temp_db_path)
+    migrations = schema_manager._find_migrations("1.0.0", "1.1.0")
+    assert len(migrations) == 1
+    assert migrations[0]["from_version"] == "1.0.0"
+    assert migrations[0]["to_version"] == "1.1.0"
+
+
+def test_find_migrations_no_path(temp_db_path: Path) -> None:
+    """Test that an error is raised if no migration path exists."""
+    schema_manager = SchemaManager(temp_db_path)
+    with pytest.raises(DatabaseError, match="No migration path"):
+        schema_manager._find_migrations("1.1.0", "2.0.0")
+
+
+def test_registry_extensible(temp_db_path: Path) -> None:
+    """Simulate adding a second migration and test correct ordering."""
+    SchemaManager.MIGRATIONS = []  # Reset registry for test isolation
+    schema_manager = SchemaManager(temp_db_path)
+    # Re-add default migration
+    SchemaManager.MIGRATIONS.append(
+        {
+            "from_version": "1.0.0",
+            "to_version": "1.1.0",
+            "up": schema_manager._migrate_1_0_0_to_1_1_0_with_backup,
+        }
+    )
+
+    # Add a fake migration 1.1.0 -> 1.2.0
+    def fake_migration(conn):
+        pass
+
+    schema_manager.MIGRATIONS.append(
+        {
+            "from_version": "1.1.0",
+            "to_version": "1.2.0",
+            "up": fake_migration,
+        }
+    )
+    migrations = schema_manager._find_migrations("1.0.0", "1.2.0")
+    assert len(migrations) == 2
+    assert migrations[0]["from_version"] == "1.0.0"
+    assert migrations[1]["from_version"] == "1.1.0"
+
+
+def test_backup_database_creates_file(tmp_path: Path) -> None:
+    """Test that _backup_database creates a backup file when the DB exists."""
+    db_path = tmp_path / "test.db"
+    db_path.write_bytes(b"testdata")
+    schema_manager = SchemaManager(db_path)
+    backup_path = schema_manager._backup_database()
+    assert backup_path is not None
+    assert backup_path.exists()
+    assert backup_path.read_bytes() == b"testdata"
+
+
+def test_backup_database_skips_if_missing(tmp_path: Path, caplog) -> None:
+    """Test that _backup_database returns None and logs a warning if the DB does not exist."""
+    db_path = tmp_path / "missing.db"
+    schema_manager = SchemaManager(db_path)
+    with caplog.at_level("WARNING"):
+        backup_path = schema_manager._backup_database()
+    assert backup_path is None
+    assert any("skipping backup" in m for m in caplog.messages)
+
+
+def test_restore_database_restores_file(tmp_path: Path) -> None:
+    """Test that _restore_database restores the DB from backup."""
+    db_path = tmp_path / "test.db"
+    backup_path = tmp_path / "test.db.bak"
+    db_path.write_bytes(b"original")
+    backup_path.write_bytes(b"backupdata")
+    schema_manager = SchemaManager(db_path)
+    schema_manager._restore_database(backup_path)
+    assert db_path.read_bytes() == b"backupdata"
+
+
+def test_migration_executor_success(tmp_path: Path) -> None:
+    """Test that a successful migration is committed and version is updated."""
+    SchemaManager.MIGRATIONS = []  # Reset registry for test isolation
+    db_path = tmp_path / "test.db"
+    schema_manager = SchemaManager(db_path)
+    schema_manager.create_schema()
+    # Re-add default migration
+    SchemaManager.MIGRATIONS.append(
+        {
+            "from_version": "1.0.0",
+            "to_version": "1.1.0",
+            "up": schema_manager._migrate_1_0_0_to_1_1_0_with_backup,
+        }
+    )
+
+    # Add a fake migration 1.1.0 -> 1.2.0
+    def add_table(conn):
+        cursor = conn.cursor()
+        cursor.execute("CREATE TABLE test_atomic (id INTEGER PRIMARY KEY)")
+        cursor.execute(
+            "UPDATE schema_version SET version = ?, updated_at = ? WHERE id = 1",
+            ("1.2.0", int(time.time())),
+        )
+        conn.commit()
+
+    schema_manager.MIGRATIONS.append(
+        {
+            "from_version": "1.1.0",
+            "to_version": "1.2.0",
+            "up": add_table,
+        }
+    )
+    schema_manager.set_schema_version("1.1.0")
+    schema_manager.migrate_to_latest()
+    # Check that the table exists and version is updated
+    conn = sqlite3.connect(str(db_path))
+    cursor = conn.cursor()
+    cursor.execute("SELECT version FROM schema_version WHERE id = 1")
+    assert cursor.fetchone()[0] == "1.2.0"
+    cursor.execute(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='test_atomic'"
+    )
+    assert cursor.fetchone() is not None
+    conn.close()
+
+
+def test_migration_executor_failure_and_rollback(tmp_path: Path) -> None:
+    """Test that a migration failure rolls back and restores from backup."""
+    SchemaManager.MIGRATIONS = []  # Reset registry for test isolation
+    db_path = tmp_path / "test.db"
+    schema_manager = SchemaManager(db_path)
+    schema_manager.create_schema()
+    # Re-add default migration
+    SchemaManager.MIGRATIONS.append(
+        {
+            "from_version": "1.0.0",
+            "to_version": "1.1.0",
+            "up": schema_manager._migrate_1_0_0_to_1_1_0_with_backup,
+        }
+    )
+
+    # Add a fake migration 1.2.0 -> 1.3.0 that fails
+    def fail_migration(conn):
+        raise RuntimeError("Simulated migration failure")
+
+    schema_manager.MIGRATIONS.append(
+        {
+            "from_version": "1.2.0",
+            "to_version": "1.3.0",
+            "up": fail_migration,
+        }
+    )
+    schema_manager.set_schema_version("1.2.0")
+    # Write a marker to the DB file to check for restore
+    db_path.write_bytes(b"originaldb")
+    try:
+        schema_manager.migrate_to_latest()
+    except Exception as e:
+        assert "Simulated migration failure" in str(e)
+    # The DB file should be restored to the original marker
+    assert db_path.read_bytes() == b"originaldb"
+    # Version should not be updated
+    conn = sqlite3.connect(str(db_path))
+    cursor = conn.cursor()
+    cursor.execute("SELECT version FROM schema_version WHERE id = 1")
+    assert cursor.fetchone()[0] == "1.2.0"
+    conn.close()

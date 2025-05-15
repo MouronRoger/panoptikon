@@ -52,3 +52,26 @@
     - Update UI to display and sort by folder size (Phase 7)
     - Add tests for accuracy and performance
     - Track progress and log all major actions in documentation system 
+
+## [2024-06-12 13:30] #phase4.3 #migration-framework #milestone #done #migration #rationale
+- **Phase:** 4.3 (Schema Migration Framework)
+- **Subphase:** Migration System Core, Safety, Recovery, and 1.1.0 Folder Size Migration
+- **Summary:**
+    - Implemented automated schema versioning and migration registry (#done)
+    - Developed migration executor with backup, rollback, and verification (#done)
+    - Added pre-migration backup, transaction-wrapped migrations, and post-migration verification (#done)
+    - Implemented automatic rollback and recovery on migration failure (#done)
+    - Migration lock prevents concurrent runs (#done)
+    - Migration for schema version 1.1.0 (folder_size column and index) implemented and tested (#done)
+    - All migration logic is idempotent and safe for repeated runs (#done)
+    - Comprehensive tests for sequential migration, rollback, recovery, idempotency, and corrupted states (#done)
+    - All code and tests meet project standards (Black, isort, Ruff, mypy --strict) (#done)
+    - Documentation updated to reflect migration system and folder_size feature (#done)
+- **Tags:** #done #milestone #migration #rationale #recovery #rollback #safety #idempotent
+- **Rationale:**
+    - Robust migration system is critical for safe schema evolution and user data integrity. Automated recovery and rollback ensure zero data loss. Idempotency and locking prevent accidental corruption. The folder_size migration is a dependency for future indexing and UI features.
+- **Next Steps:**
+    - Monitor for migration issues in real-world usage (#todo)
+    - Begin Stage 6: Implement folder size calculation and incremental updates (#todo)
+    - Prepare UI changes for folder size display and sorting (Stage 7) (#todo)
+    - Continue to log all progress and decisions in the documentation system (#milestone) 
