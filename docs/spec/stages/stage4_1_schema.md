@@ -1,4 +1,4 @@
- # 🗄️ STAGE 4.1: DATABASE SCHEMA IMPLEMENTATION
+# 🗄️ STAGE 4.1: DATABASE SCHEMA IMPLEMENTATION
 
 ## 📝 OBJECTIVES
 - Create core SQLite database schema
@@ -64,3 +64,11 @@
 - **SQL Style**: Use uppercase for SQL keywords, lowercase for identifiers
 - **Testing**: Pytest fixtures for database setup/teardown
 - **Linting**: Zero warnings from flake8 and mypy
+
+## Folder Size Field Addition
+
+- Add `folder_size INTEGER` column to the `files` table (for directories only).
+- Add index on `folder_size` for efficient sorting.
+- This enables instant folder size display and sorting in the UI (see Integration Report).
+- Schema version bump to 1.1.0 required.
+- Lays groundwork for recursive folder size calculation in later stages.

@@ -62,3 +62,11 @@
 - Stage 2 service container
 - Stage 5 search engine
 - Stage 6 indexing system
+
+## Folder Size Display in UI
+
+- Add a "Folder Size" column to the results table, visible for directories.
+- Format folder sizes in human-readable units (KB/MB/GB).
+- Enable sorting by folder size in the UI.
+- This provides instant visibility into space usage and is a unique selling point (see Integration Report).
+- Depends on schema and indexing work in earlier stages.

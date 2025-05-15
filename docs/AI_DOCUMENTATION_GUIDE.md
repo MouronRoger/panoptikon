@@ -222,3 +222,27 @@ After the migration to the unified system, these old directories can be removed:
 rm -rf scripts/qdrant-utils/
 rm -rf qdrant_storage/
 ```
+
+## System Consolidation and Cleanup
+
+The Panoptikon documentation system has undergone a full consolidation and migration to a unified, Qdrant-backed architecture. This section summarizes the actions taken, deprecated files, and next steps. This section supersedes the previous `CONSOLIDATION_SUMMARY.md` file.
+
+### Actions Taken
+- All documentation scripts and interfaces are now located in `scripts/documentation/` and `scripts/qdrant/`.
+- The main CLI for documentation management is `docs.py` at the project root.
+- The Qdrant collection name is standardized as `panoptikon`.
+- All documentation is indexed and accessed via the unified Qdrant cloud instance.
+- Redundant scripts and files have been removed or replaced by the new system.
+
+### Deprecated/Removed Files
+- `migrate_docs.py` (root) — replaced by `docs.py`
+- `scripts/docs_pipeline.py` — replaced by `docs.py`
+- `CONSOLIDATION_SUMMARY.md` — content merged here
+
+### Next Steps
+- Delete any remaining deprecated files listed above if present.
+- Ensure `.DS_Store` and other OS metadata files are removed and ignored via `.gitignore`.
+- Move technical notes (e.g., PyObjC typing) to `docs/guides/` or merge into onboarding documentation.
+- Normalize filenames (e.g., remove leading `#` from `# Panoptikon Code Error Priority List.md`).
+
+The system is now fully consolidated with a single approach to documentation management. Refer to this guide for all future documentation system questions.

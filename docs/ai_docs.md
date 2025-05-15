@@ -39,4 +39,16 @@
     - Start implementation of schema migration system (#todo)
     - Develop and test migration scripts (#todo)
     - Document migration process and update progress in documentation (#todo)
-    - Monitor for any issues during migration and address promptly (#todo) 
+    - Monitor for any issues during migration and address promptly (#todo)
+
+## [2024-06-12 10:00] #phase4.1 #phase6 #phase7 #decision #done #usp
+- **Phase:** 4.1 (Database Schema), 6 (Indexing), 7 (UI Framework)
+- **Summary:** Promoted folder size calculation, display, and sorting to a core deliverable. Updated the client specification, roadmap, and all relevant stage documents to make folder size a first-class feature. Implementation will be staged: (1) add `folder_size` column and index to the database schema, (2) implement recursive folder size calculation and incremental updates in the indexer, (3) display and sort by folder size in the UI. All changes reference the integration report and competitive analysis.
+- **Tags:** #done #decision #usp #spec #roadmap #migration #rationale
+- **Rationale:** Folder size is a unique selling point not offered by competitors. Integration report and user research confirm its value. Early implementation ensures architectural alignment and maximizes user impact.
+- **Next Steps:**
+    - Implement schema migration for `folder_size` (Phase 4.1)
+    - Add recursive folder size calculation and incremental updates (Phase 6)
+    - Update UI to display and sort by folder size (Phase 7)
+    - Add tests for accuracy and performance
+    - Track progress and log all major actions in documentation system 

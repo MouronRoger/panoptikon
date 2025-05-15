@@ -73,6 +73,8 @@ The roadmap is organized into **Development Stages** (timeline-based milestones)
 | Migration System | Build simple schema migration framework | 1 day |
 | Query Optimization | Design and implement prepared statements | 1 day |
 | Data Integrity | Configure WAL journaling and integrity checks | 1 day |
+| Folder Size Field | Add `folder_size` column to `files` table for directories (see Integration Report) | 0.5 day |
+| Folder Size Index | Add index on `folder_size` for efficient sorting | 0.5 day |
 
 ##### Milestone: Foundation Ready
 
@@ -127,6 +129,8 @@ The roadmap is organized into **Development Stages** (timeline-based milestones)
 | Batch Processing | Create efficient batch database operations | 1 day |
 | Progress Tracking | Implement indexing progress monitoring | 1 day |
 | Priority Management | Build intelligent scanning prioritization | 1 day |
+| Folder Size Calculation | Implement recursive folder size calculation and store in database | 2 days |
+| Folder Size Updates | Add incremental folder size updates on file changes | 1 day |
 
 ##### Metadata Extraction
 
@@ -154,6 +158,7 @@ The roadmap is organized into **Development Stages** (timeline-based milestones)
 - Path inclusion/exclusion rule evaluation
 - Permission-aware file operations
 - Basic file operations
+- Folder size calculation, storage, and display in results table
 
 **Quality Gates**:
 - Search completes in <50ms for 10k test files
@@ -162,6 +167,7 @@ The roadmap is organized into **Development Stages** (timeline-based milestones)
 - Path rules correctly filter files
 - Permission handling works with different access levels
 - 95% test coverage maintained
+- Folder size calculation is accurate, performant, and covered by tests
 
 ### 2.3 Development Stage 3: UI Framework (Weeks 6-8)
 *Encompasses Stage 7*
@@ -179,6 +185,7 @@ The roadmap is organized into **Development Stages** (timeline-based milestones)
 | Tab Bar | Build category filtering system | 2 days |
 | Results Table | Implement virtual table view for results | 3 days |
 | Column Management | Create customizable column system | 2 days |
+| Folder Size Column | Display folder sizes in results table, enable sorting and formatting | 1 day |
 
 ##### Interaction Model
 
@@ -416,8 +423,8 @@ The roadmap is organized into **Development Stages** (timeline-based milestones)
 | Development Stage | Weeks | Stages | Focus |
 |------------------|-------|--------|-------|
 | Stage 1: Foundation | 1-2 | Stages 1-4 | Environment, Infrastructure, Abstractions, Database |
-| Stage 2: Core Engine | 3-5 | Stages 5-6 | Search Engine, Indexing System |
-| Stage 3: UI Framework | 6-8 | Stage 7 | User Interface & Interaction |
+| Stage 2: Core Engine | 3-5 | Stages 5-6 | Search Engine, Indexing System, Folder Size Calculation |
+| Stage 3: UI Framework | 6-8 | Stage 7 | User Interface & Interaction, Folder Size Display |
 | Stage 4: Integration | 9-10 | Stages 8-9 | Cloud Integration, System Integration |
 | Stage 5: Optimization | 11-12 | Stage 10 | Performance & User Experience |
 | Stage 6: Packaging | 13 | Stage 11 | Final Build & Release |

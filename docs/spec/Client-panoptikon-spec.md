@@ -69,7 +69,7 @@ Panoptikon's index includes files on internal drives, connected external volumes
 
 Panoptikon maintains a local, lightweight database to store file index metadata. This database persists between launches, supports incremental updates driven by filesystem events, and caches information about offline or cloud-only files to avoid costly full re-indexing. When a network or cloud file is unavailable, its metadata remains accessible in the database so that the app can display placeholder entries instantly and hydrate files on demand without delaying search results.
 
-**Future-Proof Database Design**: While the initial release focuses on filename indexing only, the database schema will be designed with extensibility in mind, including provisions for future content-based search capabilities. This forward-looking approach ensures that future enhancements can be added without requiring database migration or redesign.
+**Future-Proof Database Design**: While the initial release focuses on filename indexing only, the database schema will be designed with extensibility in mind, including provisions for future content-based search capabilities **and folder size calculation**. This forward-looking approach ensures that future enhancements can be added without requiring database migration or redesign.
 
 ## ⚡ **Performance and Resource Constraints**
 
@@ -129,8 +129,8 @@ These operations apply seamlessly to multiple selected files.
 **Flexible Column Customization**: The results view offers comprehensive column customization:
 * Users can show/hide individual columns
 * Available columns include: Name, Path, Size, Extension, Type, Date Modified, Date Created, Date Accessed, and Run Count
-* Folder size calculation is supported where possible
-* Columns are sortable by clicking headers
+* **Folder size calculation is supported where possible (see Integration Report).**
+* Columns are sortable by clicking headers, including by folder size
 * Column positions can be changed via drag and drop
 * Column preferences persist across sessions
 
@@ -140,7 +140,7 @@ These operations apply seamlessly to multiple selected files.
 
 **Simple, Predictable Sorting**: By default, search results are sorted by most recently modified files at the top, followed by alphabetical ordering. This approach ensures the most relevant files typically appear first without complex ranking algorithms.
 
-**User-Controlled Sorting**: Users can manually sort the results by clicking any column header (Name, Date Modified, Size, etc.) to change the sort order. This gives direct control over result organization without automatic or "intelligent" intervention.
+**User-Controlled Sorting**: Users can manually sort the results by clicking any column header (Name, Date Modified, Size, **Folder Size**, etc.) to change the sort order. This gives direct control over result organization without automatic or "intelligent" intervention.
 
 **Basic Run Count Tracking**: The system maintains a simple count of file opens to support the "Run Count" column, but does not implement complex usage analytics or predictive sorting.
 
@@ -151,7 +151,8 @@ These operations apply seamlessly to multiple selected files.
 2. Find a specified file by filename
 3. Open it in under one second end-to-end
 4. Successfully work with local, network, and cloud files without configuration
-5. Perform the above while macOS's Activity Monitor never flags Panoptikon as a top resource consumer
+5. **See folder sizes for all directories instantly and sort by folder size**
+6. Perform the above while macOS's Activity Monitor never flags Panoptikon as a top resource consumer
 
 This criterion focuses exclusively on filename-based search performance and comprehensive file system visibility, aligning with the "no blindspots" philosophy and Stage 1 scope.
 

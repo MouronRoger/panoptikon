@@ -60,3 +60,12 @@
 - Stage 3 filesystem operations
 - Stage 3 FSEvents wrapper
 - Stage 4 database schema
+
+## Folder Size Calculation
+
+- Implement recursive folder size calculation for all indexed directories.
+- Store calculated folder sizes in the `folder_size` column of the files table.
+- Update folder sizes incrementally as files are added, removed, or changed.
+- Handle symlinks, hard links, and permission errors robustly.
+- This enables instant folder size display and sorting in the UI (see Integration Report).
+- Add tests to ensure accuracy and performance of folder size calculation.
