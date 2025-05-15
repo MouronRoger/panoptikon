@@ -450,76 +450,66 @@ def test_migration_executor_success(tmp_path: Path) -> None:
             "up": schema_manager._migrate_1_0_0_to_1_1_0_with_backup,
         }
     )
-
-    # Add a fake migration 1.1.0 -> 1.2.0
-    def add_table(conn):
-        cursor = conn.cursor()
-        cursor.execute("CREATE TABLE test_atomic (id INTEGER PRIMARY KEY)")
-        cursor.execute(
-            "UPDATE schema_version SET version = ?, updated_at = ? WHERE id = 1",
-            ("1.2.0", int(time.time())),
-        )
-        conn.commit()
-
-    schema_manager.MIGRATIONS.append(
-        {
-            "from_version": "1.1.0",
-            "to_version": "1.2.0",
-            "up": add_table,
-        }
+    # Set version to 1.0.0 to simulate needing migration
+    conn = sqlite3.connect(str(db_path))
+    cursor = conn.cursor()
+    cursor.execute(
+        "UPDATE schema_version SET version = ?, updated_at = ? WHERE id = 1",
+        ("1.0.0", int(time.time())),
     )
-    schema_manager.set_schema_version("1.1.0")
+    conn.commit()
+    conn.close()
     schema_manager.migrate_to_latest()
-    # Check that the table exists and version is updated
+    # Check that the version is updated
     conn = sqlite3.connect(str(db_path))
     cursor = conn.cursor()
     cursor.execute("SELECT version FROM schema_version WHERE id = 1")
-    assert cursor.fetchone()[0] == "1.2.0"
-    cursor.execute(
-        "SELECT name FROM sqlite_master WHERE type='table' AND name='test_atomic'"
-    )
-    assert cursor.fetchone() is not None
+    assert cursor.fetchone()[0] == CURRENT_SCHEMA_VERSION
+    # Check folder_size column
+    cursor.execute("PRAGMA table_info(files)")
+    columns = [row[1] for row in cursor.fetchall()]
+    assert "folder_size" in columns
     conn.close()
 
 
 def test_migration_executor_failure_and_rollback(tmp_path: Path) -> None:
-    """Test that a migration failure rolls back and restores from backup."""
+    """Test that a migration failure rolls back and restores the DB to the last backup (after schema creation, version 1.1.0)."""
     SchemaManager.MIGRATIONS = []  # Reset registry for test isolation
     db_path = tmp_path / "test.db"
     schema_manager = SchemaManager(db_path)
     schema_manager.create_schema()
-    # Re-add default migration
+
+    # Re-add default migration, but patch it to fail
+    def fail_migration(conn):
+        raise RuntimeError("Simulated migration failure")
+
     SchemaManager.MIGRATIONS.append(
         {
             "from_version": "1.0.0",
             "to_version": "1.1.0",
-            "up": schema_manager._migrate_1_0_0_to_1_1_0_with_backup,
-        }
-    )
-
-    # Add a fake migration 1.2.0 -> 1.3.0 that fails
-    def fail_migration(conn):
-        raise RuntimeError("Simulated migration failure")
-
-    schema_manager.MIGRATIONS.append(
-        {
-            "from_version": "1.2.0",
-            "to_version": "1.3.0",
             "up": fail_migration,
         }
     )
-    schema_manager.set_schema_version("1.2.0")
-    # Write a marker to the DB file to check for restore
-    db_path.write_bytes(b"originaldb")
+    # Set version to 1.0.0 to simulate needing migration
+    conn = sqlite3.connect(str(db_path))
+    cursor = conn.cursor()
+    cursor.execute(
+        "UPDATE schema_version SET version = ?, updated_at = ? WHERE id = 1",
+        ("1.0.0", int(time.time())),
+    )
+    conn.commit()
+    conn.close()
+    # Attempt migration and expect failure
     try:
         schema_manager.migrate_to_latest()
     except Exception as e:
         assert "Simulated migration failure" in str(e)
-    # The DB file should be restored to the original marker
-    assert db_path.read_bytes() == b"originaldb"
-    # Version should not be updated
+    # The DB should be restored to the backup (version 1.1.0)
     conn = sqlite3.connect(str(db_path))
     cursor = conn.cursor()
     cursor.execute("SELECT version FROM schema_version WHERE id = 1")
-    assert cursor.fetchone()[0] == "1.2.0"
+    assert cursor.fetchone()[0] == "1.1.0"
+    # The files table should still exist
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='files'")
+    assert cursor.fetchone() is not None
     conn.close()

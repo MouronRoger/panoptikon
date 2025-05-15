@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-One-time script to add 'document' field to existing points
+"""One-time script to add 'document' field to existing points
 """
 from qdrant_client import QdrantClient
 from qdrant_client.models import PointStruct

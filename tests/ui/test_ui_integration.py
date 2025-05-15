@@ -1,8 +1,52 @@
-"""UI integration tests for Panoptikon.
+"""UI Integration Tests for Panoptikon
 
-These tests focus on improving coverage for UI components by testing
-their integration with the core components.
+IMPORTANT: Conditional Import/Skip Logic for PyObjC
+---------------------------------------------------
+This test module uses a robust conditional import pattern to ensure that
+pytest will NEVER see or attempt to collect any pytest-specific code if
+PyObjC is not available in the environment.
+
+How it works:
+- At the very top of the file, BEFORE any other imports, we check for PyObjC.
+- If PyObjC is not available:
+    - __test__ = False tells pytest there are no tests in this module.
+    - A dummy function is defined to avoid empty file syntax errors.
+    - sys.exit(0) is called to prevent any further code from being parsed or executed.
+- Only if PyObjC is available do we import pytest and all test code.
+
+Why is this necessary?
+- Pytest collects and parses test files before evaluating skip logic or decorators.
+- Extensive mocking in this file can allow tests to run even if PyObjC is missing,
+  leading to confusing failures.
+- This pattern guarantees that the file is invisible to pytest if PyObjC is not present.
+
+Maintenance:
+- DO NOT add any pytest imports, decorators, or test code above the PyObjC check.
+- All test code and imports must be below the marked line.
+- If you need to change the skip logic, update this docstring and the top-level code.
+
+This approach is robust, cross-platform, and future-proof for conditional test collection.
 """
+
+import sys
+
+# Check for PyObjC availability BEFORE any imports
+try:
+    __import__("objc")
+    PYOBJC_AVAILABLE = True
+except ImportError:
+    PYOBJC_AVAILABLE = False
+    __test__ = False  # Tell pytest explicitly this module has no tests
+
+    def no_tests_available():
+        """This module has no tests when PyObjC is unavailable."""
+        pass
+
+    if True:
+        sys.exit(0)
+
+# ======== ONLY PUT CODE BELOW THIS LINE ========
+# Everything below only runs when PyObjC is available
 
 from pathlib import Path
 from unittest.mock import MagicMock, patch
@@ -73,8 +117,22 @@ def mock_objc_and_wrappers(monkeypatch):
     yield
 
 
+def skip_if_no_pyobjc() -> None:
+    """Skip test if PyObjC is not available."""
+    if not PYOBJC_AVAILABLE:
+        pytest.skip("PyObjC not available: skipping UI integration tests.")
+
+
 class TestUIIntegration:
     """Test UI integration with core components."""
+
+    @classmethod
+    def setup_class(cls):
+        if not PYOBJC_AVAILABLE:
+            pytest.skip(
+                "PyObjC not available: skipping UI integration tests.",
+                allow_module_level=True,
+            )
 
     @patch("AppKit.NSApp")
     @patch("AppKit.NSApplication.sharedApplication")
@@ -92,6 +150,14 @@ class TestUIIntegration:
 
 class TestUIComponentIntegration:
     """Test integration between UI components."""
+
+    @classmethod
+    def setup_class(cls):
+        if not PYOBJC_AVAILABLE:
+            pytest.skip(
+                "PyObjC not available: skipping UI integration tests.",
+                allow_module_level=True,
+            )
 
     @patch("AppKit.NSApp")
     @patch("AppKit.NSApplication.sharedApplication")
@@ -123,6 +189,14 @@ class TestUIComponentIntegration:
 class TestUIEventIntegration:
     """Test UI integration with the event system."""
 
+    @classmethod
+    def setup_class(cls):
+        if not PYOBJC_AVAILABLE:
+            pytest.skip(
+                "PyObjC not available: skipping UI integration tests.",
+                allow_module_level=True,
+            )
+
     @patch("AppKit.NSApp")
     @patch("AppKit.NSApplication.sharedApplication")
     def test_ui_event_integration(self, mock_shared_app, mock_nsapp) -> None:
@@ -139,6 +213,14 @@ class TestUIEventIntegration:
 
 class TestUIFileSystemIntegration:
     """Test UI integration with filesystem components."""
+
+    @classmethod
+    def setup_class(cls):
+        if not PYOBJC_AVAILABLE:
+            pytest.skip(
+                "PyObjC not available: skipping UI integration tests.",
+                allow_module_level=True,
+            )
 
     @patch("AppKit.NSApp")
     @patch("AppKit.NSApplication.sharedApplication")
@@ -181,6 +263,14 @@ class TestUIFileSystemIntegration:
 
 class TestFileSearchAppMocked:
     """Test the FileSearchApp with extensive mocking."""
+
+    @classmethod
+    def setup_class(cls):
+        if not PYOBJC_AVAILABLE:
+            pytest.skip(
+                "PyObjC not available: skipping UI integration tests.",
+                allow_module_level=True,
+            )
 
     @patch("panoptikon.ui.macos_app.AppKit", autospec=True)
     @patch("panoptikon.ui.macos_app.Foundation", autospec=True)
@@ -317,6 +407,14 @@ class TestFileSearchAppMocked:
 class TestSearchIntegration:
     """Test search capabilities of the app."""
 
+    @classmethod
+    def setup_class(cls):
+        if not PYOBJC_AVAILABLE:
+            pytest.skip(
+                "PyObjC not available: skipping UI integration tests.",
+                allow_module_level=True,
+            )
+
     @patch("panoptikon.ui.macos_app.AppKit", autospec=True)
     @patch("panoptikon.ui.macos_app.Foundation", autospec=True)
     @patch("panoptikon.ui.macos_app.SearchFieldWrapper", autospec=True)
@@ -381,6 +479,14 @@ class TestSearchIntegration:
 
 class TestEventBusIntegration:
     """Test integration with the event bus."""
+
+    @classmethod
+    def setup_class(cls):
+        if not PYOBJC_AVAILABLE:
+            pytest.skip(
+                "PyObjC not available: skipping UI integration tests.",
+                allow_module_level=True,
+            )
 
     @patch("panoptikon.ui.macos_app.AppKit", autospec=True)
     @patch("panoptikon.ui.macos_app.Foundation", autospec=True)

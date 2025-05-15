@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
-"""
-Migrate Knowledge Graph to Documentation
+"""Migrate Knowledge Graph to Documentation
 Converts existing knowledge graph entities to structured markdown documentation
 """
-import sys
 from pathlib import Path
+import sys
 
 # Add the project root to the Python path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
+
 from scripts.documentation.ai_docs import AIDocumentationSystem
-import json
 
 
 def migrate_knowledge_graph():

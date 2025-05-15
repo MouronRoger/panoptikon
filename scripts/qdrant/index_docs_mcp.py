@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
-"""
-MKDocs to Qdrant pipeline for panoptikon collection
+"""MKDocs to Qdrant pipeline for panoptikon collection
 Uploads documentation to the panoptikon collection with MCP-compatible configuration
 """
-import os
-from pathlib import Path
-from typing import List, Dict
-import frontmatter
 import hashlib
+from pathlib import Path
+from typing import Dict, List
+
+import frontmatter
 from qdrant_client import QdrantClient
-from qdrant_client.models import Distance, VectorParams, PointStruct
+from qdrant_client.models import Distance, PointStruct, VectorParams
 from sentence_transformers import SentenceTransformer
 
 
@@ -61,7 +60,7 @@ class MKDocsToQdrant:
                 continue
                 
             try:
-                with open(md_file, 'r', encoding='utf-8') as f:
+                with open(md_file, encoding='utf-8') as f:
                     post = frontmatter.load(f)
                     
                 # Create document metadata
@@ -185,7 +184,6 @@ class MKDocsToQdrant:
 
 def main():
     # Use your cloud Qdrant instance with panoptikon collection
-    import os
     project_root = Path(__file__).parent.parent.parent
     docs_path = project_root / "docs"
     

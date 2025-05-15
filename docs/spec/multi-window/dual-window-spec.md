@@ -1,19 +1,19 @@
-# Multi-Window Implementation Specification
+# Dual-Window Implementation Specification
 
 ## 🎯 Core Requirements
 
 ### Purpose
-Enable users to work with multiple Panoptikon windows for enhanced file management workflows, particularly drag-and-drop operations between different search contexts.
+Enable users to work with two Panoptikon windows for enhanced file management workflows, particularly drag-and-drop operations between different search contexts.
 
 ### Unique Selling Point (USP)
-**Cross-window drag-and-drop** - Unlike Everything (which doesn't support this), Panoptikon enables dragging files between search windows, creating powerful workflows for file organization across different search contexts.
+**Cross-window drag-and-drop** - Unlike Everything (which doesn't support this), Panoptikon enables dragging files between two search windows, creating powerful workflows for file organization across different search contexts.
 
 ### Key Specifications
-- **Window Creation**: Primary via interface button, keyboard shortcuts (Cmd+N) also supported
-- **Initial Positioning**: New windows appear alongside existing window as dual-pane layout
+- **Window Creation**: Toggle via interface button or keyboard shortcut (Cmd+N)
+- **Initial Positioning**: Second window appears adjacent to main window as dual-pane layout
 - **Independence**: Windows can be moved freely across screens after creation
 - **Resource Management**: Only one window is active at a time
-- **Singleton Architecture**: Single instances of core services shared across windows
+- **Binary Architecture**: Single instances of core services shared between main and secondary windows
 - **Primary Use Case**: Drag files from one window to folders displayed in another
 - **No Position Persistence**: Fresh window arrangement on each app launch
 - **No Creation Effects**: Simple appearance without animation or sound
@@ -24,7 +24,7 @@ Enable users to work with multiple Panoptikon windows for enhanced file manageme
 
 ```
 WindowState {
-  - windowId: UUID
+  - isMain: Boolean
   - isActive: Boolean
   - searchQuery: String  // Always visible in search field
   - activeTab: TabIdentifier
@@ -36,20 +36,22 @@ WindowState {
 ```
 
 **Implementation Strategy**:
-- Maintain WindowState objects for all windows
+- Maintain WindowState objects for main and secondary windows
 - Persist search query in UI to maintain context
 - Use NSWindowController pattern for window lifecycle
-- Default positioning for new windows beside existing
+- Default positioning for secondary window beside main
 
 ### 2. Active Window Coordination
 
 ```
-WindowManager (Singleton) {
-  - activeWindow: WindowIdentifier
-  - windows: Dictionary<WindowIdentifier, WindowState>
-  - activateWindow(id: WindowIdentifier)
-  - suspendWindow(id: WindowIdentifier)
-  - coordinateDragOperation(source: WindowIdentifier, target: WindowIdentifier)
+DualWindowManager (Singleton) {
+  - activeWindow: "main" | "secondary"
+  - mainWindowState: WindowState
+  - secondaryWindowState: Optional<WindowState>
+  - activateMainWindow()
+  - activateSecondaryWindow()
+  - toggleSecondaryWindow()
+  - coordinateDragOperation(isFromMainWindow: Boolean, files: Array<FileReference>)
 }
 ```
 
@@ -75,7 +77,7 @@ WindowManager (Singleton) {
 
 **Cross-Window Operations**:
 1. Drag initiated from inactive window → activate source window
-2. Track source window ID in drag session
+2. Track source window (main or secondary) in drag session
 3. Drop in target window → process through active window's services
 4. Log transaction with source and target window context
 
@@ -84,12 +86,12 @@ WindowManager (Singleton) {
 ### 1. State Synchronization
 **Issue**: File system changes while window inactive  
 **Mitigation**: 
-- Mark inactive windows as "stale"
+- Mark inactive window as "stale"
 - Quick refresh on reactivation
 - Visual indicator for outdated results
 
 ### 2. Resource Contention
-**Issue**: Multiple windows competing for file handles/locks  
+**Issue**: Two windows competing for file handles/locks  
 **Mitigation**:
 - Centralized file operation queue
 - Read operations can be concurrent
@@ -99,23 +101,16 @@ WindowManager (Singleton) {
 **Issue**: Which window is active may be unclear  
 **Mitigation**:
 - Active window displays with full color styling
-- Inactive windows shift to monochrome/grayscale appearance
+- Inactive window shifts to monochrome/grayscale appearance
 - Instant visual feedback on window activation
 - No additional UI elements needed - the color state is the indicator
 
 ### 4. Memory Usage
-**Issue**: Large result sets cached in inactive windows  
+**Issue**: Large result sets cached in inactive window  
 **Mitigation**:
 - Implement result set size limits
 - Lazy loading for cached results
 - Periodic memory pressure cleanup
-
-### 5. Window Proliferation
-**Issue**: Users creating too many windows  
-**Mitigation**:
-- Soft limit (e.g., 5 windows) with warning
-- Window management menu showing all windows
-- "Close inactive windows" option
 
 ## 🎨 UI/UX Considerations
 
@@ -126,11 +121,11 @@ WindowManager (Singleton) {
 - **No Effects**: Simple window appearance without animations
 - **Active/Inactive States**: 
   - Active window: Full color interface
-  - Inactive windows: Monochrome/grayscale appearance
+  - Inactive window: Monochrome/grayscale appearance
   - Immediate visual transition on focus change
 
 ### Window Positioning
-- **Initial Layout**: New window appears beside existing (dual-pane style)
+- **Initial Layout**: Second window appears beside main (dual-pane style)
 - **Smart Positioning**: 
   - If screen space permits: side-by-side
   - If not: cascade with offset
@@ -138,15 +133,15 @@ WindowManager (Singleton) {
 - **User Control**: Full freedom to reposition after creation
 
 ### Keyboard Support
-- **Window Creation**: Cmd+N (standard macOS convention)
+- **Window Toggle**: Cmd+N (standard macOS convention)
 - **Window Switching**: Cmd+` (standard macOS window cycling)
 - **Search Focus**: Cmd+F or auto-focus on type
 
 ## 📊 Implementation Stages
 
-### Stage 1: Basic Multi-Window
+### Stage 1: Basic Dual-Window
 - Window creation via button and Cmd+N
-- Dual-pane positioning logic
+- Side-by-side positioning logic
 - Independent search states
 - Basic active/inactive management
 
@@ -165,24 +160,23 @@ WindowManager (Singleton) {
 ### Stage 4: Polish
 - Visual state indicators
 - Refined positioning algorithm
-- Window management UI
+- Window focus management
 - Performance optimizations
 
 ## 🏆 Success Criteria
 
 1. **Performance**: Window switching < 100ms
-2. **Memory**: Inactive windows use < 10MB cached state
+2. **Memory**: Inactive window uses < 10MB cached state
 3. **Reliability**: Zero data loss during cross-window operations
 4. **Usability**: Clear active window indication
-5. **Scalability**: Handles 5+ windows gracefully
-6. **USP Delivery**: Seamless drag-drop between windows (not available in Everything)
+5. **USP Delivery**: Seamless drag-drop between windows (not available in Everything)
 
 ## 🔄 Alternative Approaches Considered
 
-### Rejected: True Multi-Instance
-- **Why**: Complex singleton synchronization
-- **Why**: Duplicate resource usage
-- **Why**: Potential race conditions
+### Rejected: Multi-Window System (>2 windows)
+- **Why**: Unnecessary complexity for limited benefit
+- **Why**: Higher resource overhead
+- **Why**: More edge cases to handle
 
 ### Rejected: Single Window with Tabs
 - **Why**: Doesn't support drag between contexts
@@ -196,7 +190,6 @@ WindowManager (Singleton) {
 ## 📝 Open Questions
 
 1. **Window Positioning Algorithm**: Exact offset for cascade when side-by-side isn't possible?
-2. **Maximum Windows**: Hard limit or just performance warning?
-3. **Visual Distinction**: Specific design elements to differentiate from Finder?
-4. **Active Window Indicator**: Title bar highlight, border, or other method?
-5. **Multi-Monitor Behavior**: Which screen gets new windows by default?
+2. **Visual Distinction**: Specific design elements to differentiate from Finder?
+3. **Active Window Indicator**: Title bar highlight, border, or other method?
+4. **Multi-Monitor Behavior**: Which screen gets secondary window by default?

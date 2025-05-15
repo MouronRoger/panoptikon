@@ -5,14 +5,14 @@
 # ---------------------------------------------------------------------------
 from __future__ import annotations
 
-import os
-import tempfile
 from collections.abc import Generator
+import os
 from pathlib import Path
+import tempfile
 from typing import Any, Dict, Optional, Set
 
-import pytest
 from pydantic import Field
+import pytest
 
 from src.panoptikon.core.config import ConfigDict, ConfigSection, ConfigurationSystem
 from src.panoptikon.core.events import EventBus

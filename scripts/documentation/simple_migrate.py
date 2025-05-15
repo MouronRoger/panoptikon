@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-"""
-Simple documentation system without embeddings
+"""Simple documentation system without embeddings
 Just creates markdown docs that can be manually indexed later
 """
-import json
-from pathlib import Path
 from datetime import datetime
-from typing import Dict, List, Optional
+from pathlib import Path
+from typing import Dict
+
 import frontmatter
 
 

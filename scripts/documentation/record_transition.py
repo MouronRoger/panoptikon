@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
+"""Quick script to record the 4.2 to 4.3 transition
 """
-Quick script to record the 4.2 to 4.3 transition
-"""
-import sys
 from pathlib import Path
+import sys
+
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from scripts.documentation.ai_docs import update_phase_progress, record_decision, create_documentation
+from scripts.documentation.ai_docs import (
+    create_documentation,
+    record_decision,
+    update_phase_progress,
+)
 
 # Record the transition
 print("📝 Recording Phase 4.2 to 4.3 transition...")

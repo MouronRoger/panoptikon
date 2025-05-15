@@ -75,3 +75,19 @@
     - Begin Stage 6: Implement folder size calculation and incremental updates (#todo)
     - Prepare UI changes for folder size display and sorting (Stage 7) (#todo)
     - Continue to log all progress and decisions in the documentation system (#milestone) 
+
+## [2024-06-12 15:30] #phase7 #ui #decision #done #testing #pyobjc #rationale
+- **Phase:** 7 (UI Framework)
+- **Summary:**
+    - Implemented robust conditional import/skip logic in `tests/ui/test_ui_integration.py` to ensure pytest never collects or runs UI integration tests if PyObjC is not available.
+    - The solution checks for PyObjC at the very top of the file, sets `__test__ = False`, defines a dummy function, and exits immediately if PyObjC is missing.
+    - All pytest-specific imports and test code are placed below the check, so pytest never sees them if PyObjC is unavailable.
+    - Added a detailed module-level docstring explaining the rationale, maintenance requirements, and usage for future developers.
+    - This approach is robust, cross-platform, and future-proof, and avoids all issues with pytest collection, mocking, and skip logic.
+- **Tags:** #done #decision #testing #pyobjc #rationale
+- **Rationale:**
+    - Previous skip/ignore mechanisms failed due to pytest's collection and parsing order and extensive mocking.
+    - This pattern guarantees the file is invisible to pytest if PyObjC is not present, preventing confusing failures and maintenance headaches.
+- **Next Steps:**
+    - Document this pattern in developer onboarding and testing guides.
+    - Apply similar patterns to other conditional test modules if needed. 

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""
-Qdrant collection management utility for Panoptikon project.
+"""Qdrant collection management utility for Panoptikon project.
 """
 import argparse
+
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams
 
@@ -59,7 +59,7 @@ class QdrantManager:
     def clear(self):
         """Clear all points from collection."""
         try:
-            from qdrant_client.models import FilterSelector, Filter
+            from qdrant_client.models import Filter, FilterSelector
             
             self.client.delete(
                 collection_name=self.collection_name,

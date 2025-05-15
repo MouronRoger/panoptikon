@@ -1,23 +1,25 @@
 #!/usr/bin/env python3
-"""
-Complete Knowledge Graph to Qdrant Pipeline
+"""Complete Knowledge Graph to Qdrant Pipeline
 1. Migrate knowledge graph to markdown docs
 2. Index all docs in Qdrant for search
 """
-import sys
 from pathlib import Path
+import sys
 
 # Add the project root to the Python path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from scripts.documentation.ai_docs import document_phase, document_component, record_decision
+
+from scripts.documentation.ai_docs import (
+    document_component,
+    document_phase,
+    record_decision,
+)
 from scripts.qdrant.index_docs import MKDocsToQdrant
-from datetime import datetime
 
 
 def migrate_from_knowledge_graph():
-    """
-    Step 1: Convert knowledge graph entities to documentation
+    """Step 1: Convert knowledge graph entities to documentation
     This would normally read from your actual knowledge graph
     """
     created_files = []
@@ -108,8 +110,7 @@ def migrate_from_knowledge_graph():
 
 
 def index_all_documentation():
-    """
-    Step 2: Index all documentation in Qdrant
+    """Step 2: Index all documentation in Qdrant
     """
     print("\n🔍 Indexing documentation in Qdrant...")
     
@@ -126,8 +127,7 @@ def index_all_documentation():
 
 
 def test_search():
-    """
-    Step 3: Test that search works
+    """Step 3: Test that search works
     """
     print("\n🧪 Testing search functionality...")
     

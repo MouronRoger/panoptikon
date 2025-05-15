@@ -2,8 +2,8 @@
 """Script to check file length limits."""
 
 import argparse
-import sys
 from collections.abc import Sequence
+import sys
 from typing import Optional
 
 

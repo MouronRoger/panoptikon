@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Test MCP-compatible Qdrant search
+"""Test MCP-compatible Qdrant search
 Verifies that documents are properly indexed for MCP access
 """
 from qdrant_client import QdrantClient

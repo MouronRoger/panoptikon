@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
-"""
-Unified Documentation System for Panoptikon
+"""Unified Documentation System for Panoptikon
 Provides both AI and manual documentation management
 """
+from pathlib import Path
 import subprocess
 import sys
-from pathlib import Path
 
 
 def run_command(cmd, description):

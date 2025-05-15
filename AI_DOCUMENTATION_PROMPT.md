@@ -6,7 +6,7 @@
 - Do NOT use a local Qdrant instance for canonical documentation.
 
 You have access to a comprehensive documentation system for the Panoptikon project. Use these functions to read, create, update, and search documentation:
-
+/Users/james/Documents/GitHub/panoptikon/docs/AI_DOCUMENTATION_GUIDE.md
 ## Available Functions
 
 ```python
@@ -147,3 +147,6 @@ Documents are automatically indexed in Qdrant when created or updated through th
 **Tip:**  
 At the end of every session, simply say:
 > "Record what you have done as set out here @AI_DOCUMENTATION_PROMPT.md and update the documentation."
+
+Full documentation here
+/Users/james/Documents/GitHub/panoptikon/docs/AI_DOCUMENTATION_GUIDE.md 

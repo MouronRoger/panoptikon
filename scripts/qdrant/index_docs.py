@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""
-Simple MKDocs to Qdrant pipeline
+"""Simple MKDocs to Qdrant pipeline
 Automatically indexes your documentation for semantic search
 """
+import hashlib
 import os
 from pathlib import Path
-from typing import List, Dict
+from typing import Dict, List
+
 import frontmatter
-import hashlib
 from qdrant_client import QdrantClient
-from qdrant_client.models import Distance, VectorParams, PointStruct
+from qdrant_client.models import Distance, PointStruct, VectorParams
 from sentence_transformers import SentenceTransformer
 
 
@@ -64,7 +64,7 @@ class MKDocsToQdrant:
                 continue
                 
             try:
-                with open(md_file, 'r', encoding='utf-8') as f:
+                with open(md_file, encoding='utf-8') as f:
                     post = frontmatter.load(f)
                     
                 # Create document metadata

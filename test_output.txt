@@ -1,74 +1,113 @@
 ============================= test session starts ==============================
-platform darwin -- Python 3.9.18, pytest-8.3.5, pluggy-1.5.0 -- /Users/james/Documents/GitHub/panoptikon/.venv/bin/python
-cachedir: .pytest_cache
+platform darwin -- Python 3.9.18, pytest-8.3.5, pluggy-1.5.0
 rootdir: /Users/james/Documents/GitHub/panoptikon
 configfile: pyproject.toml
-plugins: asyncio-0.26.0, mock-3.14.0, cov-6.1.1
+testpaths: tests
+plugins: anyio-4.9.0, asyncio-0.26.0, mock-3.14.0, cov-6.1.1
 asyncio: mode=strict, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
-collecting ... collected 22 items
+collected 313 items
 
-tests/core/test_db_pool.py::test_pool_initialization PASSED              [  4%]
-tests/core/test_db_pool.py::test_pool_get_connection PASSED              [  9%]
-tests/core/test_db_pool.py::test_pool_connection_reuse PASSED            [ 13%]
-tests/core/test_db_pool.py::test_pool_max_connections PASSED             [ 18%]
-tests/core/test_db_pool.py::test_pool_connection_health_check PASSED     [ 22%]
-tests/core/test_db_pool.py::test_pool_connection_max_age PASSED          [ 27%]
-tests/core/test_db_pool.py::test_pool_transaction PASSED                 [ 31%]
-tests/core/test_db_pool.py::test_pool_different_isolation_levels PASSED  [ 36%]
-tests/core/test_db_pool.py::test_pool_savepoint PASSED                   [ 40%]
-tests/core/test_db_pool.py::test_pool_savepoint_context_manager PASSED   [ 45%]
-tests/core/test_db_pool.py::test_pool_concurrent_access_param[10] PASSED [ 50%]
-tests/core/test_db_pool.py::test_pool_concurrent_access_param[50] PASSED [ 54%]
-tests/core/test_db_pool.py::test_pool_concurrent_access_param[100] PASSED [ 59%]
-tests/core/test_db_pool.py::test_pool_concurrent_access_param[150] PASSED [ 63%]
-tests/core/test_db_pool.py::test_pool_writer_contention PASSED           [ 68%]
-tests/core/test_db_pool.py::test_pool_stress_leak_prevention PASSED      [ 72%]
-tests/core/test_db_pool.py::test_pool_manager PASSED                     [ 77%]
-tests/core/test_db_pool.py::test_pool_thread_safety PASSED               [ 81%]
-tests/core/test_db_pool.py::test_connection_health_status PASSED         [ 86%]
-tests/core/test_db_pool.py::test_transaction_isolation_level PASSED      [ 90%]
-tests/core/test_db_pool.py::test_pooled_connection PASSED                [ 95%]
-tests/core/test_db_pool.py::test_pool_invalid_params PASSED              [100%]
-ERROR: Coverage failure: total of 30 is less than fail-under=80
+tests/core/test_bookmarks.py ...................                         [  6%]
+tests/core/test_bootstrap.py .                                           [  6%]
+tests/core/test_cloud_storage.py ...............                         [ 11%]
+tests/core/test_config.py .......                                        [ 13%]
+tests/core/test_config_hot_reload.py ......s...                          [ 16%]
+tests/core/test_database_connection.py .......                           [ 18%]
+tests/core/test_database_schema.py ......................                [ 25%]
+tests/core/test_database_service.py .......                              [ 28%]
+tests/core/test_db_pool.py ......................                        [ 35%]
+tests/core/test_db_pool_service.py ................                      [ 40%]
+tests/core/test_errors.py .........                                      [ 43%]
+tests/core/test_events.py ........................                       [ 50%]
+tests/core/test_filesystem.py ................                           [ 55%]
+tests/core/test_filesystem_access.py ............................        [ 64%]
+tests/core/test_filesystem_watcher.py ..........................sss...   [ 75%]
+tests/core/test_integration.py ..                                        [ 75%]
+tests/core/test_lifecycle.py .........                                   [ 78%]
+tests/core/test_paths.py ........                                        [ 81%]
+tests/core/test_service.py .........                                     [ 84%]
+tests/core/test_ui.py .......                                            [ 86%]
+tests/test_core.py .                                                     [ 86%]
+tests/test_main.py ...                                                   [ 87%]
+tests/ui/test_macos_app.py ........                                      [ 90%]
+tests/ui/test_macos_app_extended.py .....                                [ 91%]
+tests/ui/test_objc_integration.py ....                                   [ 92%]
+tests/ui/test_ui_integration.py FFF
 
+=================================== FAILURES ===================================
+_____________________ TestUIIntegration.test_app_lifecycle _____________________
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:886: in assert_called_once
+    raise AssertionError(msg)
+E   AssertionError: Expected 'makeKeyAndOrderFront_' to have been called once. Called 0 times.
 
+During handling of the above exception, another exception occurred:
+tests/ui/test_ui_integration.py:122: in test_app_lifecycle
+    app._window.makeKeyAndOrderFront_.assert_called_once()
+E   AssertionError: Expected 'makeKeyAndOrderFront_' to have been called once. Called 0 times.
+----------------------------- Captured stdout call -----------------------------
+PyObjC not available - UI features disabled
+Cannot show UI - PyObjC not available
+____________ TestUIComponentIntegration.test_component_integration _____________
+tests/ui/test_ui_integration.py:160: in test_component_integration
+    assert hasattr(app, "_search_field")
+E   AssertionError: assert False
+E    +  where False = hasattr(<panoptikon.ui.macos_app.FileSearchApp object at 0x115225fd0>, '_search_field')
+----------------------------- Captured stdout call -----------------------------
+PyObjC not available - UI features disabled
+_______________ TestUIEventIntegration.test_ui_event_integration _______________
+../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:886: in assert_called_once
+    raise AssertionError(msg)
+E   AssertionError: Expected 'makeKeyAndOrderFront_' to have been called once. Called 0 times.
+
+During handling of the above exception, another exception occurred:
+tests/ui/test_ui_integration.py:185: in test_ui_event_integration
+    app._window.makeKeyAndOrderFront_.assert_called_once()
+E   AssertionError: Expected 'makeKeyAndOrderFront_' to have been called once. Called 0 times.
+----------------------------- Captured stdout call -----------------------------
+PyObjC not available - UI features disabled
+Cannot show UI - PyObjC not available
 ================================ tests coverage ================================
 _______________ coverage: platform darwin, python 3.9.18-final-0 _______________
 
 Name                                      Stmts   Miss  Cover
 -------------------------------------------------------------
 src/panoptikon/__init__.py                    1      0   100%
-src/panoptikon/__main__.py                   32     32     0%
+src/panoptikon/__main__.py                   32      0   100%
 src/panoptikon/core/__init__.py               0      0   100%
-src/panoptikon/core/config.py               245    199    19%
-src/panoptikon/core/errors.py               178     91    49%
-src/panoptikon/core/events.py               168    107    36%
-src/panoptikon/core/lifecycle.py            135    135     0%
-src/panoptikon/core/service.py              108     80    26%
-src/panoptikon/database/__init__.py          14      4    71%
-src/panoptikon/database/config.py            54     21    61%
-src/panoptikon/database/connection.py        87     63    28%
-src/panoptikon/database/pool.py             268     53    80%
-src/panoptikon/database/pool_service.py      95     67    29%
-src/panoptikon/database/schema.py           139    104    25%
-src/panoptikon/database/service.py           70     49    30%
+src/panoptikon/core/config.py               245     37    85%
+src/panoptikon/core/errors.py               178     21    88%
+src/panoptikon/core/events.py               168      9    95%
+src/panoptikon/core/lifecycle.py            135      7    95%
+src/panoptikon/core/service.py              108      5    95%
+src/panoptikon/database/__init__.py          14      0   100%
+src/panoptikon/database/config.py            54      6    89%
+src/panoptikon/database/connection.py        87     20    77%
+src/panoptikon/database/pool.py             340     59    83%
+src/panoptikon/database/pool_service.py      95     12    87%
+src/panoptikon/database/schema.py           239     53    78%
+src/panoptikon/database/service.py           70      6    91%
 src/panoptikon/filesystem/__init__.py         7      0   100%
-src/panoptikon/filesystem/access.py         287    214    25%
-src/panoptikon/filesystem/bookmarks.py      214    174    19%
-src/panoptikon/filesystem/cloud.py          139    103    26%
-src/panoptikon/filesystem/events.py         107     61    43%
-src/panoptikon/filesystem/paths.py          106     68    36%
-src/panoptikon/filesystem/watcher.py        296    227    23%
+src/panoptikon/filesystem/access.py         287     50    83%
+src/panoptikon/filesystem/bookmarks.py      214     42    80%
+src/panoptikon/filesystem/cloud.py          139     12    91%
+src/panoptikon/filesystem/events.py         107      3    97%
+src/panoptikon/filesystem/paths.py          106     12    89%
+src/panoptikon/filesystem/watcher.py        296     77    74%
 src/panoptikon/search/__init__.py             0      0   100%
 src/panoptikon/typings/__init__.py            0      0   100%
 src/panoptikon/ui/__init__.py                 0      0   100%
-src/panoptikon/ui/macos_app.py              127    127     0%
-src/panoptikon/ui/objc_wrappers.py           79     79     0%
-src/panoptikon/ui/validators.py              37     37     0%
+src/panoptikon/ui/macos_app.py              127     26    80%
+src/panoptikon/ui/objc_wrappers.py           79     10    87%
+src/panoptikon/ui/validators.py              37     15    59%
 src/panoptikon/utils/__init__.py              0      0   100%
 -------------------------------------------------------------
-TOTAL                                      2993   2095    30%
+TOTAL                                      3165    482    85%
 Coverage HTML written to dir htmlcov
 Coverage XML written to file coverage.xml
-FAIL Required test coverage of 80% not reached. Total coverage: 30.00%
-============================== 22 passed in 6.87s ==============================
+Required test coverage of 80% reached. Total coverage: 84.77%
+=========================== short test summary info ============================
+FAILED tests/ui/test_ui_integration.py::TestUIIntegration::test_app_lifecycle
+FAILED tests/ui/test_ui_integration.py::TestUIComponentIntegration::test_component_integration
+FAILED tests/ui/test_ui_integration.py::TestUIEventIntegration::test_ui_event_integration
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 3 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+============ 3 failed, 287 passed, 4 skipped, 7 warnings in 12.30s =============
