@@ -207,3 +207,139 @@ def test_check_version_compatibility() -> None:
     # Different version should not be compatible
     assert not schema_manager._check_version_compatibility("0.9.0")
     assert not schema_manager._check_version_compatibility("2.0.0")
+
+
+def test_migrate_to_latest_adds_folder_size(temp_db_path: Path) -> None:
+    """Test that migrate_to_latest upgrades a 1.0.0 database to 1.1.0 and adds folder_size column and index."""
+    schema_manager = SchemaManager(temp_db_path)
+    # Create schema as 1.0.0 (simulate old schema)
+    conn = sqlite3.connect(str(temp_db_path))
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        CREATE TABLE files (
+            id INTEGER PRIMARY KEY,
+            name TEXT NOT NULL,
+            name_lower TEXT NOT NULL,
+            extension TEXT,
+            path TEXT NOT NULL,
+            parent_path TEXT NOT NULL,
+            size INTEGER,
+            date_created INTEGER,
+            date_modified INTEGER,
+            file_type TEXT,
+            is_directory INTEGER NOT NULL,
+            cloud_provider TEXT,
+            cloud_status INTEGER,
+            indexed_at INTEGER NOT NULL
+        );
+        """
+    )
+    cursor.execute(
+        "CREATE TABLE schema_version (id INTEGER PRIMARY KEY CHECK (id = 1), version TEXT NOT NULL, updated_at INTEGER NOT NULL);"
+    )
+    cursor.execute(
+        "INSERT INTO schema_version (id, version, updated_at) VALUES (1, '1.0.0', 0);"
+    )
+    conn.commit()
+    conn.close()
+    # Run migration
+    schema_manager.migrate_to_latest()
+    # Check schema version
+    conn = sqlite3.connect(str(temp_db_path))
+    cursor = conn.cursor()
+    cursor.execute("SELECT version FROM schema_version WHERE id = 1")
+    version = cursor.fetchone()[0]
+    assert version == "1.1.0"
+    # Check folder_size column
+    cursor.execute("PRAGMA table_info(files)")
+    columns = [row[1] for row in cursor.fetchall()]
+    assert "folder_size" in columns
+    # Check index
+    cursor.execute(
+        "SELECT name FROM sqlite_master WHERE type='index' AND name='idx_files_folder_size'"
+    )
+    assert cursor.fetchone() is not None
+    conn.close()
+
+
+def test_migrate_to_latest_idempotent(temp_db_path: Path) -> None:
+    """Test that running migrate_to_latest twice is safe (idempotent)."""
+    schema_manager = SchemaManager(temp_db_path)
+    # Create schema as 1.0.0
+    conn = sqlite3.connect(str(temp_db_path))
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        CREATE TABLE files (
+            id INTEGER PRIMARY KEY,
+            name TEXT NOT NULL,
+            name_lower TEXT NOT NULL,
+            extension TEXT,
+            path TEXT NOT NULL,
+            parent_path TEXT NOT NULL,
+            size INTEGER,
+            date_created INTEGER,
+            date_modified INTEGER,
+            file_type TEXT,
+            is_directory INTEGER NOT NULL,
+            cloud_provider TEXT,
+            cloud_status INTEGER,
+            indexed_at INTEGER NOT NULL
+        );
+        """
+    )
+    cursor.execute(
+        "CREATE TABLE schema_version (id INTEGER PRIMARY KEY CHECK (id = 1), version TEXT NOT NULL, updated_at INTEGER NOT NULL);"
+    )
+    cursor.execute(
+        "INSERT INTO schema_version (id, version, updated_at) VALUES (1, '1.0.0', 0);"
+    )
+    conn.commit()
+    conn.close()
+    # Run migration twice
+    schema_manager.migrate_to_latest()
+    schema_manager.migrate_to_latest()
+    # Check schema version and column
+    conn = sqlite3.connect(str(temp_db_path))
+    cursor = conn.cursor()
+    cursor.execute("SELECT version FROM schema_version WHERE id = 1")
+    version = cursor.fetchone()[0]
+    assert version == "1.1.0"
+    cursor.execute("PRAGMA table_info(files)")
+    columns = [row[1] for row in cursor.fetchall()]
+    assert "folder_size" in columns
+    conn.close()
+
+
+def test_migrate_to_latest_noop_on_1_1_0(temp_db_path: Path) -> None:
+    """Test that migrate_to_latest does nothing if already at 1.1.0."""
+    schema_manager = SchemaManager(temp_db_path)
+    schema_manager.create_schema()
+    # Should not raise or change anything
+    schema_manager.migrate_to_latest()
+    # Check schema version
+    conn = sqlite3.connect(str(temp_db_path))
+    cursor = conn.cursor()
+    cursor.execute("SELECT version FROM schema_version WHERE id = 1")
+    version = cursor.fetchone()[0]
+    assert version == "1.1.0"
+    conn.close()
+
+
+def test_set_and_get_schema_version(temp_db_path: Path) -> None:
+    """Test setting and getting the schema version."""
+    schema_manager = SchemaManager(temp_db_path)
+    schema_manager.create_schema()
+    schema_manager.set_schema_version("2.3.4")
+    assert schema_manager.get_schema_version() == "2.3.4"
+
+
+def test_compare_schema_version(temp_db_path: Path) -> None:
+    """Test compare_schema_version for less than, equal, and greater than cases."""
+    schema_manager = SchemaManager(temp_db_path)
+    schema_manager.create_schema()
+    schema_manager.set_schema_version("1.2.3")
+    assert schema_manager.compare_schema_version("1.2.4") == -1
+    assert schema_manager.compare_schema_version("1.2.3") == 0
+    assert schema_manager.compare_schema_version("1.2.2") == 1

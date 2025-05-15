@@ -73,3 +73,14 @@
 - **Logging**: Detailed migration execution logs
 - **Testing**: Test each migration independently
 - **Documentation**: Migration purpose and impacts
+
+## 📈 MIGRATION: SCHEMA VERSION 1.1.0 (FOLDER SIZE)
+
+- **Purpose:** Add `folder_size` column to `files` table and index for folder size sorting (see Integration Report).
+- **Migration Steps:**
+    1. `ALTER TABLE files ADD COLUMN folder_size INTEGER;`
+    2. `CREATE INDEX IF NOT EXISTS idx_files_folder_size ON files(folder_size);`
+    3. `UPDATE schema_version SET version = '1.1.0', updated_at = <now>;`
+- **Idempotency:** Migration should be safe to run once and not break if run again.
+- **Version Tracking:** Only run if current version < 1.1.0.
+- **Dependency:** This migration is required before implementing folder size calculation (Stage 6) and UI display (Stage 7).

@@ -73,7 +73,7 @@ The roadmap is organized into **Development Stages** (timeline-based milestones)
 | Migration System | Build simple schema migration framework | 1 day |
 | Query Optimization | Design and implement prepared statements | 1 day |
 | Data Integrity | Configure WAL journaling and integrity checks | 1 day |
-| Folder Size Field | Add `folder_size` column to `files` table for directories (see Integration Report) | 0.5 day |
+| Folder Size Field | Add `folder_size` column to `files` table for directories (see Integration Report); introduced in schema version 1.1.0 | 0.5 day |
 | Folder Size Index | Add index on `folder_size` for efficient sorting | 0.5 day |
 
 ##### Milestone: Foundation Ready
@@ -92,6 +92,8 @@ The roadmap is organized into **Development Stages** (timeline-based milestones)
 - Documentation for all public interfaces
 - Successful database migrations
 - FSEvents wrapper properly isolated
+
+**Note:** The `folder_size` column is introduced in schema version 1.1.0. Stage 4.3 (migration) will ensure all existing databases are upgraded before folder size calculation and display logic is implemented in later stages.
 
 ### 2.2 Development Stage 2: Core Engine (Weeks 3-5)
 *Encompasses Stages 5-6*
@@ -423,8 +425,8 @@ The roadmap is organized into **Development Stages** (timeline-based milestones)
 | Development Stage | Weeks | Stages | Focus |
 |------------------|-------|--------|-------|
 | Stage 1: Foundation | 1-2 | Stages 1-4 | Environment, Infrastructure, Abstractions, Database |
-| Stage 2: Core Engine | 3-5 | Stages 5-6 | Search Engine, Indexing System, Folder Size Calculation |
-| Stage 3: UI Framework | 6-8 | Stage 7 | User Interface & Interaction, Folder Size Display |
+| Stage 2: Core Engine | 3-5 | Stages 5-6 | Search Engine, Indexing System, Folder Size Calculation (requires schema 1.1.0 and migration) |
+| Stage 3: UI Framework | 6-8 | Stage 7 | User Interface & Interaction, Folder Size Display (requires schema 1.1.0 and migration) |
 | Stage 4: Integration | 9-10 | Stages 8-9 | Cloud Integration, System Integration |
 | Stage 5: Optimization | 11-12 | Stage 10 | Performance & User Experience |
 | Stage 6: Packaging | 13 | Stage 11 | Final Build & Release |

@@ -63,6 +63,8 @@
 
 ## Folder Size Calculation
 
+- The `folder_size` column is present in the schema as of version 1.1.0.
+- The migration system (Stage 4.3) will ensure all databases are upgraded before folder size calculation logic is implemented.
 - Implement recursive folder size calculation for all indexed directories.
 - Store calculated folder sizes in the `folder_size` column of the files table.
 - Update folder sizes incrementally as files are added, removed, or changed.

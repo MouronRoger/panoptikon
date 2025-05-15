@@ -7,8 +7,10 @@ for creating and validating the database schema.
 import logging
 import os
 from pathlib import Path
+import shutil
 import sqlite3
 import time
+from typing import Any
 
 from ..core.errors import DatabaseError
 from ..core.service import ServiceInterface
@@ -120,6 +122,8 @@ class SchemaManager:
     as well as applying migrations between schema versions.
     """
 
+    MIGRATIONS: list[dict[str, Any]] = []
+
     def __init__(self, db_path: Path) -> None:
         """Initialize the schema manager.
 
@@ -130,6 +134,16 @@ class SchemaManager:
             DatabaseError: If the database path is invalid.
         """
         self.db_path = db_path
+        # Register migrations (for now, just 1.0.0 -> 1.1.0)
+        if not self.MIGRATIONS:
+            self.MIGRATIONS.append(
+                {
+                    "from_version": "1.0.0",
+                    "to_version": "1.1.0",
+                    "up": self._migrate_1_0_0_to_1_1_0_with_backup,
+                    # 'down': None (not implemented)
+                }
+            )
 
         # Ensure the parent directory exists
         if not self.db_path.parent.exists():
@@ -378,6 +392,160 @@ class SchemaManager:
         # For now, just check for exact match
         # In the future, this would implement more sophisticated version compatibility checks
         return version == CURRENT_SCHEMA_VERSION
+
+    def _backup_database(self) -> Path:
+        """Create a backup of the database file before migration.
+
+        Returns:
+            Path to the backup file.
+
+        Raises:
+            DatabaseError: If backup fails.
+        """
+        backup_path = self.db_path.with_suffix(self.db_path.suffix + ".bak")
+        try:
+            shutil.copy2(self.db_path, backup_path)
+            logger.info(f"Database backup created at {backup_path}")
+            return backup_path
+        except Exception as e:
+            raise DatabaseError(f"Failed to create database backup: {e}")
+
+    def _restore_database(self, backup_path: Path) -> None:
+        """Restore the database from a backup file.
+
+        Args:
+            backup_path: Path to the backup file.
+
+        Raises:
+            DatabaseError: If restore fails.
+        """
+        try:
+            shutil.copy2(backup_path, self.db_path)
+            logger.warning(f"Database restored from backup at {backup_path}")
+        except Exception as e:
+            raise DatabaseError(f"Failed to restore database from backup: {e}")
+
+    def _migrate_1_0_0_to_1_1_0_with_backup(self, conn: sqlite3.Connection) -> None:
+        """Migrate from schema version 1.0.0 to 1.1.0 with backup and rollback support."""
+        backup_path = self._backup_database()
+        cursor = conn.cursor()
+        try:
+            # Add folder_size column if not present
+            cursor.execute("PRAGMA table_info(files)")
+            columns = [r[1] for r in cursor.fetchall()]
+            if "folder_size" not in columns:
+                cursor.execute("ALTER TABLE files ADD COLUMN folder_size INTEGER;")
+            # Add index if not present
+            cursor.execute(
+                "SELECT name FROM sqlite_master WHERE type='index' AND name='idx_files_folder_size'"
+            )
+            if not cursor.fetchone():
+                cursor.execute(
+                    "CREATE INDEX IF NOT EXISTS idx_files_folder_size ON files(folder_size);"
+                )
+            # Update schema version
+            cursor.execute(
+                "UPDATE schema_version SET version = ?, updated_at = ? WHERE id = 1",
+                ("1.1.0", int(time.time())),
+            )
+            conn.commit()
+            logger.info("Migration to 1.1.0 completed successfully.")
+        except Exception as migration_error:
+            conn.rollback()
+            logger.error(f"Migration failed, rolling back: {migration_error}")
+            self._restore_database(backup_path)
+            raise DatabaseError(
+                f"Migration to 1.1.0 failed and was rolled back: {migration_error}"
+            )
+
+    def _find_migrations(
+        self, current_version: str, target_version: str
+    ) -> list[dict[str, Any]]:
+        """Find and order migrations from current_version to target_version."""
+        migrations = []
+        version = current_version
+        while version != target_version:
+            found = False
+            for mig in self.MIGRATIONS:
+                if mig["from_version"] == version:
+                    migrations.append(mig)
+                    version = mig["to_version"]
+                    found = True
+                    break
+            if not found:
+                raise DatabaseError(
+                    f"No migration path from {version} to {target_version}"
+                )
+        return migrations
+
+    def migrate_to_latest(self) -> None:
+        """Migrate the database schema to the latest version using the migration registry."""
+        if not self.database_exists():
+            return
+        try:
+            conn = sqlite3.connect(str(self.db_path))
+            cursor = conn.cursor()
+            cursor.execute("SELECT version FROM schema_version WHERE id = 1")
+            row = cursor.fetchone()
+            if not row:
+                raise DatabaseError("Schema version not found for migration")
+            current_version = row[0]
+            if current_version == CURRENT_SCHEMA_VERSION:
+                conn.close()
+                return  # Already up to date
+            migrations = self._find_migrations(current_version, CURRENT_SCHEMA_VERSION)
+            for mig in migrations:
+                mig["up"](conn)
+            conn.close()
+        except sqlite3.Error as e:
+            raise DatabaseError(f"Error migrating database schema: {e}")
+
+    def set_schema_version(self, version: str) -> None:
+        """Set the schema version in the database.
+
+        Args:
+            version: The new schema version string.
+
+        Raises:
+            DatabaseError: If the database does not exist or update fails.
+        """
+        if not self.database_exists():
+            raise DatabaseError("Database does not exist")
+        try:
+            conn = sqlite3.connect(str(self.db_path))
+            cursor = conn.cursor()
+            cursor.execute(
+                "UPDATE schema_version SET version = ?, updated_at = ? WHERE id = 1",
+                (version, int(time.time())),
+            )
+            conn.commit()
+            conn.close()
+        except sqlite3.Error as e:
+            raise DatabaseError(f"Error setting schema version: {e}")
+
+    def compare_schema_version(self, target_version: str) -> int:
+        """Compare the current schema version to a target version.
+
+        Args:
+            target_version: The version string to compare to.
+
+        Returns:
+            -1 if current < target, 0 if equal, 1 if current > target
+        Raises:
+            DatabaseError: If the database does not exist or version cannot be read.
+        """
+        current = self.get_schema_version()
+
+        def parse(v: str) -> tuple[int, ...]:
+            return tuple(int(x) for x in v.split("."))
+
+        c_tuple = parse(current)
+        t_tuple = parse(target_version)
+        if c_tuple < t_tuple:
+            return -1
+        if c_tuple > t_tuple:
+            return 1
+        return 0
 
 
 class DatabaseSchemaService(ServiceInterface):

@@ -140,7 +140,7 @@ class ConnectionPool:
         connection_timeout: Timeout for connection acquisition in seconds.
         connection_max_age: Maximum age of a connection in seconds before recycling.
         health_check_interval: Interval between health checks in seconds.
-        debug_mode: Set to True to enable debug diagnostics
+        debug_mode: Set to True to enable debug diagnostics (default: False)
     """
 
     def __init__(
@@ -161,6 +161,7 @@ class ConnectionPool:
             connection_timeout: Timeout for connection acquisition in seconds.
             connection_max_age: Maximum age of a connection before recycling.
             health_check_interval: Interval between health checks in seconds.
+            debug_mode: Set to True to enable debug diagnostics (default: False)
 
         Raises:
             ValueError: If invalid parameters are provided.
@@ -184,6 +185,7 @@ class ConnectionPool:
         self.connection_timeout = connection_timeout
         self.connection_max_age = connection_max_age
         self.health_check_interval = health_check_interval
+        self.debug_mode = False
 
         # Pool state
         self._lock = threading.RLock()
@@ -574,6 +576,81 @@ class ConnectionPool:
         except sqlite3.Error as e:
             logger.error(f"Error closing database connection: {e}")
 
+    def _reuse_existing_connection(
+        self, current_thread_id: int
+    ) -> Optional[PooledConnection]:
+        """Check if the thread already has a connection and return it if available."""
+        if (
+            hasattr(self._local, "connection_id")
+            and self._local.connection_id is not None
+        ):
+            with self._lock:
+                if self._local.connection_id in self._active_connections:
+                    conn = self._active_connections[self._local.connection_id]
+                    logger.debug("Reusing existing connection for current thread")
+                    return conn
+        return None
+
+    def _get_idle_connection(
+        self, current_thread_id: int
+    ) -> Optional[PooledConnection]:
+        """Get an idle connection from the pool, recycling if needed."""
+        if self._idle_connections:
+            conn = self._idle_connections.popleft()
+            # Check if the connection is too old
+            if time.time() - conn.created_at > self.connection_max_age:
+                logger.debug("Recycling connection that exceeded max age")
+                self._close_connection(conn)
+                conn = self._create_connection()
+            # Check connection health
+            if self._check_connection_health(conn) != ConnectionHealthStatus.HEALTHY:
+                logger.debug("Recycling unhealthy connection")
+                self._close_connection(conn)
+                conn = self._create_connection()
+            # Mark as active and return
+            conn.in_use = True
+            conn.thread_id = current_thread_id
+            conn.last_used_at = time.time()
+            self._active_connections[current_thread_id] = conn
+            self._local.connection_id = current_thread_id
+            self._local.current_connection = conn.connection
+            if self.debug_mode:
+                logger.debug(
+                    "pool.state.transition",
+                    extra={
+                        "connection_id": id(conn),
+                        "from_state": "created",
+                        "to_state": "active",
+                        "thread_id": current_thread_id,
+                        "stack": traceback.extract_stack(),
+                    },
+                )
+            return conn
+        return None
+
+    def _create_and_register_connection(
+        self, current_thread_id: int
+    ) -> PooledConnection:
+        """Create a new connection and register it as active for the current thread."""
+        conn = self._create_connection()
+        conn.in_use = True
+        conn.thread_id = current_thread_id
+        self._active_connections[current_thread_id] = conn
+        self._local.connection_id = current_thread_id
+        self._local.current_connection = conn.connection
+        if self.debug_mode:
+            logger.debug(
+                "pool.state.transition",
+                extra={
+                    "connection_id": id(conn),
+                    "from_state": "created",
+                    "to_state": "active",
+                    "thread_id": current_thread_id,
+                    "stack": traceback.extract_stack(),
+                },
+            )
+        return conn
+
     def _checkout_connection(self, timeout: float) -> PooledConnection:
         """Get a connection from the pool.
 
@@ -590,84 +667,27 @@ class ConnectionPool:
         start_time = time.time()
         current_thread_id = threading.get_ident()
 
-        # Check if the thread already has a connection
-        if (
-            hasattr(self._local, "connection_id")
-            and self._local.connection_id is not None
-        ):
-            with self._lock:
-                if self._local.connection_id in self._active_connections:
-                    conn = self._active_connections[self._local.connection_id]
-                    logger.debug("Reusing existing connection for current thread")
-                    return conn
+        # Try to reuse an existing connection for this thread
+        reused = self._reuse_existing_connection(current_thread_id)
+        if reused:
+            return reused
 
         while True:
             with self._lock:
                 if self._shutting_down:
                     raise ConnectionPoolError("Connection pool is shutting down")
 
-                # Check for an existing idle connection
-                if self._idle_connections:
-                    conn = self._idle_connections.popleft()
-
-                    # Check if the connection is too old
-                    if time.time() - conn.created_at > self.connection_max_age:
-                        logger.debug("Recycling connection that exceeded max age")
-                        self._close_connection(conn)
-                        conn = self._create_connection()
-
-                    # Check connection health
-                    if (
-                        self._check_connection_health(conn)
-                        != ConnectionHealthStatus.HEALTHY
-                    ):
-                        logger.debug("Recycling unhealthy connection")
-                        self._close_connection(conn)
-                        conn = self._create_connection()
-
-                    # Mark as active and return
-                    conn.in_use = True
-                    conn.thread_id = current_thread_id
-                    conn.last_used_at = time.time()
-                    self._active_connections[current_thread_id] = conn
-                    self._local.connection_id = current_thread_id
-                    self._local.current_connection = conn.connection
-                    if self.debug_mode:
-                        logger.debug(
-                            "pool.state.transition",
-                            extra={
-                                "connection_id": id(conn),
-                                "from_state": "created",
-                                "to_state": "active",
-                                "thread_id": current_thread_id,
-                                "stack": traceback.extract_stack(),
-                            },
-                        )
-                    return conn
+                # Try to get an idle connection
+                idle = self._get_idle_connection(current_thread_id)
+                if idle:
+                    return idle
 
                 # If we haven't reached max connections, create a new one
                 if (
                     len(self._active_connections) + len(self._idle_connections)
                     < self.max_connections
                 ):
-                    conn = self._create_connection()
-                    conn.in_use = True
-                    conn.thread_id = current_thread_id
-                    self._active_connections[current_thread_id] = conn
-                    self._local.connection_id = current_thread_id
-                    self._local.current_connection = conn.connection
-                    if self.debug_mode:
-                        logger.debug(
-                            "pool.state.transition",
-                            extra={
-                                "connection_id": id(conn),
-                                "from_state": "created",
-                                "to_state": "active",
-                                "thread_id": current_thread_id,
-                                "stack": traceback.extract_stack(),
-                            },
-                        )
-                    return conn
+                    return self._create_and_register_connection(current_thread_id)
 
             # If we've reached the timeout, raise an exception
             if time.time() - start_time > timeout:

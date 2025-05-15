@@ -1,74 +1,99 @@
-# ⚡ STAGE 4.4: QUERY OPTIMIZATION SYSTEM
+# ⚡ STAGE 4.4: QUERY OPTIMIZATION SYSTEM (V6 FORMAT)
+# 📝 OBJECTIVES
+* Implement prepared statement management
+* Create query parameterization helpers
+* Build query performance monitoring
+* Establish statement caching system
 
-## 📝 OBJECTIVES
-- Implement prepared statement management
-- Create query parameterization helpers
-- Build query performance monitoring
-- Establish statement caching system
+⠀🔧 IMPLEMENTATION STRATEGY
+### 1. LOAD STAGE SPEC
+* 📄 From: stage4_4_optimization.md
+* 🔍 This stage belongs to Development Phase 1: Foundation
 
-## 🔧 IMPLEMENTATION TASKS
+⠀2. ANALYZE CONTEXT
+* 🔍 Dependencies:
+  * Stage 4.2: Connection pool (execution context)
+  * Stage 4.1: Schema (query targets)
+  * Stage 2: Logging system (performance logs)
+  * Stage 2: Metrics collection (timing data)
+* ✅ Query mCP to validate prerequisites are complete
+* ⚠️ Flag any missing dependencies before proceeding
 
-### 1. Prepared Statement Framework 📋
-- **Statement Registry**: Centralized prepared statements
-- **Parameter Binding**: Safe value substitution
-- **Statement Caching**: Reuse compiled queries
-- **Lifecycle Management**: Statement cleanup
+⠀3. STAGE SEGMENTATION
+**SEGMENT 1: Prepared Statement Framework**
+* **Implementation Tasks:**
+  * Create StatementRegistry for centralized prepared statement management
+  * Implement parameter binding system with type safety
+  * Build statement caching mechanism with lifecycle management
+  * Develop cleanup routines for statement finalization
+* **Testing Criteria:**
+  * Verify statements properly compile and execute
+  * Test parameter binding with various data types
+  * Measure statement cache hit rates
+  * Validate proper cleanup of statements
+* **Documentation Update:**
+  * Record component implementation details
+  * Document caching strategy decisions
 
-### 2. Query Builder Utilities 🛠️
-```python
-# Safe query construction:
-# - Parameter placeholders (?)
-# - Type-safe bindings
-# - SQL injection prevention
-# - Dynamic query composition
-```
+⠀**SEGMENT 2: Query Builder Utilities**
+* **Implementation Tasks:**
+  * Create safe parameterization helpers
+  * Implement SQL injection prevention
+  * Build dynamic query composition tools
+  * Create type-safe binding interface
+* **Testing Criteria:**
+  * Verify SQL injection prevention
+  * Test dynamic query building
+  * Validate parameter substitution
+  * Check edge cases (NULL values, special characters)
+* **Documentation Update:**
+  * Document query builder API
+  * Record any security decisions
 
-### 3. Performance Monitoring 📊
-1. Query execution timing
-2. EXPLAIN QUERY PLAN analysis
-3. Index usage tracking
-4. Slow query identification
-5. Query frequency analysis
+⠀**SEGMENT 3: Performance Monitoring**
+* **Implementation Tasks:**
+  * Implement query execution timing
+  * Create EXPLAIN QUERY PLAN analysis
+  * Build index usage tracking
+  * Develop slow query identification
+  * Implement query frequency analysis
+* **Testing Criteria:**
+  * Verify timing accuracy
+  * Test EXPLAIN plan parsing
+  * Validate slow query detection
+  * Check performance impact of monitoring
+* **Documentation Update:**
+  * Document monitoring configuration options
+  * Record performance baseline metrics
 
-### 4. Optimization Strategies 🎯
-- **Index Hints**: Guide SQLite query planner
-- **Query Rewriting**: Optimize common patterns
-- **Batch Operations**: Reduce round trips
-- **Cache Strategy**: Frequently used results
+⠀**SEGMENT 4: Optimization Strategies**
+* **Implementation Tasks:**
+  * Implement index hints for SQLite query planner
+  * Create query rewriting for common patterns
+  * Build batch operation support
+  * Develop result caching strategy
+* **Testing Criteria:**
+  * Measure performance improvements with optimizations
+  * Test batch operations vs. individual queries
+  * Validate cache invalidation
+  * Check optimization compatibility with transactions
+* **Documentation Update:**
+  * Document optimization strategies and when to use each
+  * Record performance gains from optimizations
 
-## 🧪 TESTING REQUIREMENTS
-- Test parameterized query safety
-- Verify statement caching effectiveness
-- Measure query performance improvements
-- Test with various data volumes
-- Validate EXPLAIN plan analysis
-- Test batch operation performance
-- Ensure SQL injection prevention
-- Maintain 95% code coverage
+⠀4. STAGE INTEGRATION TEST
+* ✅ Run full stage integration tests
+* ✅ Apply linter and formatter
+* ❌ Do not alter tests to match code
+* ✅ Verify all success criteria:
+  * Parameterized queries prevent SQL injection
+  * Statement caching reduces parse time by 50%+
+  * Query monitoring identifies slow queries
+  * Batch operations 10x faster than individual operations
+  * EXPLAIN analysis provides actionable insights
 
-## 🎯 SUCCESS CRITERIA
-- Parameterized queries prevent SQL injection
-- Statement caching reduces parse time 50%+
-- Query monitoring identifies slow queries
-- Batch operations 10x faster than individual
-- EXPLAIN analysis provides insights
-
-## 🚫 CONSTRAINTS
-- Use only SQLite built-in features
-- No query plan hints (SQLite limitation)
-- Parameter count limit (999 in SQLite)
-- Must work with all transaction types
-
-## 📋 DEPENDENCIES
-- Stage 4.2: Connection pool (execution context)
-- Stage 4.1: Schema (query targets)
-- Stage 2: Logging system (performance logs)
-- Stage 2: Metrics collection (timing data)
-
-## 🏗️ CODE STANDARDS
-- **Query Format**: Consistent SQL style guide
-- **Parameter Names**: Descriptive binding names
-- **Performance Targets**: Document expected times
-- **Security**: All user input parameterized
-- **Monitoring**: Structured performance logs
-- **Caching**: Clear cache invalidation rules
+⠀5. PROPAGATE STATE
+* 📝 Write stage4_4_report.md
+* 📦 Save stage4_4_prompt.md
+* 🔁 Update mCP with full stage status
+* 📊 Document using AI Documentation System

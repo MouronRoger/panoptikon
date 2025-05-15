@@ -1,81 +1,115 @@
-# 🛡️ STAGE 4.5: DATA INTEGRITY PROTECTION
+# 🛡️ STAGE 4.5: DATA INTEGRITY PROTECTION (V6 FORMAT)
+# 📝 OBJECTIVES
+* Configure Write-Ahead Logging (WAL) mode
+* Implement integrity verification system
+* Create automated repair mechanisms
+* Design backup and recovery processes
 
-## 📝 OBJECTIVES
-- Configure Write-Ahead Logging (WAL) mode
-- Implement integrity verification system
-- Create automated repair mechanisms
-- Design backup and recovery processes
+⠀🔧 IMPLEMENTATION STRATEGY
+### 1. LOAD STAGE SPEC
+* 📄 From: stage4_5_integrity.md
+* 🔍 This stage belongs to Development Phase 1: Foundation
 
-## 🔧 IMPLEMENTATION TASKS
+⠀2. ANALYZE CONTEXT
+* 🔍 Dependencies:
+  * Stages 4.1-4.4: All database components
+  * Stage 2: File system operations (backups)
+  * Stage 2: Scheduling system (automated backups)
+  * Stage 2: Notification system (alerts)
+* ✅ Query mCP to validate prerequisites are complete
+* ⚠️ Flag any missing dependencies before proceeding
 
-### 1. WAL Configuration 📝
-- **Enable WAL Mode**: Better concurrency and crash recovery
-- **Checkpoint Strategy**: Automatic and manual checkpoints
-- **WAL Size Management**: Prevent unbounded growth
-- **Synchronization Modes**: Balance safety vs performance
+⠀3. STAGE SEGMENTATION
+**SEGMENT 1: WAL Configuration**
+* **Implementation Tasks:**
+  * Implement WAL mode configuration
+  * Create checkpoint strategy management
+  * Build WAL size monitoring and control
+  * Develop synchronization mode configuration
+* **Testing Criteria:**
+  * Verify WAL mode properly activates
+  * Test checkpoint behavior under load
+  * Validate concurrent access in WAL mode
+  * Measure performance impact of different sync modes
+* **Documentation Update:**
+  * Document WAL configuration options
+  * Record performance characteristics
 
-### 2. Integrity Checking System 🔍
-```python
-# Integrity verification:
-# - PRAGMA integrity_check
-# - Foreign key constraint validation
-# - Index consistency verification
-# - Page-level corruption detection
-```
+⠀**SEGMENT 2: Integrity Checking System**
+* **Implementation Tasks:**
+  * Implement PRAGMA integrity_check wrapper
+  * Create foreign key constraint validation
+  * Build index consistency verification
+  * Develop page-level corruption detection
+* **Testing Criteria:**
+  * Test detection of various corruption types
+  * Verify foreign key validation correctness
+  * Measure integrity check performance
+  * Validate incremental checking capabilities
+* **Documentation Update:**
+  * Document integrity checking API
+  * Record integrity verification approach
 
-### 3. Automated Repair 🔧
-1. Detect corruption patterns
-2. Attempt automatic fixes
-3. Rebuild corrupted indexes
-4. Recreate damaged relationships
-5. Fallback to backup restoration
+⠀**SEGMENT 3: Automated Repair**
+* **Implementation Tasks:**
+  * Implement corruption pattern detection
+  * Create automated fix mechanisms
+  * Build index rebuilding functionality
+  * Develop relationship repair tools
+  * Implement backup restoration fallback
+* **Testing Criteria:**
+  * Test repair of various corruption scenarios
+  * Verify index rebuilding effectiveness
+  * Validate relationship repair success rate
+  * Measure repair performance
+* **Documentation Update:**
+  * Document repair capabilities and limitations
+  * Record repair strategy decisions
 
-### 4. Backup System 💾
-- **Scheduled Backups**: Regular automatic backups
-- **Hot Backup**: Using SQLite backup API
-- **Compression**: Space-efficient storage
-- **Rotation Policy**: Manage backup retention
-- **Verification**: Test backup integrity
+⠀**SEGMENT 4: Backup System**
+* **Implementation Tasks:**
+  * Implement scheduled backup mechanism
+  * Create hot backup using SQLite backup API
+  * Build compression integration
+  * Develop backup rotation policy
+  * Implement backup verification
+* **Testing Criteria:**
+  * Verify backup creation correctness
+  * Test compression effectiveness
+  * Validate rotation policy execution
+  * Measure backup performance
+* **Documentation Update:**
+  * Document backup configuration options
+  * Record backup storage requirements
 
-### 5. Recovery Procedures 🚑
-- **Point-in-time Recovery**: WAL-based restoration
-- **Selective Restoration**: Table-level recovery
-- **Corruption Isolation**: Quarantine bad data
-- **Recovery Testing**: Automated recovery drills
+⠀**SEGMENT 5: Recovery Procedures**
+* **Implementation Tasks:**
+  * Implement point-in-time recovery
+  * Create selective table restoration
+  * Build corruption isolation mechanisms
+  * Develop recovery testing framework
+* **Testing Criteria:**
+  * Test recovery from various failure scenarios
+  * Verify selective restoration accuracy
+  * Validate corruption isolation effectiveness
+  * Measure recovery time performance
+* **Documentation Update:**
+  * Document recovery procedures
+  * Record recovery testing methodology
 
-## 🧪 TESTING REQUIREMENTS
-- Test WAL mode configuration
-- Verify checkpoint behavior
-- Simulate database corruption
-- Test automatic repair mechanisms
-- Validate backup creation and restoration
-- Test recovery procedures
-- Measure integrity check performance
-- Maintain 95% code coverage
+⠀4. STAGE INTEGRATION TEST
+* ✅ Run full stage integration tests
+* ✅ Apply linter and formatter
+* ❌ Do not alter tests to match code
+* ✅ Verify all success criteria:
+  * Zero data loss in crash scenarios
+  * Integrity checks complete in < 2 seconds
+  * Successful recovery from corruption
+  * Backup/restore < 10 seconds for 1GB database
+  * Automated repair success rate > 80%
 
-## 🎯 SUCCESS CRITERIA
-- Zero data loss in crash scenarios
-- Integrity checks complete < 2 seconds
-- Successful recovery from corruption
-- Backup/restore < 10 seconds for 1GB
-- Automated repair success rate > 80%
-
-## 🚫 CONSTRAINTS
-- Use only SQLite built-in features
-- Backup size manageable (compressed)
-- Recovery time < 30 seconds
-- Minimal performance impact in WAL mode
-
-## 📋 DEPENDENCIES
-- Stage 4.1-4.4: All database components
-- Stage 2: File system operations (backups)
-- Stage 2: Scheduling system (automated backups)
-- Stage 2: Notification system (alerts)
-
-## 🏗️ CODE STANDARDS
-- **Error Handling**: Detailed corruption reporting
-- **Logging**: Comprehensive integrity logs
-- **Testing**: Corruption simulation framework
-- **Documentation**: Recovery procedures
-- **Metrics**: Integrity check timings
-- **Alerts**: Corruption detection notifications
+⠀5. PROPAGATE STATE
+* 📝 Write stage4_5_report.md
+* 📦 Save stage4_5_prompt.md
+* 🔁 Update mCP with full stage status
+* 📊 Document using AI Documentation System
