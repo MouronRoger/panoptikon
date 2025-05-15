@@ -117,17 +117,24 @@ def main() -> None:
     docs = [parse_markdown_doc(md) for md in md_files]
     print(f"Parsed {len(docs)} docs")
 
-    # Qdrant indexing
     print("Connecting to Qdrant...")
     client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
+    print("Connected to Qdrant.")
+
     ensure_qdrant_collection(client)
+    print("Ensured Qdrant collection exists.")
+
+    print("Loading embedding model...")
     model = SentenceTransformer("all-MiniLM-L6-v2")
+    print("Model loaded.")
+
     print("Indexing in Qdrant...")
     index_in_qdrant(docs, client, model)
+    print("Qdrant indexing complete.")
 
-    # KG export
     print("Exporting to JSON-LD for knowledge graph...")
     export_jsonld(docs, KG_EXPORT_DIR)
+    print("KG export complete.")
 
     # Cross-reference summary
     cross_refs = [

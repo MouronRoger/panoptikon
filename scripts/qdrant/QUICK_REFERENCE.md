@@ -3,20 +3,8 @@
 ## Essential Commands
 
 ```bash
-# Index documentation (standard)
+# Index documentation (MCP-compatible, cloud only)
 ./qdrant.sh index
-
-# Index documentation (MCP-compatible with named vectors)
-./qdrant.sh index --mcp
-
-# Search
-./qdrant.sh search "your query here"
-
-# Check collection status
-./qdrant.sh manage info
-
-# Clear all data
-./qdrant.sh manage clear
 
 # Test MCP integration
 ./qdrant.sh test
@@ -36,10 +24,10 @@ The MCP server expects:
 - Collection: `panoptikon`
 - Named vectors: `fast-all-minilm-l6-v2`
 
-Use `./qdrant.sh index --mcp` for MCP-compatible indexing.
+Use `./qdrant.sh index` for MCP-compatible indexing.
 
 ## Troubleshooting
 
-1. **MCP search failing**: Make sure to use `--mcp` flag when indexing
-2. **Zero results**: Check collection has data with `./qdrant.sh manage info`
-3. **Vector mismatch**: Use the MCP-compatible indexing script
+1. **MCP search failing**: Make sure you have indexed with the MCP-compatible script
+2. **Zero results**: Check collection has data with the MCP test script
+3. **Vector mismatch**: Only use the MCP-compatible indexer

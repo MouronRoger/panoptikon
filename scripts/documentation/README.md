@@ -1,8 +1,32 @@
-# Panoptikon Documentation System
+# Documentation System Scripts
 
-## Overview
+This directory contains scripts for managing and migrating project documentation.
 
-The Panoptikon project uses a unified documentation system that integrates with Qdrant for semantic search and the MCP server for AI access.
+## Main AI Documentation System
+
+- **ai_docs.py**: The main entry point for the AI-accessible documentation system. This file is located at `scripts/documentation/ai_docs.py`.
+
+  Example usage:
+  ```python
+  from scripts.documentation.ai_docs import *
+  # ...
+  results = search_documentation("current phase status")
+  update_phase_progress("Phase 4", status="In Progress", ...)
+  record_decision("Title", status="Accepted", ...)
+  ```
+
+- All documentation operations should use this module and its APIs. Do not reference or use `scripts/ai_docs.py` (which does not exist).
+
+## Migration and Utility Scripts
+
+- `migrate_kg_to_docs.py`: Migrate knowledge graph data to documentation format.
+- `simple_migrate.py`, `migrate_complete.py`: Additional migration utilities.
+- `record_transition.py`: Log and record phase/stage transitions.
+
+## Notes
+
+- All documentation is stored in the `/docs` directory and indexed to the Qdrant cloud instance using the MCP-compatible workflow.
+- For Qdrant integration and indexing, see `../qdrant/README.md` and use only the MCP-compatible scripts.
 
 ## Directory Structure
 

@@ -58,6 +58,11 @@ repos:
         types: [python, markdown]
         pass_filenames: false
         always_run: true
+        additional_dependencies:
+          - python-frontmatter
+          - sentence-transformers
+          - torch
+          - qdrant-client
 
     -   id: audit-fix-qdrant-metadata
         name: audit and fix Qdrant metadata (MCP compatibility)

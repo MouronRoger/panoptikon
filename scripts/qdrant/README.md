@@ -4,12 +4,9 @@ This directory contains all scripts for managing the Qdrant vector database inte
 
 ## Scripts
 
-- `index_docs.py` - Indexes markdown documentation from `/docs` into Qdrant
-- `index_docs_mcp.py` - MCP-compatible version with named vectors
-- `search_docs.py` - Search the indexed documentation
-- `manage.py` - Manage the Qdrant collection (info, clear, recreate, list)
+- `index_docs_mcp.py` - MCP-compatible indexing with named vectors (cloud only)
 - `test_mcp.py` - Test MCP (Model Context Protocol) integration
-- `qdrant.sh` - Convenience wrapper for all operations
+- `qdrant.sh` - Convenience wrapper for all operations (MCP-compatible only)
 
 ## Usage
 
@@ -19,40 +16,11 @@ This directory contains all scripts for managing the Qdrant vector database inte
 # Make the script executable (first time only)
 chmod +x qdrant.sh
 
-# Index all documentation
+# Index all documentation (MCP-compatible, cloud only)
 ./qdrant.sh index
-
-# Index with MCP-compatible named vectors
-./qdrant.sh index --mcp
-
-# Search documentation
-./qdrant.sh search "connection pool"
-
-# Manage collection
-./qdrant.sh manage info
-./qdrant.sh manage clear
-./qdrant.sh manage recreate
-./qdrant.sh manage list
 
 # Test MCP integration
 ./qdrant.sh test
-```
-
-### Direct usage:
-
-```bash
-# Index documentation
-python index_docs.py
-
-# Search
-python search_docs.py "your search query"
-
-# Manage collection
-python manage.py info --url $QDRANT_URL --api-key $QDRANT_API_KEY
-python manage.py clear --url $QDRANT_URL --api-key $QDRANT_API_KEY
-
-# Test MCP
-python test_mcp.py
 ```
 
 ## Configuration

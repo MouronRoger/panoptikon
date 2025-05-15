@@ -21,12 +21,9 @@ The Panoptikon project uses a unified Qdrant-based documentation system for all 
      - Provides functions for creating, updating, searching documentation
    
    - **Utility Scripts**: `/scripts/qdrant/`
-     - `index_docs.py` - Index documentation to Qdrant
-     - `index_docs_mcp.py` - MCP-compatible indexing with named vectors
-     - `search_docs.py` - Search indexed documentation
-     - `manage.py` - Manage Qdrant collection
+     - `index_docs_mcp.py` - MCP-compatible indexing with named vectors (cloud only)
      - `test_mcp.py` - Test MCP integration
-     - `qdrant.sh` - Wrapper script for all operations
+     - `qdrant.sh` - Wrapper script for all MCP-compatible operations
 
 3. **MCP Server Integration**
    - Uses the `panoptikon` collection
@@ -126,7 +123,7 @@ All documents are organized in these directories and indexed in Qdrant:
 
 - `architecture` - System design documentation
 - `components` - Individual component docs
-- `stages` - Project stage documentation
+- `phases` - Project phase documentation
 - `testing` - Test plans and coverage
 - `api` - API documentation
 - `guides` - How-to guides
@@ -147,19 +144,12 @@ All documents are organized in these directories and indexed in Qdrant:
 For manual operations, use the scripts in `scripts/qdrant/`:
 
 ```bash
-# Index all documentation (MCP-compatible by default)
-./scripts/qdrant/qdrant.sh index
+# Index all documentation (MCP-compatible, cloud only)
+cd scripts/qdrant
+./qdrant.sh index
 
-# Search documentation
-./scripts/qdrant/qdrant.sh search "your query"
-
-# Check status
-./scripts/qdrant/qdrant.sh manage info
-
-# Or use the unified CLI from project root
-python docs.py index
-python docs.py search "query"
-python docs.py status
+# Test MCP integration
+./qdrant.sh test
 ```
 
 ## Important Notes
@@ -191,14 +181,9 @@ scripts/
 │   └── simple_migrate.py
 │
 └── qdrant/               # Qdrant indexing tools
-    ├── index_docs.py     # Standard indexing
     ├── index_docs_mcp.py # MCP-compatible indexing
-    ├── search_docs.py    # Search interface
-    ├── manage.py         # Collection management
     ├── test_mcp.py       # MCP testing
     └── qdrant.sh         # Wrapper script
-
-docs.py                   # Main CLI interface (project root)
 ```
 
 ## Packaging for Other Projects
@@ -206,10 +191,9 @@ docs.py                   # Main CLI interface (project root)
 To use this documentation system in other projects:
 
 1. Copy the `scripts/documentation/` and `scripts/qdrant/` directories
-2. Copy `docs.py` to the project root
-3. Update the Qdrant credentials and collection name in the scripts
-4. Create the necessary documentation directories (`docs/architecture`, etc.)
-5. Run `python docs.py index` to start indexing documentation
+2. Update the Qdrant credentials and collection name in the scripts
+3. Create the necessary documentation directories (`docs/architecture`, etc.)
+4. Run `./qdrant.sh index` to start indexing documentation
 
 The system is designed to be self-contained and easily portable to other repositories.
 
@@ -229,14 +213,13 @@ The Panoptikon documentation system has undergone a full consolidation and migra
 
 ### Actions Taken
 - All documentation scripts and interfaces are now located in `scripts/documentation/` and `scripts/qdrant/`.
-- The main CLI for documentation management is `docs.py` at the project root.
 - The Qdrant collection name is standardized as `panoptikon`.
 - All documentation is indexed and accessed via the unified Qdrant cloud instance.
 - Redundant scripts and files have been removed or replaced by the new system.
 
 ### Deprecated/Removed Files
-- `migrate_docs.py` (root) — replaced by `docs.py`
-- `scripts/docs_pipeline.py` — replaced by `docs.py`
+- `migrate_docs.py` (root) — replaced by new workflow
+- `scripts/docs_pipeline.py` — replaced by new workflow
 - `CONSOLIDATION_SUMMARY.md` — content merged here
 
 ### Next Steps
