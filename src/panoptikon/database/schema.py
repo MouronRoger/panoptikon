@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS files (
     path TEXT NOT NULL,               -- Full path
     parent_path TEXT NOT NULL,        -- Parent directory path
     size INTEGER,                     -- File size (NULL for cloud-only)
+    folder_size INTEGER,              -- Folder size in bytes (for directories, NULL for files)
     date_created INTEGER,             -- Creation timestamp
     date_modified INTEGER,            -- Modification timestamp 
     file_type TEXT,                   -- UTType identifier
@@ -102,13 +103,14 @@ INDEXES = [
     "CREATE INDEX IF NOT EXISTS idx_files_type ON files(file_type);",
     "CREATE INDEX IF NOT EXISTS idx_files_cloud ON files(cloud_provider, cloud_status);",
     "CREATE INDEX IF NOT EXISTS idx_files_indexed ON files(indexed_at);",
+    "CREATE INDEX IF NOT EXISTS idx_files_folder_size ON files(folder_size);",
     "CREATE INDEX IF NOT EXISTS idx_directories_path ON directories(path);",
     "CREATE INDEX IF NOT EXISTS idx_file_types_ext ON file_types(extension);",
     "CREATE INDEX IF NOT EXISTS idx_tabs_position ON tabs(position);",
 ]
 
 # Current schema version
-CURRENT_SCHEMA_VERSION = "1.0.0"
+CURRENT_SCHEMA_VERSION = "1.1.0"
 
 
 class SchemaManager:
@@ -303,6 +305,7 @@ class SchemaManager:
             "idx_files_type",
             "idx_files_cloud",
             "idx_files_indexed",
+            "idx_files_folder_size",
             "idx_directories_path",
             "idx_file_types_ext",
             "idx_tabs_position",

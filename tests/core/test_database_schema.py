@@ -85,6 +85,7 @@ def test_create_schema(temp_db_path: Path) -> None:
         "idx_files_type",
         "idx_files_cloud",
         "idx_files_indexed",
+        "idx_files_folder_size",
         "idx_directories_path",
         "idx_file_types_ext",
         "idx_tabs_position",
@@ -98,6 +99,11 @@ def test_create_schema(temp_db_path: Path) -> None:
     # Check that foreign keys are enabled
     cursor.execute("PRAGMA foreign_keys")
     assert cursor.fetchone()[0] == 1
+
+    # Check that the files table has the folder_size column
+    cursor.execute("PRAGMA table_info(files)")
+    columns = [row[1] for row in cursor.fetchall()]
+    assert "folder_size" in columns, "folder_size column missing in files table"
 
     conn.close()
 
