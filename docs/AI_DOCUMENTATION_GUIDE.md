@@ -1,5 +1,7 @@
 # AI Documentation Guide - Panoptikon
 
+**IMPORTANT: The only canonical source of project documentation is the Markdown files in `/docs`, which are automatically indexed to the Qdrant cloud instance (`panoptikon` collection) for semantic search and MCP server integration. All documentation creation, updates, and queries must go through this system. Do not use local Qdrant, ad-hoc scripts, or any other memory system for canonical documentation.**
+
 This guide provides comprehensive information about the Panoptikon documentation system, which uses Qdrant for semantic search and integrates with the MCP server.
 
 ## System Overview

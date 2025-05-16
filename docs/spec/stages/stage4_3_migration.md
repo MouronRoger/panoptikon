@@ -77,6 +77,7 @@
 ## 📈 MIGRATION: SCHEMA VERSION 1.1.0 (FOLDER SIZE)
 
 - **Purpose:** Add `folder_size` column to `files` table and index for folder size sorting (see Integration Report).
+- **Status:** Migration completed and tested in Phase 4.3. See [Folder Size Implementation](../../components/folder-size-implementation.md) for details.
 - **Migration Steps:**
     1. `ALTER TABLE files ADD COLUMN folder_size INTEGER;`
     2. `CREATE INDEX IF NOT EXISTS idx_files_folder_size ON files(folder_size);`

@@ -7,6 +7,7 @@
 import hashlib
 import json
 from pathlib import Path
+import shutil
 from typing import Any, Dict, List
 
 import frontmatter  # type: ignore[import-untyped]
@@ -54,6 +55,7 @@ def index_in_qdrant(
             payload={
                 "path": doc["path"],
                 "title": doc["title"],
+                "document": doc["content"],
                 "content": doc["content"][:500],
                 "metadata": doc["metadata"],
                 **{
@@ -135,6 +137,34 @@ def main() -> None:
     print("Exporting to JSON-LD for knowledge graph...")
     export_jsonld(docs, KG_EXPORT_DIR)
     print("KG export complete.")
+
+    # Automatically sync to MCP KG server memory file
+    mcp_memory_path = Path(
+        "/Users/james/Library/Application Support/Claude/panoptikon/memory.jsonl"
+    )
+    kg_jsonld_path = KG_EXPORT_DIR / "kg_nodes.jsonld"
+    try:
+        shutil.copyfile(kg_jsonld_path, mcp_memory_path)
+        print(f"Synced {kg_jsonld_path} to MCP KG server at {mcp_memory_path}")
+    except Exception as e:
+        print(f"Failed to sync KG export to MCP memory file: {e}")
+
+    # Reconcile formats: convert JSON-LD to MCP NDJSON
+    try:
+        with open(kg_jsonld_path, encoding="utf-8") as f:
+            nodes = json.load(f)
+        with open(mcp_memory_path, "w", encoding="utf-8") as out:
+            for node in nodes:
+                entity = {
+                    "type": "entity",
+                    "name": node.get("name"),
+                    "entityType": node.get("@type", "CreativeWork"),
+                    "observations": [node.get("text", "")],
+                }
+                out.write(json.dumps(entity) + "\n")
+        print(f"Reconciled and wrote MCP NDJSON format to {mcp_memory_path}")
+    except Exception as e:
+        print(f"Failed to reconcile and write MCP NDJSON format: {e}")
 
     # Cross-reference summary
     cross_refs = [

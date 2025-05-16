@@ -65,8 +65,8 @@
 
 ## Folder Size Display in UI
 
-- The "Folder Size" column and sorting depend on the presence of the `folder_size` column (schema 1.1.0) and on successful migration in Stage 4.3.
-- Add a "Folder Size" column to the results table, visible for directories.
+- The "Folder Size" column and sorting depend on the presence of the `folder_size` column (schema 1.1.0, migration complete; see [Folder Size Implementation](../../components/folder-size-implementation.md)).
+- Add a "Folder Size" column to the results table, visible for directories (pending).
 - Format folder sizes in human-readable units (KB/MB/GB).
 - Enable sorting by folder size in the UI.
 - This provides instant visibility into space usage and is a unique selling point (see Integration Report).

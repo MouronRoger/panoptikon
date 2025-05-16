@@ -67,8 +67,9 @@
 
 ## Folder Size Field Addition
 
-- Add `folder_size INTEGER` column to the `files` table (for directories only).
-- Add index on `folder_size` for efficient sorting.
-- This enables instant folder size display and sorting in the UI (see Integration Report).
+- The `folder_size INTEGER` column is present in the `files` table as of schema version 1.1.0 (for directories only).
+- Index `idx_files_folder_size` enables efficient sorting by folder size.
+- Purpose: Enables instant folder size display and sorting in the UI, and supports recursive size calculation in the indexing phase.
+- See [Folder Size Implementation](../../components/folder-size-implementation.md) for full details.
 - Schema version bump to 1.1.0 required.
 - Lays groundwork for recursive folder size calculation in later stages.
