@@ -1,19 +1,20 @@
 # Panoptikon Development Roadmap - Pragmatic Approach
 
 > **Terminology:**
-> - "Stage" = One of the 4 high-level development units (matches directory and tags)
-> - "Stage" = One of the 11 implementation units (formerly called "stages" in older docs)
+> - "Phase" = One of the 6 high-level development units (timeline-based milestones, matches directory and tags; formerly called "Development Stage" in some docs)
+> - "Stage" = One of the 11 implementation units (detailed, matches stage prompt files)
+> - See [docs/spec/stages/project_summary.md](project_summary.md) for the canonical stage list and mapping.
 > - This naming is chosen to maintain consistency with existing documentation and memory systems.
 
 ## 1. Overview
 
-This roadmap outlines the development process for Panoptikon, a high-performance macOS filename search utility. It provides a structured approach for a single developer working with Cursor AI to implement the system architecture and deliver the Stage 1 MVP while strategically bulletproofing only the most critical OS-dependent components.
+This roadmap outlines the development process for Panoptikon, a high-performance macOS filename search utility. It provides a structured approach for a single developer working with Cursor AI to implement the system architecture and deliver the Phase 1 MVP while strategically bulletproofing only the most critical OS-dependent components.
 
-The roadmap is organized into **Development Stages** (timeline-based milestones) and **Stages** (detailed implementation units). Each stage encompasses specific stages, building upon the previous ones while maintaining testability, quality, and focused OS resilience throughout the process.
+The roadmap is organized into **Development Phases** (timeline-based milestones) and **Stages** (detailed implementation units). Each phase encompasses specific stages, building upon the previous ones while maintaining testability, quality, and focused OS resilience throughout the process.
 
-## 2. Development Stages & Stages
+## 2. Development Phases & Stages
 
-### 2.1 Development Stage 1: Foundation (Weeks 1-2)
+### 2.1 Development Phase 1: Foundation (Weeks 1-2)
 *Encompasses Stages 1-4*
 
 **Focus**: Establish the core project structure, development environment, and foundational components.
@@ -95,7 +96,7 @@ The roadmap is organized into **Development Stages** (timeline-based milestones)
 
 **Note:** The `folder_size` column is introduced in schema version 1.1.0. Stage 4.3 (migration) will ensure all existing databases are upgraded before folder size calculation and display logic is implemented in later stages.
 
-### 2.2 Development Stage 2: Core Engine (Weeks 3-5)
+### 2.2 Development Phase 2: Core Engine (Weeks 3-5)
 *Encompasses Stages 5-6*
 
 **Focus**: Implement the core search and indexing capabilities that form the heart of the application.
@@ -171,7 +172,7 @@ The roadmap is organized into **Development Stages** (timeline-based milestones)
 - 95% test coverage maintained
 - Folder size calculation is accurate, performant, and covered by tests
 
-### 2.3 Development Stage 3: UI Framework (Weeks 6-8)
+### 2.3 Development Phase 3: UI Framework (Weeks 6-8)
 *Encompasses Stage 7*
 
 **Focus**: Create the native user interface and interaction model that provides the dual-paradigm experience.
@@ -236,7 +237,7 @@ The roadmap is organized into **Development Stages** (timeline-based milestones)
 - Tooltips provide clear guidance for both paradigms
 - Component abstraction properly isolates UI framework dependencies
 
-### 2.4 Development Stage 4: Integration (Weeks 9-10)
+### 2.4 Development Phase 4: Integration (Weeks 9-10)
 *Encompasses Stages 8-9*
 
 **Focus**: Connect all components and implement cloud provider integration, preferences, and system integration.
@@ -295,7 +296,7 @@ The roadmap is organized into **Development Stages** (timeline-based milestones)
 - Alternative system integration methods work when primary fails
 - Multi-window drag-and-drop operations work reliably
 
-### 2.5 Development Stage 5: Optimization (Weeks 11-12)
+### 2.5 Development Phase 5: Optimization (Weeks 11-12)
 *Encompasses Stage 10*
 
 **Focus**: Fine-tune performance, memory usage, and user experience to meet or exceed all targets.
@@ -364,7 +365,7 @@ The roadmap is organized into **Development Stages** (timeline-based milestones)
 - Graceful behavior with permission changes
 - Consistent operation with cloud provider variation
 
-### 2.6 Development Stage 6: Packaging and Release (Week 13)
+### 2.6 Development Phase 6: Packaging and Release (Week 13)
 *Encompasses Stage 11*
 
 **Focus**: Create the final application bundle, complete documentation, and prepare for distribution.
@@ -420,16 +421,16 @@ The roadmap is organized into **Development Stages** (timeline-based milestones)
 - Update system correctly detects new versions
 - Documentation covers all features and functions
 
-## 3. Stage & Stage Summary
+## 3. Phase & Stage Summary
 
-| Development Stage | Weeks | Stages | Focus |
+| Development Phase | Weeks | Stages | Focus |
 |------------------|-------|--------|-------|
-| Stage 1: Foundation | 1-2 | Stages 1-4 | Environment, Infrastructure, Abstractions, Database |
-| Stage 2: Core Engine | 3-5 | Stages 5-6 | Search Engine, Indexing System, Folder Size Calculation (requires schema 1.1.0 and migration) |
-| Stage 3: UI Framework | 6-8 | Stage 7 | User Interface & Interaction, Folder Size Display (requires schema 1.1.0 and migration) |
-| Stage 4: Integration | 9-10 | Stages 8-9 | Cloud Integration, System Integration |
-| Stage 5: Optimization | 11-12 | Stage 10 | Performance & User Experience |
-| Stage 6: Packaging | 13 | Stage 11 | Final Build & Release |
+| Phase 1: Foundation | 1-2 | Stages 1-4 | Environment, Infrastructure, Abstractions, Database |
+| Phase 2: Core Engine | 3-5 | Stages 5-6 | Search Engine, Indexing System, Folder Size Calculation (requires schema 1.1.0 and migration) |
+| Phase 3: UI Framework | 6-8 | Stage 7 | User Interface & Interaction, Folder Size Display (requires schema 1.1.0 and migration) |
+| Phase 4: Integration | 9-10 | Stages 8-9 | Cloud Integration, System Integration |
+| Phase 5: Optimization | 11-12 | Stage 10 | Performance & User Experience |
+| Phase 6: Packaging | 13 | Stage 11 | Final Build & Release |
 
 ## 4. Testing Strategy
 
@@ -437,6 +438,6 @@ The roadmap is organized into **Development Stages** (timeline-based milestones)
 
 ## 10. Conclusion
 
-This development roadmap provides a structured approach to delivering Panoptikon using a clear hierarchy of Development Stages (timeline milestones) and Stages (implementation details). By organizing the work into these two levels, the plan offers both high-level progress tracking and detailed implementation guidance.
+This development roadmap provides a structured approach to delivering Panoptikon using a clear hierarchy of Development Phases (timeline milestones) and Stages (implementation details). By organizing the work into these two levels, the plan offers both high-level progress tracking and detailed implementation guidance.
 
 The emphasis on early implementation of high-risk components, multiple implementation strategies for volatile OS interfaces, and comprehensive testing will ensure a high-quality, performant, and resilient application that delivers on the promise: "it knows where everything is with no blindspots."
