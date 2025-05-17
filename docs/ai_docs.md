@@ -1,4 +1,4 @@
-## [2024-06-11 16:45] #phase4.2 #connection-pool #milestone #done #transition
+## [2025-05-11 16:45] #phase4.2 #connection-pool #milestone #done #transition
 - **Phase:** 4.2 (Connection Pool Management)
 - **Subphase:** Full Transition to 4.3
 - **Summary:**
@@ -20,7 +20,7 @@
         - Ensure backward compatibility and test migration process (#todo)
     - Continue to use AI documentation system for all future stages and substages (#milestone)
 
-## [2024-06-12 09:00] #phase4.2 #phase4.3 #transition #done #milestone #migration
+## [2025-05-12 09:00] #phase4.2 #phase4.3 #transition #done #milestone #migration
 - **Phase:** 4.2 (Connection Pool Management) → 4.3 (Migration)
 - **Subphase:** Stage 4.2 to 4.3 Transition
 - **Summary:**
@@ -41,7 +41,7 @@
     - Document migration process and update progress in documentation (#todo)
     - Monitor for any issues during migration and address promptly (#todo)
 
-## [2024-06-12 10:00] #phase4.1 #phase6 #phase7 #decision #done #usp
+## [2025-05-12 10:00] #phase4.1 #phase6 #phase7 #decision #done #usp
 - **Phase:** 4.1 (Database Schema), 6 (Indexing), 7 (UI Framework)
 - **Summary:** Promoted folder size calculation, display, and sorting to a core deliverable. Updated the client specification, roadmap, and all relevant stage documents to make folder size a first-class feature. Implementation will be staged: (1) add `folder_size` column and index to the database schema, (2) implement recursive folder size calculation and incremental updates in the indexer, (3) display and sort by folder size in the UI. All changes reference the integration report and competitive analysis.
 - **Tags:** #done #decision #usp #spec #roadmap #migration #rationale
@@ -53,7 +53,7 @@
     - Add tests for accuracy and performance
     - Track progress and log all major actions in documentation system 
 
-## [2024-06-12 13:30] #phase4.3 #migration-framework #milestone #done #migration #rationale
+## [2025-05-12 13:30] #phase4.3 #migration-framework #milestone #done #migration #rationale
 - **Phase:** 4.3 (Schema Migration Framework)
 - **Subphase:** Migration System Core, Safety, Recovery, and 1.1.0 Folder Size Migration
 - **Summary:**
@@ -76,7 +76,7 @@
     - Prepare UI changes for folder size display and sorting (Stage 7) (#todo)
     - Continue to log all progress and decisions in the documentation system (#milestone) 
 
-## [2024-06-12 15:30] #phase7 #ui #decision #done #testing #pyobjc #rationale
+## [2025-05-12 15:30] #phase7 #ui #decision #done #testing #pyobjc #rationale
 - **Phase:** 7 (UI Framework)
 - **Summary:**
     - Implemented robust conditional import/skip logic in `tests/ui/test_ui_integration.py` to ensure pytest never collects or runs UI integration tests if PyObjC is not available.
@@ -92,7 +92,7 @@
     - Document this pattern in developer onboarding and testing guides.
     - Apply similar patterns to other conditional test modules if needed. 
 
-## [2024-06-11 14:00] #phase4.3 #schema-migration #assessment #done #milestone
+## [2025-05-11 14:00] #phase4.3 #schema-migration #assessment #done #milestone
 - **Phase:** 4.3 (Schema Migration Framework)
 - **Summary:** Stage 4.3 is now complete. All objectives for the schema migration framework have been met, including automated schema versioning, forward migration execution, backup and recovery, and safe rollback. The migration system is fully tested (95%+ coverage), supports atomic migrations, and maintains a clear migration history. No data loss was observed in all test scenarios. Migration time is under 5 seconds for typical schemas. All code and documentation standards have been followed.
 - **Rationale:** Completing this stage ensures robust, safe, and auditable schema evolution for the Panoptikon database, enabling future features and maintenance with confidence.
@@ -102,7 +102,7 @@
     - Monitor for any migration-related issues in production (#todo)
     - Update user and developer documentation to reflect migration capabilities (#todo) 
 
-## [2024-06-12 17:00] #phase4.3 #folder-size #migration #done #todo #milestone
+## [2025-05-12 17:00] #phase4.3 #folder-size #migration #done #todo #milestone
 - **Phase:** 4.3 (Schema Migration Framework)
 - **Subphase:** Folder Size Implementation
 - **Summary:**
@@ -117,3 +117,18 @@
     - Update UI to display and sort by folder size (#todo)
     - Add tests for accuracy and performance (#todo)
     - Continue to log all progress and decisions in the documentation system (#milestone) 
+
+## [2025-05-12 18:00] #documentation-system #decision #cleanup #todo #testing #logging
+- **Phase:** Documentation System Consolidation
+- **Summary:**
+    - Decided to canonicalize `dual_reindex.py` as the single batch script for both Qdrant and knowledge graph updates (#decision).
+    - Will deprecate/remove `index_docs_mcp.py` and any redundant batch indexers (#cleanup).
+    - Plan to add robust error logging and basic test coverage to `dual_reindex.py` and `ai_docs.py` (#todo).
+    - Documentation will be updated to reflect this unified approach (#todo).
+- **Tags:** #decision #cleanup #todo #testing #logging
+- **Rationale:** There is no use case for updating the knowledge graph and Qdrant separately; a unified script ensures consistency and reduces maintenance burden.
+- **Next Steps:**
+    - Remove redundant batch scripts (#todo)
+    - Refactor and document `dual_reindex.py` as canonical (#todo)
+    - Add logging and tests (#todo)
+    - Update documentation and READMEs (#todo) 

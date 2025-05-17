@@ -23,8 +23,7 @@ The Panoptikon project uses a unified Qdrant-based documentation system for all 
      - Provides functions for creating, updating, searching documentation
    
    - **Utility Scripts**: `/scripts/qdrant/`
-     - `index_docs_mcp.py` - MCP-compatible indexing with named vectors (cloud only)
-     - `test_mcp.py` - Test MCP integration
+     - `dual_reindex.py` - Canonical batch script for both Qdrant (semantic search) and knowledge graph (JSON-LD/NDJSON) export. Always use this for batch reindexing and KG export.
      - `qdrant.sh` - Wrapper script for all MCP-compatible operations
 
 3. **MCP Server Integration**
@@ -146,12 +145,9 @@ All documents are organized in these directories and indexed in Qdrant:
 For manual operations, use the scripts in `scripts/qdrant/`:
 
 ```bash
-# Index all documentation (MCP-compatible, cloud only)
-cd scripts/qdrant
-./qdrant.sh index
-
-# Test MCP integration
-./qdrant.sh test
+# Index all documentation and export KG (canonical, cloud only)
+cd scripts/documentation
+python dual_reindex.py
 ```
 
 ## Important Notes
@@ -161,6 +157,8 @@ cd scripts/qdrant
 3. **Automatic Indexing**: The ai_docs.py system automatically indexes on create/update
 4. **MCP Compatible**: The system is fully integrated with the MCP server
 5. **Document Field**: All indexed documents include a `document` field for MCP compatibility
+6. **Batch Operations**: Only use `dual_reindex.py` for batch Qdrant and KG export. All other batch indexers are deprecated.
+7. **Error Logging & Testing**: The canonical batch script (`dual_reindex.py`) includes robust error logging and is covered by basic tests for reliability.
 
 ## Migration Status
 
@@ -223,6 +221,7 @@ The Panoptikon documentation system has undergone a full consolidation and migra
 - `migrate_docs.py` (root) — replaced by new workflow
 - `scripts/docs_pipeline.py` — replaced by new workflow
 - `CONSOLIDATION_SUMMARY.md` — content merged here
+- `index_docs_mcp.py` (scripts/qdrant/) — replaced by dual_reindex.py
 
 ### Next Steps
 - Delete any remaining deprecated files listed above if present.

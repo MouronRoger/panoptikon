@@ -12,7 +12,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 case "$1" in
     index)
         echo "Indexing documentation to Qdrant (MCP-compatible only)..."
-        python "$SCRIPT_DIR/index_docs_mcp.py"
+            python "$SCRIPT_DIR/index_docs_mcp.py"
         ;;
     test)
         echo "Testing MCP integration..."
