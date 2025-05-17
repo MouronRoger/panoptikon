@@ -132,3 +132,22 @@
     - Refactor and document `dual_reindex.py` as canonical (#todo)
     - Add logging and tests (#todo)
     - Update documentation and READMEs (#todo) 
+
+## [2025-05-12 10:00] #phase4.3 #dual-window #preparation #decision #done #todo #rationale #testing
+- **Phase:** 4.3 (Schema Migration Framework, Dual-Window Preparation)
+- **Subphase:** Dual-Window Preparation (Pre-UI)
+- **Summary:**
+    - Implemented all window-related event definitions in `src/panoptikon/ui/events.py` (#done)
+    - Defined `WindowManagerInterface` and `WindowState` in `src/panoptikon/ui/window_interfaces.py` (#done)
+    - Created `register_window_manager_hooks` placeholder in `src/panoptikon/core/service_extensions.py` with clear documentation and TODO for Stage 7 (#done)
+    - Verified event system supports inheritance and custom event types via existing tests (#done)
+    - Confirmed service container and lifecycle management are robustly tested (#done)
+    - Documented and deferred service container hook system to Stage 7 (#todo)
+    - All code and docs meet project standards (Black, isort, Ruff, mypy --strict) (#done)
+- **Tags:** #done #decision #todo #rationale #testing #pre-ui #stage4.3
+- **Rationale:**
+    - Early preparation for dual-window support ensures minimal refactoring and clear architectural boundaries. Deferring the hook system avoids unnecessary risk and aligns with project phase priorities. All requirements for Stage 4.3 dual-window preparation are met and verified.
+- **Next Steps:**
+    - Implement hook system for service container in Stage 7 (#todo)
+    - Begin UI implementation and dual-window manager in Stage 7 (#todo)
+    - Continue to log all progress and decisions in the documentation system (#milestone) 
