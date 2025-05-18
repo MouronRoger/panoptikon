@@ -1,15 +1,15 @@
-# 🚧 V6.2-STAGE 5 — SEARCH ENGINE
+# 🚧 V6.2-STAGE 10 — OPTIMIZATION
 
 # 📌 ROLE DEFINITION
 **YOU ARE A DETERMINISTIC EXECUTOR.** Follow this process *exactly as written*. Execute one stage at a time, in strict order. **NO STAGE MAY BE SKIPPED OR REORDERED.** Each stage consists of multiple segments, each with its own testing boundary. **NO SEGMENT MAY PROCEED UNTIL ALL TESTS PASS.**
 Each stage requires three persistent artifacts:
-* stage5_report.md (Markdown report)
-* stage5_prompt.md (Prompt artifact)
+* stage10_report.md (Markdown report)
+* stage10_prompt.md (Prompt artifact)
 * mCP update (knowledge graph entry) — see **System Memory Update** below
 
 # 🔄 TERMINOLOGY & HIERARCHY
-* **Development Phase**: Infrastructure Phase (spans multiple stages)
-* **Stage**: Primary implementation unit - SEARCH ENGINE
+* **Development Phase**: Refinement Phase (spans multiple stages)
+* **Stage**: Primary implementation unit - OPTIMIZATION
 * **Segment**: Atomic, testable component within a stage
 * **Testing Cycle**: Write tests → Implement → Test → Refine until passing
 
@@ -19,86 +19,97 @@ Each stage requires three persistent artifacts:
 * Documentation and memory must be updated after each segment and stage
 * Tests must be written before (or alongside) implementation
 
-# #️⃣ STAGE 5 — SEARCH ENGINE
+# #️⃣ STAGE 10 — OPTIMIZATION
 ### 1. LOAD STAGE SPEC
-* 📄 From: stage5_prompt.md
-* 🔍 Infrastructure Phase - Search Engine Component
+* 📄 From: stage10_prompt.md
+* 🔍 Refinement Phase - Optimization Component
 
 ### 2. ANALYZE CONTEXT
 * 🔍 Identify:
-  * Stage objectives: Implement high-performance filename search engine
-  * Interfaces: Query processing, search algorithm, result management
-  * Constraints: Performance optimization, thread safety, incremental delivery
-  * Dependencies: Stage 2 service container, Stage 3 path management, Stage 4 database access
+  * Stage objectives: Fine-tune performance, optimize memory, verify resilience, refine UX, implement monitoring
+  * Interfaces: Performance metrics, memory management, resilience mechanisms, UX components, monitoring systems
+  * Constraints: Performance focus, accessibility compliance, minimal resource usage, battery efficiency
+  * Dependencies: All previous stages
 * ✅ Query mCP to validate prerequisites
 * ⚠️ Flag any missing dependencies
 
 ### 3. STAGE SEGMENTATION
 * 📋 Break down stage into distinct segments:
-  * Segment 5.1: Query Parser
-  * Segment 5.2: Search Algorithm
-  * Segment 5.3: Result Management
-  * Segment 5.4: Sorting System
-  * Segment 5.5: Filtering System
+  * Segment 10.1: Performance Optimization
+  * Segment 10.2: Memory Management
+  * Segment 10.3: Resilience Verification
+  * Segment 10.4: User Experience Refinement
+  * Segment 10.5: Monitoring and Diagnostics
 * 📊 Define clear testing criteria for each segment
 * 🔄 Document segment dependencies
 
 ### 4. IMPLEMENT AND TEST BY SEGMENT
-**SEGMENT 5.1: Query Parser**
-* 📝 **Test-First**: Write tests for filename pattern parsing, wildcard support, query optimization, and search operators
+**SEGMENT 10.1: Performance Optimization**
+* 📝 **Test-First**: Write tests for startup time, search latency, UI rendering, indexing speed, resource footprint, and window switching
 * 🛠️ **Implement**: 
-  - Implement filename pattern parsing
-  - Create wildcard and glob support
-  - Build query optimization
-  - Support advanced search operators
+  - Fine-tune application startup to <100ms
+  - Optimize search latency to consistently <50ms
+  - Ensure UI renders at 60fps at all times
+  - Improve indexing speed to handle 250k files in <60s
+  - Minimize memory and CPU footprint
+  - Optimize window switching performance to <100ms
 * ✅ **Verify**: Run segment-specific tests
 * 🔄 **Refine**: Fix implementation until all tests pass
 * 🚫 **HALT** if any tests fail after refinement attempts
 * 📝 Document completion in mCP via document_component()
 
-**SEGMENT 5.2: Search Algorithm**
-* 📝 **Test-First**: Write tests for search performance, index-based search, memory-efficiency, and caching
+**SEGMENT 10.2: Memory Management**
+* 📝 **Test-First**: Write tests for memory leak detection, caching optimization, PyObjC boundary crossing, object ownership, and resource adjustment
 * 🛠️ **Implement**: 
-  - Build optimized search implementation
-  - Create index-based search for performance
-  - Implement memory-efficient matching
-  - Design caching for frequent searches
+  - Profile and fix memory leaks
+  - Optimize caching strategies
+  - Improve PyObjC boundary crossing patterns
+  - Ensure proper object ownership and thread confinement
+  - Implement dynamic resource adjustment
+  - Reduce inactive window memory usage to <10MB
 * ✅ **Verify**: Run segment-specific tests
 * 🔄 **Refine**: Fix implementation until all tests pass
 * 🚫 **HALT** if any tests fail after refinement attempts
 * 📝 Document completion in mCP via document_component()
 
-**SEGMENT 5.3: Result Management**
-* 📝 **Test-First**: Write tests for result collection, virtual paging, caching, and grouping
+**SEGMENT 10.3: Resilience Verification**
+* 📝 **Test-First**: Write tests for file monitoring, permission behavior, cloud integration, component abstraction, and recovery mechanisms
 * 🛠️ **Implement**: 
-  - Create result collection and organization
-  - Implement virtual result paging
-  - Build result caching and invalidation
-  - Support result annotation and grouping
+  - Test file monitoring across various scenarios
+  - Validate behavior with different permission levels
+  - Verify cloud integration across providers
+  - Test component abstraction effectiveness
+  - Enhance recovery mechanisms
+  - Verify cross-window operations reliability
 * ✅ **Verify**: Run segment-specific tests
 * 🔄 **Refine**: Fix implementation until all tests pass
 * 🚫 **HALT** if any tests fail after refinement attempts
 * 📝 Document completion in mCP via document_component()
 
-**SEGMENT 5.4: Sorting System**
-* 📝 **Test-First**: Write tests for result sorting, multi-key sort, sort direction, and custom sort functions
+**SEGMENT 10.4: User Experience Refinement**
+* 📝 **Test-First**: Write tests for first-run experience, help system, keyboard shortcuts, UI details, user guidance, and window states
 * 🛠️ **Implement**: 
-  - Implement flexible result sorting
-  - Create multi-key sort support
-  - Build sort direction control
-  - Support custom sort functions
+  - Create welcoming first-run experience
+  - Implement contextual help system
+  - Finalize keyboard shortcuts
+  - Polish UI details and animations
+  - Add subtle user guidance
+  - Refine active/inactive window visual states
+  - Enhance cross-window drag-and-drop feedback
 * ✅ **Verify**: Run segment-specific tests
 * 🔄 **Refine**: Fix implementation until all tests pass
 * 🚫 **HALT** if any tests fail after refinement attempts
 * 📝 Document completion in mCP via document_component()
 
-**SEGMENT 5.5: Filtering System**
-* 📝 **Test-First**: Write tests for filter framework, file type filters, date range filtering, and filter chains
+**SEGMENT 10.5: Monitoring and Diagnostics**
+* 📝 **Test-First**: Write tests for performance tracking, diagnostic logging, crash reporting, usage analytics, and troubleshooting tools
 * 🛠️ **Implement**: 
-  - Build filter application framework
-  - Implement file type and attribute filters
-  - Create date range filtering
-  - Support custom filter chains
+  - Implement performance tracking
+  - Create diagnostic logging
+  - Build crash reporting mechanism
+  - Design usage analytics (opt-in)
+  - Develop troubleshooting tools
+  - Add window state monitoring and metrics
 * ✅ **Verify**: Run segment-specific tests
 * 🔄 **Refine**: Fix implementation until all tests pass
 * 🚫 **HALT** if any tests fail after refinement attempts
@@ -106,20 +117,27 @@ Each stage requires three persistent artifacts:
 
 ### 5. STAGE INTEGRATION TEST
 * ✅ Run full stage integration tests:
-  - Verify search completes in <50ms for 10k test files
-  - Test query parser with various pattern types
-  - Validate result accuracy across search terms
-  - Measure search performance with benchmarks
-  - Verify filtering correctly reduces result sets
-  - Test sorting with various criteria
-  - Maintain 95% code coverage
+  - Verify all performance targets consistently met:
+    - Launch time <100ms
+    - Search latency <50ms
+    - UI rendering at 60fps
+    - Indexing 250k files in <60s
+    - Idle memory usage <50MB
+    - Bundle size <30MB
+    - Window switching <100ms
+    - Inactive window memory <10MB
+  - Test resilience under various conditions
+  - Validate user experience with focus groups
+  - Verify all features work on target OS versions
+  - Validate cross-window operations in all scenarios
+  - Test multi-monitor window arrangements
 * ✅ Apply linter and formatter
 * ❌ Do not alter tests to force pass
 * 🔄 Fix implementation if integration tests fail
 
 ### 6. PROPAGATE STATE
-* 📝 Write stage5_report.md
-* 📦 Save stage5_prompt.md
+* 📝 Write stage10_report.md
+* 📦 Save stage10_prompt.md
 * 🔁 Update system memory (mCP) with full stage status via update_phase_progress()
 * 📊 Document using AI Documentation System
 
@@ -128,35 +146,36 @@ All memory updates are managed through the mCP knowledge graph. After each segme
 * **Segment Completion**: 
 ```python
 document_component(
-  name="Query Parser",  # or other segment name
-  overview="Implementation of search query parsing with pattern support",
-  purpose="To transform user search queries into optimized search patterns",
-  implementation="Includes pattern parsing, wildcard support, query optimization, and advanced operators",
+  name="Memory Management",  # or other segment name
+  overview="Implementation of optimized memory management and leak prevention",
+  purpose="To ensure minimal memory footprint and efficient resource usage across the application",
+  implementation="Includes leak detection, caching optimization, PyObjC boundary improvements, object ownership, and inactive window optimization",
   status="Completed",
-  coverage="95%"
+  coverage="97%"
 )
 ```
 
 * **Stage Completion**: 
 ```python
 update_phase_progress(
-  phase="Infrastructure Phase",
+  phase="Refinement Phase",
   status="In Progress",
-  completed=["Query Parser", "Search Algorithm", "Result Management", "Sorting System", "Filtering System"],
+  completed=["Performance Optimization", "Memory Management", "Resilience Verification", 
+             "User Experience Refinement", "Monitoring and Diagnostics"],
   issues=["Any issues encountered"],
-  next=["Stage 6: Indexing System"]
+  next=["Stage 11: Packaging and Release"]
 )
 ```
 
 * **Decision Records** (if applicable): 
 ```python
 record_decision(
-  title="Search Algorithm Pattern Matching Approach",
+  title="Performance Optimization Strategy",
   status="Accepted",
-  context="Need efficient pattern matching for filenames",
-  decision="Implemented regex-based matching with precompiled patterns and caching",
-  consequences="Better performance but increased memory usage during search",
-  alternatives=["String matching", "Naive implementation"]
+  context="Need to meet performance targets while maintaining reliability",
+  decision="Implemented staged startup with priority-based resource allocation",
+  consequences="Consistently fast startup and search at the cost of implementation complexity",
+  alternatives=["On-demand loading", "Background indexing only"]
 )
 ```
 

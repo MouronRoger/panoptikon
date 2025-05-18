@@ -8,6 +8,7 @@ from .core.errors import ErrorManager
 from .core.events import EventBus
 from .core.lifecycle import ApplicationLifecycle
 from .core.service import ServiceContainer
+from .core.service_extensions import register_window_manager_hooks
 
 
 def setup_logging() -> None:
@@ -46,6 +47,9 @@ def main() -> int:
 
         lifecycle = ApplicationLifecycle(container, event_bus)
         container.register(ApplicationLifecycle, factory=lambda c: lifecycle)
+
+        # Prepare for dual-window support (Stage 7)
+        register_window_manager_hooks(container)
 
         # Validate the dependency graph
         container.validate_dependencies()

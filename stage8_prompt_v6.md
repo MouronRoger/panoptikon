@@ -1,15 +1,15 @@
-# 🚧 V6.2-STAGE 5 — SEARCH ENGINE
+# 🚧 V6.2-STAGE 8 — CLOUD INTEGRATION
 
 # 📌 ROLE DEFINITION
 **YOU ARE A DETERMINISTIC EXECUTOR.** Follow this process *exactly as written*. Execute one stage at a time, in strict order. **NO STAGE MAY BE SKIPPED OR REORDERED.** Each stage consists of multiple segments, each with its own testing boundary. **NO SEGMENT MAY PROCEED UNTIL ALL TESTS PASS.**
 Each stage requires three persistent artifacts:
-* stage5_report.md (Markdown report)
-* stage5_prompt.md (Prompt artifact)
+* stage8_report.md (Markdown report)
+* stage8_prompt.md (Prompt artifact)
 * mCP update (knowledge graph entry) — see **System Memory Update** below
 
 # 🔄 TERMINOLOGY & HIERARCHY
-* **Development Phase**: Infrastructure Phase (spans multiple stages)
-* **Stage**: Primary implementation unit - SEARCH ENGINE
+* **Development Phase**: Integration Phase (spans multiple stages)
+* **Stage**: Primary implementation unit - CLOUD INTEGRATION
 * **Segment**: Atomic, testable component within a stage
 * **Testing Cycle**: Write tests → Implement → Test → Refine until passing
 
@@ -19,86 +19,86 @@ Each stage requires three persistent artifacts:
 * Documentation and memory must be updated after each segment and stage
 * Tests must be written before (or alongside) implementation
 
-# #️⃣ STAGE 5 — SEARCH ENGINE
+# #️⃣ STAGE 8 — CLOUD INTEGRATION
 ### 1. LOAD STAGE SPEC
-* 📄 From: stage5_prompt.md
-* 🔍 Infrastructure Phase - Search Engine Component
+* 📄 From: stage8_prompt.md
+* 🔍 Integration Phase - Cloud Integration Component
 
 ### 2. ANALYZE CONTEXT
 * 🔍 Identify:
-  * Stage objectives: Implement high-performance filename search engine
-  * Interfaces: Query processing, search algorithm, result management
-  * Constraints: Performance optimization, thread safety, incremental delivery
-  * Dependencies: Stage 2 service container, Stage 3 path management, Stage 4 database access
+  * Stage objectives: Implement cloud provider integration with Finder delegation
+  * Interfaces: Provider detection, status visualization, operation delegation, placeholder support
+  * Constraints: Provider-agnostic where possible, offline functionality, consistent UX across providers
+  * Dependencies: Stage 2 service container, Stage 3 filesystem operations, Stage 3 cloud detection, Stage 7 UI framework
 * ✅ Query mCP to validate prerequisites
 * ⚠️ Flag any missing dependencies
 
 ### 3. STAGE SEGMENTATION
 * 📋 Break down stage into distinct segments:
-  * Segment 5.1: Query Parser
-  * Segment 5.2: Search Algorithm
-  * Segment 5.3: Result Management
-  * Segment 5.4: Sorting System
-  * Segment 5.5: Filtering System
+  * Segment 8.1: Provider Detection
+  * Segment 8.2: Status Visualization
+  * Segment 8.3: Operation Delegation to System/Finder
+  * Segment 8.4: Placeholder Support
+  * Segment 8.5: Offline Handling
 * 📊 Define clear testing criteria for each segment
 * 🔄 Document segment dependencies
 
 ### 4. IMPLEMENT AND TEST BY SEGMENT
-**SEGMENT 5.1: Query Parser**
-* 📝 **Test-First**: Write tests for filename pattern parsing, wildcard support, query optimization, and search operators
+**SEGMENT 8.1: Provider Detection**
+* 📝 **Test-First**: Write tests for cloud storage identification, provider-specific logic, path pattern recognition, and provider support
 * 🛠️ **Implement**: 
-  - Implement filename pattern parsing
-  - Create wildcard and glob support
-  - Build query optimization
-  - Support advanced search operators
+  - Implement cloud storage identification
+  - Create provider-specific detection logic
+  - Build path pattern recognition
+  - Support major providers (iCloud, Dropbox, OneDrive, Google Drive, Box)
 * ✅ **Verify**: Run segment-specific tests
 * 🔄 **Refine**: Fix implementation until all tests pass
 * 🚫 **HALT** if any tests fail after refinement attempts
 * 📝 Document completion in mCP via document_component()
 
-**SEGMENT 5.2: Search Algorithm**
-* 📝 **Test-First**: Write tests for search performance, index-based search, memory-efficiency, and caching
+**SEGMENT 8.2: Status Visualization**
+* 📝 **Test-First**: Write tests for cloud file indicators, status monitoring, download progress, and offline indicators
 * 🛠️ **Implement**: 
-  - Build optimized search implementation
-  - Create index-based search for performance
-  - Implement memory-efficient matching
-  - Design caching for frequent searches
+  - Create indicators for cloud files
+  - Implement status change monitoring
+  - Build download progress visualization
+  - Design offline indicator system
 * ✅ **Verify**: Run segment-specific tests
 * 🔄 **Refine**: Fix implementation until all tests pass
 * 🚫 **HALT** if any tests fail after refinement attempts
 * 📝 Document completion in mCP via document_component()
 
-**SEGMENT 5.3: Result Management**
-* 📝 **Test-First**: Write tests for result collection, virtual paging, caching, and grouping
+**SEGMENT 8.3: Operation Delegation to System/Finder**
+* 📝 **Test-First**: Write tests for system delegation layer, operation routing, fallback mechanisms, and provider-native operations
 * 🛠️ **Implement**: 
-  - Create result collection and organization
-  - Implement virtual result paging
-  - Build result caching and invalidation
-  - Support result annotation and grouping
+  - Build system delegation layer using NSWorkspace
+  - Implement operation routing that delegates cloud operations to Finder
+  - Create fallback mechanisms (e.g., if NSWorkspace fails, use `open` command)
+  - Support provider-native operations through system delegation
 * ✅ **Verify**: Run segment-specific tests
 * 🔄 **Refine**: Fix implementation until all tests pass
 * 🚫 **HALT** if any tests fail after refinement attempts
 * 📝 Document completion in mCP via document_component()
 
-**SEGMENT 5.4: Sorting System**
-* 📝 **Test-First**: Write tests for result sorting, multi-key sort, sort direction, and custom sort functions
+**SEGMENT 8.4: Placeholder Support**
+* 📝 **Test-First**: Write tests for cloud-only file indicators, download triggering, metadata extraction, and operation queueing
 * 🛠️ **Implement**: 
-  - Implement flexible result sorting
-  - Create multi-key sort support
-  - Build sort direction control
-  - Support custom sort functions
+  - Implement cloud-only file indicators
+  - Create on-demand download triggering
+  - Build placeholder metadata extraction
+  - Support operation queueing during download
 * ✅ **Verify**: Run segment-specific tests
 * 🔄 **Refine**: Fix implementation until all tests pass
 * 🚫 **HALT** if any tests fail after refinement attempts
 * 📝 Document completion in mCP via document_component()
 
-**SEGMENT 5.5: Filtering System**
-* 📝 **Test-First**: Write tests for filter framework, file type filters, date range filtering, and filter chains
+**SEGMENT 8.5: Offline Handling**
+* 📝 **Test-First**: Write tests for offline experience, operation queueing, reconnection synchronization, and offline indicators
 * 🛠️ **Implement**: 
-  - Build filter application framework
-  - Implement file type and attribute filters
-  - Create date range filtering
-  - Support custom filter chains
+  - Create graceful offline experience
+  - Implement cached operation queuing
+  - Build synchronization on reconnection
+  - Design offline mode indicators
 * ✅ **Verify**: Run segment-specific tests
 * 🔄 **Refine**: Fix implementation until all tests pass
 * 🚫 **HALT** if any tests fail after refinement attempts
@@ -106,20 +106,20 @@ Each stage requires three persistent artifacts:
 
 ### 5. STAGE INTEGRATION TEST
 * ✅ Run full stage integration tests:
-  - Verify search completes in <50ms for 10k test files
-  - Test query parser with various pattern types
-  - Validate result accuracy across search terms
-  - Measure search performance with benchmarks
-  - Verify filtering correctly reduces result sets
-  - Test sorting with various criteria
-  - Maintain 95% code coverage
+  - Verify cloud files correctly identified
+  - Test operations across providers
+  - Validate placeholder handling
+  - Measure performance with cloud-only files
+  - Verify offline mode functions correctly
+  - Test reconnection synchronization
+  - Validate graceful degradation
 * ✅ Apply linter and formatter
 * ❌ Do not alter tests to force pass
 * 🔄 Fix implementation if integration tests fail
 
 ### 6. PROPAGATE STATE
-* 📝 Write stage5_report.md
-* 📦 Save stage5_prompt.md
+* 📝 Write stage8_report.md
+* 📦 Save stage8_prompt.md
 * 🔁 Update system memory (mCP) with full stage status via update_phase_progress()
 * 📊 Document using AI Documentation System
 
@@ -128,10 +128,10 @@ All memory updates are managed through the mCP knowledge graph. After each segme
 * **Segment Completion**: 
 ```python
 document_component(
-  name="Query Parser",  # or other segment name
-  overview="Implementation of search query parsing with pattern support",
-  purpose="To transform user search queries into optimized search patterns",
-  implementation="Includes pattern parsing, wildcard support, query optimization, and advanced operators",
+  name="Operation Delegation to System/Finder",  # or other segment name
+  overview="Implementation of cloud operation delegation to native system handlers",
+  purpose="To leverage macOS native capabilities for cloud operations rather than implementing provider-specific APIs",
+  implementation="Includes NSWorkspace delegation, operation routing, fallback mechanisms, and provider-native operations support",
   status="Completed",
   coverage="95%"
 )
@@ -140,23 +140,24 @@ document_component(
 * **Stage Completion**: 
 ```python
 update_phase_progress(
-  phase="Infrastructure Phase",
+  phase="Integration Phase",
   status="In Progress",
-  completed=["Query Parser", "Search Algorithm", "Result Management", "Sorting System", "Filtering System"],
+  completed=["Provider Detection", "Status Visualization", "Operation Delegation to System/Finder", 
+             "Placeholder Support", "Offline Handling"],
   issues=["Any issues encountered"],
-  next=["Stage 6: Indexing System"]
+  next=["Stage 9: System Integration"]
 )
 ```
 
 * **Decision Records** (if applicable): 
 ```python
 record_decision(
-  title="Search Algorithm Pattern Matching Approach",
+  title="Cloud Operation Delegation Strategy",
   status="Accepted",
-  context="Need efficient pattern matching for filenames",
-  decision="Implemented regex-based matching with precompiled patterns and caching",
-  consequences="Better performance but increased memory usage during search",
-  alternatives=["String matching", "Naive implementation"]
+  context="Need to handle cloud provider operations without implementing provider-specific APIs",
+  decision="Implemented full delegation to Finder/NSWorkspace for all cloud operations",
+  consequences="Better reliability and future-proofing, at cost of less fine-grained control",
+  alternatives=["Direct API implementation", "Hybrid approach"]
 )
 ```
 

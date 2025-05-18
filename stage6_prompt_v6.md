@@ -1,15 +1,15 @@
-# 🚧 V6.2-STAGE 5 — SEARCH ENGINE
+# 🚧 V6.2-STAGE 6 — INDEXING SYSTEM
 
 # 📌 ROLE DEFINITION
 **YOU ARE A DETERMINISTIC EXECUTOR.** Follow this process *exactly as written*. Execute one stage at a time, in strict order. **NO STAGE MAY BE SKIPPED OR REORDERED.** Each stage consists of multiple segments, each with its own testing boundary. **NO SEGMENT MAY PROCEED UNTIL ALL TESTS PASS.**
 Each stage requires three persistent artifacts:
-* stage5_report.md (Markdown report)
-* stage5_prompt.md (Prompt artifact)
+* stage6_report.md (Markdown report)
+* stage6_prompt.md (Prompt artifact)
 * mCP update (knowledge graph entry) — see **System Memory Update** below
 
 # 🔄 TERMINOLOGY & HIERARCHY
 * **Development Phase**: Infrastructure Phase (spans multiple stages)
-* **Stage**: Primary implementation unit - SEARCH ENGINE
+* **Stage**: Primary implementation unit - INDEXING SYSTEM
 * **Segment**: Atomic, testable component within a stage
 * **Testing Cycle**: Write tests → Implement → Test → Refine until passing
 
@@ -19,86 +19,99 @@ Each stage requires three persistent artifacts:
 * Documentation and memory must be updated after each segment and stage
 * Tests must be written before (or alongside) implementation
 
-# #️⃣ STAGE 5 — SEARCH ENGINE
+# #️⃣ STAGE 6 — INDEXING SYSTEM
 ### 1. LOAD STAGE SPEC
-* 📄 From: stage5_prompt.md
-* 🔍 Infrastructure Phase - Search Engine Component
+* 📄 From: stage6_prompt.md
+* 🔍 Infrastructure Phase - Indexing System Component
 
 ### 2. ANALYZE CONTEXT
 * 🔍 Identify:
-  * Stage objectives: Implement high-performance filename search engine
-  * Interfaces: Query processing, search algorithm, result management
-  * Constraints: Performance optimization, thread safety, incremental delivery
-  * Dependencies: Stage 2 service container, Stage 3 path management, Stage 4 database access
+  * Stage objectives: Implement file system scanning and indexing with metadata extraction
+  * Interfaces: Scanner, metadata extraction, incremental updates, priority management
+  * Constraints: Low system impact, background operation, incremental progress persistence
+  * Dependencies: Stage 2 service container, Stage 2 event bus, Stage 3 filesystem operations, Stage 3 FSEvents wrapper, Stage 4 database schema
 * ✅ Query mCP to validate prerequisites
 * ⚠️ Flag any missing dependencies
 
 ### 3. STAGE SEGMENTATION
 * 📋 Break down stage into distinct segments:
-  * Segment 5.1: Query Parser
-  * Segment 5.2: Search Algorithm
-  * Segment 5.3: Result Management
-  * Segment 5.4: Sorting System
-  * Segment 5.5: Filtering System
+  * Segment 6.1: Initial Scanner
+  * Segment 6.2: Metadata Extraction
+  * Segment 6.3: Incremental Updates
+  * Segment 6.4: Priority Management
+  * Segment 6.5: Progress Tracking
+  * Segment 6.6: Folder Size Calculation
 * 📊 Define clear testing criteria for each segment
 * 🔄 Document segment dependencies
 
 ### 4. IMPLEMENT AND TEST BY SEGMENT
-**SEGMENT 5.1: Query Parser**
-* 📝 **Test-First**: Write tests for filename pattern parsing, wildcard support, query optimization, and search operators
+**SEGMENT 6.1: Initial Scanner**
+* 📝 **Test-First**: Write tests for directory scanning, path rule evaluation, batch processing, and throttling
 * 🛠️ **Implement**: 
-  - Implement filename pattern parsing
-  - Create wildcard and glob support
-  - Build query optimization
-  - Support advanced search operators
+  - Build recursive directory scanning
+  - Implement path rule evaluation during scan
+  - Create batch processing for efficiency
+  - Design throttling for system impact
 * ✅ **Verify**: Run segment-specific tests
 * 🔄 **Refine**: Fix implementation until all tests pass
 * 🚫 **HALT** if any tests fail after refinement attempts
 * 📝 Document completion in mCP via document_component()
 
-**SEGMENT 5.2: Search Algorithm**
-* 📝 **Test-First**: Write tests for search performance, index-based search, memory-efficiency, and caching
+**SEGMENT 6.2: Metadata Extraction**
+* 📝 **Test-First**: Write tests for file metadata extraction, file type identification, attribute harvesting, and cloud metadata handling
 * 🛠️ **Implement**: 
-  - Build optimized search implementation
-  - Create index-based search for performance
-  - Implement memory-efficient matching
-  - Design caching for frequent searches
+  - Implement file metadata extraction
+  - Create file type identification
+  - Build attribute harvesting
+  - Support cloud metadata handling
 * ✅ **Verify**: Run segment-specific tests
 * 🔄 **Refine**: Fix implementation until all tests pass
 * 🚫 **HALT** if any tests fail after refinement attempts
 * 📝 Document completion in mCP via document_component()
 
-**SEGMENT 5.3: Result Management**
-* 📝 **Test-First**: Write tests for result collection, virtual paging, caching, and grouping
+**SEGMENT 6.3: Incremental Updates**
+* 📝 **Test-First**: Write tests for change-based updates, event-driven indexing, diff detection, and conflict resolution
 * 🛠️ **Implement**: 
-  - Create result collection and organization
-  - Implement virtual result paging
-  - Build result caching and invalidation
-  - Support result annotation and grouping
+  - Implement change-based index updates
+  - Create event-driven indexing
+  - Build diff detection for efficient updates
+  - Design conflict resolution
 * ✅ **Verify**: Run segment-specific tests
 * 🔄 **Refine**: Fix implementation until all tests pass
 * 🚫 **HALT** if any tests fail after refinement attempts
 * 📝 Document completion in mCP via document_component()
 
-**SEGMENT 5.4: Sorting System**
-* 📝 **Test-First**: Write tests for result sorting, multi-key sort, sort direction, and custom sort functions
+**SEGMENT 6.4: Priority Management**
+* 📝 **Test-First**: Write tests for scanning prioritization, user focus areas, frequency-based prioritization, and manual overrides
 * 🛠️ **Implement**: 
-  - Implement flexible result sorting
-  - Create multi-key sort support
-  - Build sort direction control
-  - Support custom sort functions
+  - Build intelligent scanning prioritization
+  - Implement user focus areas
+  - Create frequency-based prioritization
+  - Support manual priority overrides
 * ✅ **Verify**: Run segment-specific tests
 * 🔄 **Refine**: Fix implementation until all tests pass
 * 🚫 **HALT** if any tests fail after refinement attempts
 * 📝 Document completion in mCP via document_component()
 
-**SEGMENT 5.5: Filtering System**
-* 📝 **Test-First**: Write tests for filter framework, file type filters, date range filtering, and filter chains
+**SEGMENT 6.5: Progress Tracking**
+* 📝 **Test-First**: Write tests for progress monitoring, status reporting, ETA calculation, and cancellation/pausing
 * 🛠️ **Implement**: 
-  - Build filter application framework
-  - Implement file type and attribute filters
-  - Create date range filtering
-  - Support custom filter chains
+  - Implement indexing progress monitoring
+  - Create status reporting
+  - Build ETA calculation
+  - Support cancellation and pausing
+* ✅ **Verify**: Run segment-specific tests
+* 🔄 **Refine**: Fix implementation until all tests pass
+* 🚫 **HALT** if any tests fail after refinement attempts
+* 📝 Document completion in mCP via document_component()
+
+**SEGMENT 6.6: Folder Size Calculation**
+* 📝 **Test-First**: Write tests for recursive folder size calculation, incremental updates, and special case handling
+* 🛠️ **Implement**: 
+  - Implement recursive folder size calculation for all indexed directories
+  - Store calculated folder sizes in the `folder_size` column
+  - Update folder sizes incrementally as files change
+  - Handle symlinks, hard links, and permission errors
 * ✅ **Verify**: Run segment-specific tests
 * 🔄 **Refine**: Fix implementation until all tests pass
 * 🚫 **HALT** if any tests fail after refinement attempts
@@ -106,20 +119,21 @@ Each stage requires three persistent artifacts:
 
 ### 5. STAGE INTEGRATION TEST
 * ✅ Run full stage integration tests:
-  - Verify search completes in <50ms for 10k test files
-  - Test query parser with various pattern types
-  - Validate result accuracy across search terms
-  - Measure search performance with benchmarks
-  - Verify filtering correctly reduces result sets
-  - Test sorting with various criteria
+  - Verify indexing processes >1000 files/second
+  - Test incremental updates with various changes
+  - Validate metadata extraction accuracy
+  - Measure indexing performance with benchmarks
+  - Verify prioritization correctly orders operations
+  - Test progress tracking accuracy
+  - Verify folder size calculation accuracy
   - Maintain 95% code coverage
 * ✅ Apply linter and formatter
 * ❌ Do not alter tests to force pass
 * 🔄 Fix implementation if integration tests fail
 
 ### 6. PROPAGATE STATE
-* 📝 Write stage5_report.md
-* 📦 Save stage5_prompt.md
+* 📝 Write stage6_report.md
+* 📦 Save stage6_prompt.md
 * 🔁 Update system memory (mCP) with full stage status via update_phase_progress()
 * 📊 Document using AI Documentation System
 
@@ -128,10 +142,10 @@ All memory updates are managed through the mCP knowledge graph. After each segme
 * **Segment Completion**: 
 ```python
 document_component(
-  name="Query Parser",  # or other segment name
-  overview="Implementation of search query parsing with pattern support",
-  purpose="To transform user search queries into optimized search patterns",
-  implementation="Includes pattern parsing, wildcard support, query optimization, and advanced operators",
+  name="Initial Scanner",  # or other segment name
+  overview="Implementation of recursive directory scanner with path rule evaluation",
+  purpose="To efficiently traverse and index the filesystem with minimal system impact",
+  implementation="Includes recursive scanning, rule evaluation, batch processing, and throttling",
   status="Completed",
   coverage="95%"
 )
@@ -142,21 +156,22 @@ document_component(
 update_phase_progress(
   phase="Infrastructure Phase",
   status="In Progress",
-  completed=["Query Parser", "Search Algorithm", "Result Management", "Sorting System", "Filtering System"],
+  completed=["Initial Scanner", "Metadata Extraction", "Incremental Updates", 
+             "Priority Management", "Progress Tracking", "Folder Size Calculation"],
   issues=["Any issues encountered"],
-  next=["Stage 6: Indexing System"]
+  next=["Stage 7: UI Framework"]
 )
 ```
 
 * **Decision Records** (if applicable): 
 ```python
 record_decision(
-  title="Search Algorithm Pattern Matching Approach",
+  title="Folder Size Calculation Strategy",
   status="Accepted",
-  context="Need efficient pattern matching for filenames",
-  decision="Implemented regex-based matching with precompiled patterns and caching",
-  consequences="Better performance but increased memory usage during search",
-  alternatives=["String matching", "Naive implementation"]
+  context="Need efficient and accurate folder size calculation",
+  decision="Implemented incremental calculation with change-based updates",
+  consequences="Instant folder size display at the cost of additional database storage",
+  alternatives=["On-demand calculation", "Approximate sizing"]
 )
 ```
 

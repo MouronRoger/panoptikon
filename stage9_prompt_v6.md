@@ -1,15 +1,15 @@
-# 🚧 V6.2-STAGE 5 — SEARCH ENGINE
+# 🚧 V6.2-STAGE 9 — SYSTEM INTEGRATION
 
 # 📌 ROLE DEFINITION
 **YOU ARE A DETERMINISTIC EXECUTOR.** Follow this process *exactly as written*. Execute one stage at a time, in strict order. **NO STAGE MAY BE SKIPPED OR REORDERED.** Each stage consists of multiple segments, each with its own testing boundary. **NO SEGMENT MAY PROCEED UNTIL ALL TESTS PASS.**
 Each stage requires three persistent artifacts:
-* stage5_report.md (Markdown report)
-* stage5_prompt.md (Prompt artifact)
+* stage9_report.md (Markdown report)
+* stage9_prompt.md (Prompt artifact)
 * mCP update (knowledge graph entry) — see **System Memory Update** below
 
 # 🔄 TERMINOLOGY & HIERARCHY
-* **Development Phase**: Infrastructure Phase (spans multiple stages)
-* **Stage**: Primary implementation unit - SEARCH ENGINE
+* **Development Phase**: Integration Phase (spans multiple stages)
+* **Stage**: Primary implementation unit - SYSTEM INTEGRATION
 * **Segment**: Atomic, testable component within a stage
 * **Testing Cycle**: Write tests → Implement → Test → Refine until passing
 
@@ -19,86 +19,100 @@ Each stage requires three persistent artifacts:
 * Documentation and memory must be updated after each segment and stage
 * Tests must be written before (or alongside) implementation
 
-# #️⃣ STAGE 5 — SEARCH ENGINE
+# #️⃣ STAGE 9 — SYSTEM INTEGRATION
 ### 1. LOAD STAGE SPEC
-* 📄 From: stage5_prompt.md
-* 🔍 Infrastructure Phase - Search Engine Component
+* 📄 From: stage9_prompt.md
+* 🔍 Integration Phase - System Integration Component
 
 ### 2. ANALYZE CONTEXT
 * 🔍 Identify:
-  * Stage objectives: Implement high-performance filename search engine
-  * Interfaces: Query processing, search algorithm, result management
-  * Constraints: Performance optimization, thread safety, incremental delivery
-  * Dependencies: Stage 2 service container, Stage 3 path management, Stage 4 database access
+  * Stage objectives: Implement system-wide activation, menu bar integration, dock integration, permissions, Finder integration
+  * Interfaces: Global hotkey, menu bar, dock, permissions, Finder, dual-window system enhancement
+  * Constraints: Resilience against system service failures, fallback mechanisms, minimal permissions functionality
+  * Dependencies: Stage 2 service container, Stage 3 filesystem operations, Stage 3 permission bookmarks, Stage 7 UI framework, Stage 7 dual-window implementation
 * ✅ Query mCP to validate prerequisites
 * ⚠️ Flag any missing dependencies
 
 ### 3. STAGE SEGMENTATION
 * 📋 Break down stage into distinct segments:
-  * Segment 5.1: Query Parser
-  * Segment 5.2: Search Algorithm
-  * Segment 5.3: Result Management
-  * Segment 5.4: Sorting System
-  * Segment 5.5: Filtering System
+  * Segment 9.1: Global Hotkey
+  * Segment 9.2: Menu Bar Icon
+  * Segment 9.3: Dock Integration
+  * Segment 9.4: Permissions Management
+  * Segment 9.5: Finder Integration
+  * Segment 9.6: Dual-Window System Enhancement
 * 📊 Define clear testing criteria for each segment
 * 🔄 Document segment dependencies
 
 ### 4. IMPLEMENT AND TEST BY SEGMENT
-**SEGMENT 5.1: Query Parser**
-* 📝 **Test-First**: Write tests for filename pattern parsing, wildcard support, query optimization, and search operators
+**SEGMENT 9.1: Global Hotkey**
+* 📝 **Test-First**: Write tests for system-wide activation, fallback mechanisms, shortcut configuration, and activation feedback
 * 🛠️ **Implement**: 
-  - Implement filename pattern parsing
-  - Create wildcard and glob support
-  - Build query optimization
-  - Support advanced search operators
+  - Implement system-wide activation hotkey
+  - Create fallback mechanisms for different permission levels
+  - Build customizable shortcut configuration
+  - Design activation animation and feedback
 * ✅ **Verify**: Run segment-specific tests
 * 🔄 **Refine**: Fix implementation until all tests pass
 * 🚫 **HALT** if any tests fail after refinement attempts
 * 📝 Document completion in mCP via document_component()
 
-**SEGMENT 5.2: Search Algorithm**
-* 📝 **Test-First**: Write tests for search performance, index-based search, memory-efficiency, and caching
+**SEGMENT 9.2: Menu Bar Icon**
+* 📝 **Test-First**: Write tests for status item creation, menu functionality, status visualization, and activation paths
 * 🛠️ **Implement**: 
-  - Build optimized search implementation
-  - Create index-based search for performance
-  - Implement memory-efficient matching
-  - Design caching for frequent searches
+  - Create status item with menu
+  - Implement quick actions
+  - Build status visualization
+  - Support alternative activation path
 * ✅ **Verify**: Run segment-specific tests
 * 🔄 **Refine**: Fix implementation until all tests pass
 * 🚫 **HALT** if any tests fail after refinement attempts
 * 📝 Document completion in mCP via document_component()
 
-**SEGMENT 5.3: Result Management**
-* 📝 **Test-First**: Write tests for result collection, virtual paging, caching, and grouping
+**SEGMENT 9.3: Dock Integration**
+* 📝 **Test-First**: Write tests for dock icon behavior, badge notifications, dock menu, and drag-and-drop
 * 🛠️ **Implement**: 
-  - Create result collection and organization
-  - Implement virtual result paging
-  - Build result caching and invalidation
-  - Support result annotation and grouping
+  - Build proper dock icon behavior
+  - Implement badge notifications
+  - Create dock menu with actions
+  - Support drag and drop to dock icon
 * ✅ **Verify**: Run segment-specific tests
 * 🔄 **Refine**: Fix implementation until all tests pass
 * 🚫 **HALT** if any tests fail after refinement attempts
 * 📝 Document completion in mCP via document_component()
 
-**SEGMENT 5.4: Sorting System**
-* 📝 **Test-First**: Write tests for result sorting, multi-key sort, sort direction, and custom sort functions
+**SEGMENT 9.4: Permissions Management**
+* 📝 **Test-First**: Write tests for FDA guidance, permission detection, progressive requests, and permission-aware routing
 * 🛠️ **Implement**: 
-  - Implement flexible result sorting
-  - Create multi-key sort support
-  - Build sort direction control
-  - Support custom sort functions
+  - Create Full Disk Access guidance
+  - Implement permission detection
+  - Build progressive permission requests
+  - Design permission-aware operation routing
 * ✅ **Verify**: Run segment-specific tests
 * 🔄 **Refine**: Fix implementation until all tests pass
 * 🚫 **HALT** if any tests fail after refinement attempts
 * 📝 Document completion in mCP via document_component()
 
-**SEGMENT 5.5: Filtering System**
-* 📝 **Test-First**: Write tests for filter framework, file type filters, date range filtering, and filter chains
+**SEGMENT 9.5: Finder Integration**
+* 📝 **Test-First**: Write tests for reveal functionality, selection preservation, contextual operations, and drag-and-drop
 * 🛠️ **Implement**: 
-  - Build filter application framework
-  - Implement file type and attribute filters
-  - Create date range filtering
-  - Support custom filter chains
+  - Implement reveal in Finder function
+  - Create file selection preservation
+  - Build contextual operations with Finder
+  - Support drag and drop between applications
+* ✅ **Verify**: Run segment-specific tests
+* 🔄 **Refine**: Fix implementation until all tests pass
+* 🚫 **HALT** if any tests fail after refinement attempts
+* 📝 Document completion in mCP via document_component()
+
+**SEGMENT 9.6: Dual-Window System Enhancement**
+* 📝 **Test-First**: Write tests for menu bar toggle, keyboard shortcut, window positioning, state persistence, and drag-and-drop
+* 🛠️ **Implement**: 
+  - Add window toggle to menu bar icon menu
+  - Implement window toggle keyboard shortcut (Cmd+N)
+  - Create window positioning for multi-monitor setups
+  - Build window state persistence between app launches
+  - Support drag-and-drop between Finder and both windows
 * ✅ **Verify**: Run segment-specific tests
 * 🔄 **Refine**: Fix implementation until all tests pass
 * 🚫 **HALT** if any tests fail after refinement attempts
@@ -106,20 +120,22 @@ Each stage requires three persistent artifacts:
 
 ### 5. STAGE INTEGRATION TEST
 * ✅ Run full stage integration tests:
-  - Verify search completes in <50ms for 10k test files
-  - Test query parser with various pattern types
-  - Validate result accuracy across search terms
-  - Measure search performance with benchmarks
-  - Verify filtering correctly reduces result sets
-  - Test sorting with various criteria
-  - Maintain 95% code coverage
+  - Verify hotkey works reliably
+  - Test with different permission levels
+  - Validate menu bar functions correctly
+  - Measure dock integration behavior
+  - Verify permissions guidance helps users
+  - Test Finder integration across operations
+  - Maintain graceful behavior with limited permissions
+  - Validate dual-window operations across monitors
+  - Test window toggle from system menu and keyboard shortcut
 * ✅ Apply linter and formatter
 * ❌ Do not alter tests to force pass
 * 🔄 Fix implementation if integration tests fail
 
 ### 6. PROPAGATE STATE
-* 📝 Write stage5_report.md
-* 📦 Save stage5_prompt.md
+* 📝 Write stage9_report.md
+* 📦 Save stage9_prompt.md
 * 🔁 Update system memory (mCP) with full stage status via update_phase_progress()
 * 📊 Document using AI Documentation System
 
@@ -128,35 +144,36 @@ All memory updates are managed through the mCP knowledge graph. After each segme
 * **Segment Completion**: 
 ```python
 document_component(
-  name="Query Parser",  # or other segment name
-  overview="Implementation of search query parsing with pattern support",
-  purpose="To transform user search queries into optimized search patterns",
-  implementation="Includes pattern parsing, wildcard support, query optimization, and advanced operators",
+  name="Dual-Window System Enhancement",  # or other segment name
+  overview="Implementation of system-level integration for dual-window functionality",
+  purpose="To enhance the dual-window feature with system-level integration and multi-monitor support",
+  implementation="Includes menu bar toggle, keyboard shortcut, window positioning, state persistence, and enhanced drag-and-drop",
   status="Completed",
-  coverage="95%"
+  coverage="96%"
 )
 ```
 
 * **Stage Completion**: 
 ```python
 update_phase_progress(
-  phase="Infrastructure Phase",
+  phase="Integration Phase",
   status="In Progress",
-  completed=["Query Parser", "Search Algorithm", "Result Management", "Sorting System", "Filtering System"],
+  completed=["Global Hotkey", "Menu Bar Icon", "Dock Integration", 
+             "Permissions Management", "Finder Integration", "Dual-Window System Enhancement"],
   issues=["Any issues encountered"],
-  next=["Stage 6: Indexing System"]
+  next=["Stage 10: Optimization"]
 )
 ```
 
 * **Decision Records** (if applicable): 
 ```python
 record_decision(
-  title="Search Algorithm Pattern Matching Approach",
+  title="Permission Management Strategy",
   status="Accepted",
-  context="Need efficient pattern matching for filenames",
-  decision="Implemented regex-based matching with precompiled patterns and caching",
-  consequences="Better performance but increased memory usage during search",
-  alternatives=["String matching", "Naive implementation"]
+  context="Need to handle different permission levels gracefully",
+  decision="Implemented progressive permission model with graceful degradation",
+  consequences="Application works at all permission levels with clear guidance for enhancing functionality",
+  alternatives=["Binary permission model", "Mandatory FDA requirement"]
 )
 ```
 
