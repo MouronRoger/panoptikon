@@ -1,1 +1,1 @@
-"""Tests for the core module."""
+"""Core test suite for Panoptikon."""
