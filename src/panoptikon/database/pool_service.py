@@ -14,7 +14,10 @@ from ..core.config import ConfigurationSystem
 from ..core.errors import DatabaseError
 from ..core.service import ServiceInterface
 from .config import DatabaseConfig
+from .optimization import QueryOptimizer
+from .performance_monitor import QueryPerformanceMonitor
 from .pool import ConnectionPool, TransactionIsolationLevel, get_pool_manager
+from .statement_registry import StatementRegistry
 
 logger = logging.getLogger(__name__)
 
@@ -52,6 +55,9 @@ class DatabasePoolService(ServiceInterface):
         self._config: Optional[DatabaseConfig] = None
         self._pool: Optional[ConnectionPool] = None
         self._initialized = False
+        self.statement_registry = StatementRegistry()
+        self.performance_monitor = QueryPerformanceMonitor()
+        self.optimizer = QueryOptimizer()
 
     def initialize(self) -> None:
         """Initialize the database pool service.
@@ -189,18 +195,24 @@ class DatabasePoolService(ServiceInterface):
         self,
         query: str,
         parameters: Optional[Union[Tuple[Any, ...], Dict[str, Any]]] = None,
+        *,
+        use_registry: bool = True,
+        monitor: bool = True,
+        optimize: bool = False,
+        index_hint: Optional[str] = None,
+        cache_result: bool = False,
     ) -> sqlite3.Cursor:
-        """Execute a SQL query with parameters.
-
-        Thread Safety:
-            - Safe to call from multiple threads.
-
-        SQLite Limitation:
-            - Write queries may fail under high concurrency due to SQLite's single-writer limitation.
+        """Execute a SQL query with parameters, supporting prepared statement registry,
+        performance monitoring, and optional optimization.
 
         Args:
             query: The SQL query to execute.
             parameters: Optional parameters for the query.
+            use_registry: Use StatementRegistry for prepared statements.
+            monitor: Record timing and performance metrics.
+            optimize: Apply query optimization strategies.
+            index_hint: Optional index hint for the query.
+            cache_result: Use result caching for SELECT queries.
 
         Returns:
             A SQLite cursor with the query results.
@@ -209,22 +221,56 @@ class DatabasePoolService(ServiceInterface):
             DatabaseError: If there's an error executing the query.
         """
         pool = self.get_pool()
-        return pool.execute(query, parameters)
+        # Pool does not directly support these features, so use a connection context
+        with pool.get_connection() as conn:
+            optimizer = self.optimizer
+            performance_monitor = self.performance_monitor
+            statement_registry = self.statement_registry
+            sql = query
+            if optimize:
+                sql = optimizer.rewrite_query(sql)
+                if index_hint:
+                    sql = optimizer.with_index_hint(sql, index_hint)
+            if cache_result and sql.strip().upper().startswith("SELECT"):
+                result = optimizer.cached_query(
+                    conn,
+                    sql,
+                    tuple(parameters)
+                    if isinstance(parameters, (list, tuple))
+                    else None,
+                )
+                if isinstance(result, sqlite3.Cursor):
+                    return result
+                if parameters is None:
+                    return conn.execute(sql)
+                return conn.execute(sql, parameters)
+            if use_registry:
+                if monitor:
+                    cursor, _ = performance_monitor.time_query(conn, sql, parameters)
+                    return cursor
+                return statement_registry.bind_and_execute(conn, sql, parameters)
+            if monitor:
+                cursor, _ = performance_monitor.time_query(conn, sql, parameters)
+                return cursor
+            if parameters is None:
+                return conn.execute(sql)
+            return conn.execute(sql, parameters)
 
     def execute_many(
-        self, query: str, parameters: List[Union[Tuple[Any, ...], Dict[str, Any]]]
+        self,
+        query: str,
+        parameters: List[Union[Tuple[Any, ...], Dict[str, Any]]],
+        *,
+        optimize: bool = False,
+        batch: bool = True,
     ) -> sqlite3.Cursor:
-        """Execute a SQL query with multiple parameter sets.
-
-        Thread Safety:
-            - Safe to call from multiple threads.
-
-        SQLite Limitation:
-            - Write queries may fail under high concurrency due to SQLite's single-writer limitation.
+        """Execute a SQL query with multiple parameter sets, supporting batch optimization.
 
         Args:
             query: The SQL query to execute.
             parameters: List of parameter sets for the query.
+            optimize: Apply query optimization strategies.
+            batch: Use batch execution optimization.
 
         Returns:
             A SQLite cursor with the query results.
@@ -233,7 +279,18 @@ class DatabasePoolService(ServiceInterface):
             DatabaseError: If there's an error executing the query.
         """
         pool = self.get_pool()
-        return pool.execute_many(query, parameters)
+        with pool.get_connection() as conn:
+            optimizer = self.optimizer
+            sql = query
+            if optimize:
+                sql = optimizer.rewrite_query(sql)
+            if batch:
+                tuple_params = [
+                    tuple(p.values()) if isinstance(p, dict) else tuple(p)
+                    for p in parameters
+                ]
+                return optimizer.batch_execute(conn, sql, tuple_params)
+            return conn.executemany(sql, parameters)
 
     @contextmanager
     def transaction(

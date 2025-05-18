@@ -14,6 +14,9 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 from ..core.errors import DatabaseError
 from ..core.service import ServiceInterface
+from .optimization import QueryOptimizer
+from .performance_monitor import QueryPerformanceMonitor
+from .statement_registry import StatementRegistry
 
 logger = logging.getLogger(__name__)
 
@@ -38,6 +41,9 @@ class DatabaseConnection:
         self.db_path = db_path
         self.timeout = timeout
         self._local = threading.local()
+        self.statement_registry = StatementRegistry()
+        self.performance_monitor = QueryPerformanceMonitor()
+        self.optimizer = QueryOptimizer()
 
     @contextmanager
     def connect(self) -> Generator[sqlite3.Connection, None, None]:
@@ -122,12 +128,24 @@ class DatabaseConnection:
         self,
         query: str,
         parameters: Optional[Union[Tuple[Any, ...], Dict[str, Any]]] = None,
+        *,
+        use_registry: bool = True,
+        monitor: bool = True,
+        optimize: bool = False,
+        index_hint: Optional[str] = None,
+        cache_result: bool = False,
     ) -> sqlite3.Cursor:
-        """Execute a SQL query with parameters.
+        """Execute a SQL query with parameters, supporting prepared statement registry,
+        performance monitoring, and optional optimization.
 
         Args:
             query: The SQL query to execute.
             parameters: Optional parameters for the query.
+            use_registry: Use StatementRegistry for prepared statements.
+            monitor: Record timing and performance metrics.
+            optimize: Apply query optimization strategies.
+            index_hint: Optional index hint for the query.
+            cache_result: Use result caching for SELECT queries.
 
         Returns:
             A SQLite cursor with the query results.
@@ -137,20 +155,74 @@ class DatabaseConnection:
         """
         with self.connect() as conn:
             try:
-                if parameters is None:
-                    return conn.execute(query)
-                return conn.execute(query, parameters)
+                return self._execute_internal(
+                    conn,
+                    query,
+                    parameters,
+                    use_registry=use_registry,
+                    monitor=monitor,
+                    optimize=optimize,
+                    index_hint=index_hint,
+                    cache_result=cache_result,
+                )
             except sqlite3.Error as e:
                 raise DatabaseError(f"Error executing query: {e}, Query: {query}")
 
-    def execute_many(
-        self, query: str, parameters: List[Union[Tuple[Any, ...], Dict[str, Any]]]
+    def _execute_internal(
+        self,
+        conn: sqlite3.Connection,
+        query: str,
+        parameters: Optional[Union[Tuple[Any, ...], Dict[str, Any]]],
+        *,
+        use_registry: bool,
+        monitor: bool,
+        optimize: bool,
+        index_hint: Optional[str],
+        cache_result: bool,
     ) -> sqlite3.Cursor:
-        """Execute a SQL query with multiple parameter sets.
+        sql = query
+        if optimize:
+            sql = self.optimizer.rewrite_query(sql)
+            if index_hint:
+                sql = self.optimizer.with_index_hint(sql, index_hint)
+        if cache_result and sql.strip().upper().startswith("SELECT"):
+            result = self.optimizer.cached_query(
+                conn,
+                sql,
+                tuple(parameters) if isinstance(parameters, (list, tuple)) else None,
+            )
+            if isinstance(result, sqlite3.Cursor):
+                return result
+            if parameters is None:
+                return conn.execute(sql)
+            return conn.execute(sql, parameters)
+        if use_registry:
+            if monitor:
+                cursor, _ = self.performance_monitor.time_query(conn, sql, parameters)
+                return cursor
+            return self.statement_registry.bind_and_execute(conn, sql, parameters)
+        if monitor:
+            cursor, _ = self.performance_monitor.time_query(conn, sql, parameters)
+            return cursor
+        if parameters is None:
+            return conn.execute(sql)
+        return conn.execute(sql, parameters)
+
+    def execute_many(
+        self,
+        query: str,
+        parameters: List[Union[Tuple[Any, ...], Dict[str, Any]]],
+        *,
+        optimize: bool = False,
+        batch: bool = True,
+    ) -> sqlite3.Cursor:
+        """Execute a SQL query with multiple parameter sets, supporting batch optimization.
 
         Args:
             query: The SQL query to execute.
             parameters: List of parameter sets for the query.
+            optimize: Apply query optimization strategies.
+            batch: Use batch execution optimization.
 
         Returns:
             A SQLite cursor with the query results.
@@ -160,7 +232,17 @@ class DatabaseConnection:
         """
         with self.connect() as conn:
             try:
-                return conn.executemany(query, parameters)
+                sql = query
+                if optimize:
+                    sql = self.optimizer.rewrite_query(sql)
+                if batch:
+                    # QueryOptimizer.batch_execute expects List[Tuple[Any, ...]]
+                    tuple_params = [
+                        tuple(p.values()) if isinstance(p, dict) else tuple(p)
+                        for p in parameters
+                    ]
+                    return self.optimizer.batch_execute(conn, sql, tuple_params)
+                return conn.executemany(sql, parameters)
             except sqlite3.Error as e:
                 raise DatabaseError(f"Error executing batch query: {e}, Query: {query}")
 

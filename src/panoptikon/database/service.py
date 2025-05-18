@@ -13,7 +13,10 @@ from ..core.errors import DatabaseError
 from ..core.service import ServiceInterface
 from .config import DatabaseConfig
 from .connection import DatabaseConnection
+from .optimization import QueryOptimizer
+from .performance_monitor import QueryPerformanceMonitor
 from .schema import SchemaManager
+from .statement_registry import StatementRegistry
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +39,9 @@ class DatabaseService(ServiceInterface):
         self._connection: Optional[DatabaseConnection] = None
         self._schema_manager: Optional[SchemaManager] = None
         self._initialized = False
+        self.statement_registry = StatementRegistry()
+        self.performance_monitor = QueryPerformanceMonitor()
+        self.optimizer = QueryOptimizer()
 
     def initialize(self) -> None:
         """Initialize the database service.
@@ -129,12 +135,24 @@ class DatabaseService(ServiceInterface):
         self,
         query: str,
         parameters: Optional[Union[Tuple[Any, ...], Dict[str, Any]]] = None,
+        *,
+        use_registry: bool = True,
+        monitor: bool = True,
+        optimize: bool = False,
+        index_hint: Optional[str] = None,
+        cache_result: bool = False,
     ) -> sqlite3.Cursor:
-        """Execute a SQL query with parameters.
+        """Execute a SQL query with parameters, supporting prepared statement registry,
+        performance monitoring, and optional optimization.
 
         Args:
             query: The SQL query to execute.
             parameters: Optional parameters for the query.
+            use_registry: Use StatementRegistry for prepared statements.
+            monitor: Record timing and performance metrics.
+            optimize: Apply query optimization strategies.
+            index_hint: Optional index hint for the query.
+            cache_result: Use result caching for SELECT queries.
 
         Returns:
             A SQLite cursor with the query results.
@@ -143,16 +161,31 @@ class DatabaseService(ServiceInterface):
             DatabaseError: If there's an error executing the query.
         """
         connection = self.get_connection()
-        return connection.execute(query, parameters)
+        return connection.execute(
+            query,
+            parameters,
+            use_registry=use_registry,
+            monitor=monitor,
+            optimize=optimize,
+            index_hint=index_hint,
+            cache_result=cache_result,
+        )
 
     def execute_many(
-        self, query: str, parameters: List[Union[Tuple[Any, ...], Dict[str, Any]]]
+        self,
+        query: str,
+        parameters: List[Union[Tuple[Any, ...], Dict[str, Any]]],
+        *,
+        optimize: bool = False,
+        batch: bool = True,
     ) -> sqlite3.Cursor:
-        """Execute a SQL query with multiple parameter sets.
+        """Execute a SQL query with multiple parameter sets, supporting batch optimization.
 
         Args:
             query: The SQL query to execute.
             parameters: List of parameter sets for the query.
+            optimize: Apply query optimization strategies.
+            batch: Use batch execution optimization.
 
         Returns:
             A SQLite cursor with the query results.
@@ -161,7 +194,12 @@ class DatabaseService(ServiceInterface):
             DatabaseError: If there's an error executing the query.
         """
         connection = self.get_connection()
-        return connection.execute_many(query, parameters)
+        return connection.execute_many(
+            query,
+            parameters,
+            optimize=optimize,
+            batch=batch,
+        )
 
     @property
     def schema_manager(self) -> SchemaManager:

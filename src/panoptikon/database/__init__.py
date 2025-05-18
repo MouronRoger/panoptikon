@@ -5,6 +5,8 @@ from typing import Optional
 
 from .config import DatabaseConfig, get_default_config
 from .connection import DatabaseConnection, DatabaseConnectionService
+from .optimization import QueryOptimizer
+from .performance_monitor import QueryPerformanceMonitor
 from .pool import (
     ConnectionHealthStatus,
     ConnectionPool,
@@ -14,8 +16,10 @@ from .pool import (
     get_pool_manager,
 )
 from .pool_service import DatabasePoolService
+from .query_builder import QueryBuilder
 from .schema import DatabaseSchemaService, SchemaManager
 from .service import DatabaseService
+from .statement_registry import StatementRegistry
 
 __all__ = [
     "ConnectionHealthStatus",
@@ -33,6 +37,10 @@ __all__ = [
     "get_default_config",
     "get_default_db_path",
     "get_pool_manager",
+    "StatementRegistry",
+    "QueryBuilder",
+    "QueryPerformanceMonitor",
+    "QueryOptimizer",
 ]
 
 

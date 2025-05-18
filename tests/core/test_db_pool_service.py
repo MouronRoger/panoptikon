@@ -207,17 +207,17 @@ def test_pool_service_execute(pool_service: DatabasePoolService) -> None:
     Args:
         pool_service: Database pool service fixture.
     """
-    # Setup the mock pool
-    mock_pool = pool_service.get_pool()
-    mock_cursor = MagicMock(spec=sqlite3.Cursor)
-    mock_pool.execute.return_value = mock_cursor
-
-    # Execute a query
-    result = pool_service.execute("SELECT * FROM test")
-
-    # Check that the pool's execute method was called
-    mock_pool.execute.assert_called_once_with("SELECT * FROM test", None)
-    assert result is mock_cursor
+    # Patch the connection returned by get_connection()
+    mock_conn = MagicMock(spec=sqlite3.Connection)
+    with patch.object(pool_service.get_pool(), "get_connection") as mock_get_conn:
+        mock_get_conn.return_value.__enter__.return_value = mock_conn
+        mock_cursor = MagicMock(spec=sqlite3.Cursor)
+        mock_conn.execute.return_value = mock_cursor
+        # Execute a query
+        result = pool_service.execute("SELECT * FROM test")
+        # Check that the connection's execute method was called
+        mock_conn.execute.assert_called_once_with("SELECT * FROM test")
+        assert result is mock_cursor
 
 
 def test_pool_service_execute_many(pool_service: DatabasePoolService) -> None:
@@ -226,20 +226,20 @@ def test_pool_service_execute_many(pool_service: DatabasePoolService) -> None:
     Args:
         pool_service: Database pool service fixture.
     """
-    # Setup the mock pool
-    mock_pool = pool_service.get_pool()
-    mock_cursor = MagicMock(spec=sqlite3.Cursor)
-    mock_pool.execute_many.return_value = mock_cursor
-
-    # Execute a query with multiple parameters
-    params = [(1, "test"), (2, "test2")]
-    result = pool_service.execute_many("INSERT INTO test VALUES (?, ?)", params)
-
-    # Check that the pool's execute_many method was called
-    mock_pool.execute_many.assert_called_once_with(
-        "INSERT INTO test VALUES (?, ?)", params
-    )
-    assert result is mock_cursor
+    # Patch the connection returned by get_connection()
+    mock_conn = MagicMock(spec=sqlite3.Connection)
+    with patch.object(pool_service.get_pool(), "get_connection") as mock_get_conn:
+        mock_get_conn.return_value.__enter__.return_value = mock_conn
+        mock_cursor = MagicMock(spec=sqlite3.Cursor)
+        mock_conn.executemany.return_value = mock_cursor
+        # Execute a query with multiple parameters
+        params = [(1, "test"), (2, "test2")]
+        result = pool_service.execute_many("INSERT INTO test VALUES (?, ?)", params)
+        # Check that the connection's executemany method was called
+        mock_conn.executemany.assert_called_once_with(
+            "INSERT INTO test VALUES (?, ?)", params
+        )
+        assert result is mock_cursor
 
 
 def test_pool_service_transaction(pool_service: DatabasePoolService) -> None:
@@ -517,3 +517,89 @@ def test_pool_service_stress_leak_prevention_integration(
     for e in errors:
         msg = str(e)
         assert "deadlock" not in msg.lower()
+
+
+def test_pool_execute_with_statement_registry(
+    real_pool_service: DatabasePoolService,
+) -> None:
+    """Test execute with StatementRegistry enabled in pool service."""
+    real_pool_service.execute(
+        "CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY, value TEXT)"
+    )
+    real_pool_service.execute(
+        "INSERT INTO test (id, value) VALUES (?, ?)", (1, "foo"), use_registry=True
+    )
+    cursor = real_pool_service.execute(
+        "SELECT value FROM test WHERE id = ?", (1,), use_registry=True
+    )
+    assert cursor.fetchone()[0] == "foo"
+
+
+def test_pool_execute_with_performance_monitor(
+    real_pool_service: DatabasePoolService,
+) -> None:
+    """Test execute with performance monitoring enabled in pool service."""
+    real_pool_service.execute(
+        "CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY, value TEXT)"
+    )
+    real_pool_service.execute(
+        "INSERT INTO test (id, value) VALUES (?, ?)", (1, "bar"), monitor=True
+    )
+    cursor = real_pool_service.execute(
+        "SELECT value FROM test WHERE id = ?", (1,), monitor=True
+    )
+    assert cursor.fetchone()[0] == "bar"
+    assert real_pool_service.performance_monitor.query_times
+
+
+def test_pool_execute_with_optimizer_index_hint(
+    real_pool_service: DatabasePoolService,
+) -> None:
+    """Test execute with optimizer index hint in pool service."""
+    real_pool_service.execute(
+        "CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY, value TEXT)"
+    )
+    real_pool_service.execute(
+        "CREATE INDEX IF NOT EXISTS idx_test_value ON test(value)"
+    )
+    real_pool_service.execute(
+        "INSERT INTO test (id, value) VALUES (?, ?)", (1, "baz"), optimize=True
+    )
+    cursor = real_pool_service.execute(
+        "SELECT value FROM test WHERE id = ?",
+        (1,),
+        optimize=True,
+        index_hint="idx_test_value",
+    )
+    assert cursor.fetchone()[0] == "baz"
+
+
+def test_pool_execute_with_result_cache(real_pool_service: DatabasePoolService) -> None:
+    """Test execute with result caching enabled in pool service."""
+    real_pool_service.execute(
+        "CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY, value TEXT)"
+    )
+    real_pool_service.execute(
+        "INSERT INTO test (id, value) VALUES (?, ?)", (1, "cacheme")
+    )
+    cursor = real_pool_service.execute(
+        "SELECT value FROM test WHERE id = ?", (1,), cache_result=True
+    )
+    assert cursor.fetchone()[0] == "cacheme"
+    cursor2 = real_pool_service.execute(
+        "SELECT value FROM test WHERE id = ?", (1,), cache_result=True
+    )
+    assert cursor2.fetchone()[0] == "cacheme"
+
+
+def test_pool_execute_many_with_batch(real_pool_service: DatabasePoolService) -> None:
+    """Test execute_many with batch optimization enabled in pool service."""
+    real_pool_service.execute(
+        "CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY, value TEXT)"
+    )
+    data = [(1, "a"), (2, "b"), (3, "c")]
+    real_pool_service.execute_many(
+        "INSERT INTO test (id, value) VALUES (?, ?)", data, optimize=True, batch=True
+    )
+    cursor = real_pool_service.execute("SELECT COUNT(*) FROM test")
+    assert cursor.fetchone()[0] == 3
