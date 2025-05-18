@@ -4,9 +4,11 @@ Provides query execution timing, EXPLAIN QUERY PLAN analysis, index usage tracki
 slow query identification, and query frequency analysis.
 """
 
+from __future__ import annotations
+
 import sqlite3
 import time
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 
 
 class QueryPerformanceMonitor:
@@ -20,7 +22,10 @@ class QueryPerformanceMonitor:
         self.slow_threshold: float = 0.1  # seconds
 
     def time_query(
-        self, conn: sqlite3.Connection, sql: str, parameters: Optional[Any] = None
+        self,
+        conn: sqlite3.Connection,
+        sql: str,
+        parameters: Optional[Union[tuple[object, ...], dict[str, object]]] = None,
     ) -> Tuple[sqlite3.Cursor, float]:
         """Execute a query and record its execution time.
 
@@ -44,8 +49,11 @@ class QueryPerformanceMonitor:
         return cursor, elapsed
 
     def explain_query_plan(
-        self, conn: sqlite3.Connection, sql: str, parameters: Optional[Any] = None
-    ) -> List[Tuple[Any, ...]]:
+        self,
+        conn: sqlite3.Connection,
+        sql: str,
+        parameters: Optional[Union[tuple[object, ...], dict[str, object]]] = None,
+    ) -> List[Tuple[object, ...]]:
         """Run EXPLAIN QUERY PLAN and return the analysis.
 
         Args:

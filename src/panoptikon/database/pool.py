@@ -5,6 +5,8 @@ connections, with health monitoring, automatic reconnection, and
 transaction isolation level support.
 """
 
+from __future__ import annotations
+
 from collections import defaultdict, deque
 from collections.abc import Generator
 from contextlib import contextmanager
@@ -438,7 +440,7 @@ class ConnectionPool:
     def execute(
         self,
         query: str,
-        parameters: Optional[Union[tuple[Any, ...], dict[str, Any]]] = None,
+        parameters: Optional[Union[tuple[object, ...], dict[str, object]]] = None,
     ) -> sqlite3.Cursor:
         """Execute a SQL query with parameters.
 
@@ -469,7 +471,7 @@ class ConnectionPool:
                 ) from e
 
     def execute_many(
-        self, query: str, parameters: list[Union[tuple[Any, ...], dict[str, Any]]]
+        self, query: str, parameters: list[Union[tuple[object, ...], dict[str, object]]]
     ) -> sqlite3.Cursor:
         """Execute a SQL query with multiple parameter sets.
 
@@ -497,7 +499,7 @@ class ConnectionPool:
                     f"Error executing batch query: {e}, Query: {query}"
                 ) from e
 
-    def get_stats(self) -> dict[str, Any]:
+    def get_stats(self) -> dict[str, object]:
         """Get enhanced statistics about the connection pool."""
         with self._lock:
             return {

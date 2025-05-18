@@ -5,6 +5,8 @@ structured error types, error reporting, recovery mechanisms, and
 diagnostic information collection.
 """
 
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum, auto
@@ -51,8 +53,8 @@ class ErrorContext:
     user_action: Optional[str] = None
     component: Optional[str] = None
     source_location: Optional[str] = None
-    environment: dict[str, Any] = field(default_factory=dict)
-    related_objects: dict[str, Any] = field(default_factory=dict)
+    environment: dict[str, object] = field(default_factory=dict)
+    related_objects: dict[str, object] = field(default_factory=dict)
 
 
 class ApplicationError(Exception):

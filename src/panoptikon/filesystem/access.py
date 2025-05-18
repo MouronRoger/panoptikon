@@ -9,14 +9,16 @@ This module provides a layer of abstraction over file system operations:
 - Permission state visualization
 """
 
-from dataclasses import dataclass
-from enum import Enum, auto
+from __future__ import annotations
+
 import logging
 import os
-from pathlib import Path
 import platform
 import shutil
 import stat
+from dataclasses import dataclass
+from enum import Enum, auto
+from pathlib import Path
 from typing import Callable, Optional, TypeVar, cast
 
 from ..core.events import EventBus

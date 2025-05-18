@@ -34,6 +34,11 @@ repos:
         additional_dependencies: [types-all]
         args: [--strict]
 
+-   repo: https://github.com/microsoft/pyright
+    rev: 1.1.353
+    hooks:
+    -   id: pyright
+
 -   repo: local
     hooks:
     -   id: check-file-length

@@ -5,6 +5,8 @@ through publish/subscribe patterns, supporting both synchronous and
 asynchronous event handling.
 """
 
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 import asyncio
 from dataclasses import asdict, dataclass, field, is_dataclass
@@ -48,7 +50,7 @@ class EventBase:
     timestamp: datetime = field(default_factory=datetime.now)
     source: Optional[str] = None
 
-    def to_dict(self) -> dict[str, Any]:
+    def to_dict(self) -> dict[str, object]:
         """Convert event to dictionary representation.
 
         Returns:
@@ -98,7 +100,7 @@ class ErrorEvent(EventBase):
         if not self.message:
             raise ValueError("message is required")
 
-    def to_dict(self) -> dict[str, Any]:
+    def to_dict(self) -> dict[str, object]:
         """Convert error event to dictionary representation.
 
         Returns:

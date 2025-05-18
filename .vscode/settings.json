@@ -16,7 +16,7 @@
     "ms-python.black-formatter",
     "ms-python.isort",
     "charliermarsh.ruff",
-    "ms-python.mypy-type-checker"
+    "ms-python.pyright"
   ],
   "[python]": {
     "editor.defaultFormatter": "charliermarsh.ruff",
@@ -25,5 +25,9 @@
       "source.fixAll": "explicit",
       "source.organizeImports": "explicit"
     }
-  }
+  },
+  "pyright.typeCheckingMode": "strict",
+  "pyright.useLibraryCodeForTypes": true,
+  "pyright.disableLanguageServices": false,
+  "pyright.disableOrganizeImports": false
 }

@@ -80,6 +80,17 @@ The project uses pre-commit hooks to ensure code quality. They are installed aut
 pre-commit install
 ```
 
+## Type Checking
+
+This project uses [Pyright](https://github.com/microsoft/pyright) for static type checking, with [mypy](http://mypy-lang.org/) temporarily retained during migration. See `docs/spec/Pyright Migration Plan - Post Phase 4.md` for details.
+
+To run type checks:
+
+```bash
+pyright
+mypy src/panoptikon
+```
+
 ## License
 
 MIT License - see LICENSE file for details.

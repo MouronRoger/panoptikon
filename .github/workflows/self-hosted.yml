@@ -31,7 +31,10 @@ jobs:
     - name: Type check with mypy
       run: |
         mypy src/panoptikon
-        
+    - name: Type check with Pyright
+      run: |
+        pip install pyright
+        pyright
     - name: Lint with ruff
       run: |
         ruff check src/ 

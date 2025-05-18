@@ -5,6 +5,8 @@ settings (defaults, user, runtime), schema validation, and hot reloading
 of configuration changes.
 """
 
+from __future__ import annotations
+
 from datetime import datetime
 from enum import Enum, auto
 import json
@@ -150,9 +152,9 @@ class ConfigurationSystem(ServiceInterface):
         self._initialized = False
 
         # Configuration data stores
-        self._default_config: dict[str, dict[str, Any]] = {}
-        self._user_config: dict[str, dict[str, Any]] = {}
-        self._runtime_config: dict[str, dict[str, Any]] = {}
+        self._default_config: dict[str, dict[str, object]] = {}
+        self._user_config: dict[str, dict[str, object]] = {}
+        self._runtime_config: dict[str, dict[str, object]] = {}
 
         # Schema registry
         self._schemas: dict[str, type[ConfigSection]] = {}
@@ -259,7 +261,7 @@ class ConfigurationSystem(ServiceInterface):
 
         logger.debug(f"Registered configuration section: {section_name}")
 
-    def get(self, section: str, key: str, default: Any = None) -> Any:
+    def get(self, section: str, key: str, default: object = None) -> object:
         """Get a configuration value.
 
         Looks up the value in the following order:
@@ -304,7 +306,7 @@ class ConfigurationSystem(ServiceInterface):
 
         return default
 
-    def get_section(self, section: str) -> dict[str, Any]:
+    def get_section(self, section: str) -> dict[str, object]:
         """Get all configuration values for a section.
 
         Returns merged values from all configuration sources.
@@ -363,7 +365,7 @@ class ConfigurationSystem(ServiceInterface):
         self,
         section: str,
         key: str,
-        value: Any,
+        value: object,
         source: ConfigSource = ConfigSource.RUNTIME,
     ) -> None:
         """Set a configuration value.
@@ -422,7 +424,7 @@ class ConfigurationSystem(ServiceInterface):
     def update_section(
         self,
         section: str,
-        values: dict[str, Any],
+        values: dict[str, object],
         source: ConfigSource = ConfigSource.RUNTIME,
     ) -> None:
         """Update multiple values in a section.

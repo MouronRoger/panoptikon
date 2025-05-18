@@ -56,9 +56,7 @@ class FileSearchApp:
         """Initialize the application."""
         # Buffer for table content – created early so delegates can rely on it.
         self._files: list[list[str]] = []
-
-        # Attempt to import the core PyObjC modules; they must be real modules,
-        # not dummy objects (e.g. an `ImportError` instance returned by a mock).
+        self._pyobjc_available: bool
         try:
             # Try importing each required module and confirm they're genuine modules
             for name in ("AppKit", "Foundation", "objc"):
@@ -95,7 +93,7 @@ class FileSearchApp:
 
         # Create a window
         frame = (200, 200, 800, 600)  # x, y, width, height
-        self._window = (
+        self._window: Any = (
             AppKit.NSWindow.alloc().initWithContentRect_styleMask_backing_defer_(
                 Foundation.NSMakeRect(*frame),
                 AppKit.NSWindowStyleMaskTitled
@@ -109,7 +107,7 @@ class FileSearchApp:
         self._window.setReleasedWhenClosed_(False)
 
         # Create a content view
-        content_view = self._window.contentView()
+        content_view: Any = self._window.contentView()
 
         # Create search field using our wrapper
         search_frame = (20, frame[3] - 60, frame[2] - 40, 30)
@@ -144,8 +142,8 @@ class FileSearchApp:
 
         # Import PyObjC modules only within the methods that use them
 
-        self._table_delegate = _TableDelegate()
-        self._table_data_source = _TableDataSource()
+        self._table_delegate: Any = _TableDelegate()
+        self._table_data_source: Any = _TableDataSource()
         self._table_data_source.setFiles_(self._files)
 
         # Validate delegates before setting them
@@ -156,7 +154,7 @@ class FileSearchApp:
         self._table_view.set_data_source(self._table_data_source)
 
         # Create and set search field delegate
-        self._search_delegate = _SearchFieldDelegate()
+        self._search_delegate: Any = _SearchFieldDelegate()
         self._search_delegate.setCallback_(self)
         self._search_field.set_delegate(self._search_delegate)
 
@@ -174,7 +172,7 @@ class FileSearchApp:
         # Get the shared application and run it
         import AppKit
 
-        app = AppKit.NSApplication.sharedApplication()
+        app: Any = AppKit.NSApplication.sharedApplication()
         app.activateIgnoringOtherApps_(True)
         app.run()
 
@@ -213,8 +211,8 @@ class FileSearchApp:
         Args:
             sender: The NSSegmentedControl that sent the action
         """
-        option_index = self._search_options.get_selected_segment()
-        option_name = ["Name", "Content", "Date", "Size"][option_index]
+        option_index: int = self._search_options.get_selected_segment()
+        option_name: str = ["Name", "Content", "Date", "Size"][option_index]
         print(f"Search option changed to: {option_name}")
 
 

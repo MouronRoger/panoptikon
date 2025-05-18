@@ -29,6 +29,7 @@ class SearchFieldWrapper:
         Args:
             frame: The frame rectangle as (x, y, width, height)
         """
+        self._search_field: Any
         if frame is not None:
             self._search_field = AppKit.NSSearchField.alloc().initWithFrame_(
                 Foundation.NSMakeRect(*frame)
@@ -42,7 +43,7 @@ class SearchFieldWrapper:
         Args:
             text: The placeholder text to display
         """
-        cell = self._search_field.cell()
+        cell: Any = self._search_field.cell()
         cell.setPlaceholderString_(text)
 
     def set_delegate(self, delegate: Any) -> None:
@@ -88,30 +89,25 @@ class TableViewWrapper:
         Args:
             frame: The frame rectangle as (x, y, width, height)
         """
+        self._table_view: Any
+        self._scroll_view: Any
         if frame is not None:
             self._table_view = AppKit.NSTableView.alloc().initWithFrame_(
                 Foundation.NSMakeRect(*frame)
             )
-        else:
-            self._table_view = AppKit.NSTableView.alloc().init()
-
-        # Create a scroll view container
-        if frame is not None:
             self._scroll_view = AppKit.NSScrollView.alloc().initWithFrame_(
                 Foundation.NSMakeRect(*frame)
             )
         else:
+            self._table_view = AppKit.NSTableView.alloc().init()
             self._scroll_view = AppKit.NSScrollView.alloc().init()
 
-        # Configure scroll view
         self._scroll_view.setHasVerticalScroller_(True)
         self._scroll_view.setHasHorizontalScroller_(True)
         self._scroll_view.setBorderType_(AppKit.NSBezelBorder)
         self._scroll_view.setAutoresizingMask_(
             AppKit.NSViewWidthSizable | AppKit.NSViewHeightSizable
         )
-
-        # Add table view to scroll view
         self._scroll_view.setDocumentView_(self._table_view)
 
     def add_column(self, identifier: str, title: str, width: float) -> None:
@@ -122,7 +118,7 @@ class TableViewWrapper:
             title: The column title
             width: The column width
         """
-        column = AppKit.NSTableColumn.alloc().initWithIdentifier_(identifier)
+        column: Any = AppKit.NSTableColumn.alloc().initWithIdentifier_(identifier)
         column.setWidth_(width)
         column.headerCell().setStringValue_(title)
         self._table_view.addTableColumn_(column)
@@ -179,6 +175,7 @@ class SegmentedControlWrapper:
             frame: The frame rectangle as (x, y, width, height)
             tracking_mode: Tracking mode (0=momentary, 1=select, 2=selectAny)
         """
+        self._control: Any
         if frame is not None:
             self._control = AppKit.NSSegmentedControl.alloc().initWithFrame_(
                 Foundation.NSMakeRect(*frame)
@@ -219,7 +216,7 @@ class SegmentedControlWrapper:
             target: The target object
             action: The selector string for the action method
         """
-        selector = objc.selector(getattr(target, action), signature=b"v@:@")
+        selector: Any = objc.selector(getattr(target, action), signature=b"v@:@")
         self._control.setTarget_(target)
         self._control.setAction_(selector)
 

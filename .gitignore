@@ -90,7 +90,7 @@ poetry.lock
 .ruff_cache/
 
 # VS Code
-.vscode/
+# .vscode
 
 # macOS
 .DS_Store

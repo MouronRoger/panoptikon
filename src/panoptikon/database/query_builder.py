@@ -4,8 +4,10 @@ Provides helpers for safe parameterization, SQL injection prevention, and
 dynamic query composition with type safety.
 """
 
+from __future__ import annotations
+
 import re
-from typing import Any, Dict, Tuple
+from typing import Dict, Tuple
 
 
 class QueryBuilder:
@@ -27,8 +29,8 @@ class QueryBuilder:
 
     @staticmethod
     def build_where_clause(
-        conditions: Dict[str, Any], param_style: str = ":{name}"
-    ) -> Tuple[str, Dict[str, Any]]:
+        conditions: Dict[str, object], param_style: str = ":{name}"
+    ) -> Tuple[str, Dict[str, object]]:
         """Build a WHERE clause from a dict of conditions.
 
         Args:
@@ -49,7 +51,9 @@ class QueryBuilder:
         return where_clause, params
 
     @staticmethod
-    def build_insert(table: str, data: Dict[str, Any]) -> Tuple[str, Dict[str, Any]]:
+    def build_insert(
+        table: str, data: Dict[str, object]
+    ) -> Tuple[str, Dict[str, object]]:
         """Build a parameterized INSERT statement.
 
         Args:
@@ -69,8 +73,8 @@ class QueryBuilder:
 
     @staticmethod
     def build_update(
-        table: str, data: Dict[str, Any], where: Dict[str, Any]
-    ) -> Tuple[str, Dict[str, Any]]:
+        table: str, data: Dict[str, object], where: Dict[str, object]
+    ) -> Tuple[str, Dict[str, object]]:
         """Build a parameterized UPDATE statement.
 
         Args:

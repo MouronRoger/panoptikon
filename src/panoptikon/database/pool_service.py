@@ -4,11 +4,13 @@ This module provides a service for managing database connection pools
 with integration into the service container.
 """
 
+from __future__ import annotations
+
 from collections.abc import Generator
 from contextlib import contextmanager
 import logging
 import sqlite3
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 from ..core.config import ConfigurationSystem
 from ..core.errors import DatabaseError
@@ -194,7 +196,7 @@ class DatabasePoolService(ServiceInterface):
     def execute(
         self,
         query: str,
-        parameters: Optional[Union[Tuple[Any, ...], Dict[str, Any]]] = None,
+        parameters: Optional[Union[Tuple[object, ...], Dict[str, object]]] = None,
         *,
         use_registry: bool = True,
         monitor: bool = True,
@@ -259,7 +261,7 @@ class DatabasePoolService(ServiceInterface):
     def execute_many(
         self,
         query: str,
-        parameters: List[Union[Tuple[Any, ...], Dict[str, Any]]],
+        parameters: List[Union[Tuple[object, ...], Dict[str, object]]],
         *,
         optimize: bool = False,
         batch: bool = True,
@@ -382,7 +384,7 @@ class DatabasePoolService(ServiceInterface):
         with pool.get_connection(timeout) as conn:
             yield conn
 
-    def get_stats(self) -> dict[str, Any]:
+    def get_stats(self) -> dict[str, object]:
         """Get statistics about the connection pool.
 
         Thread Safety:

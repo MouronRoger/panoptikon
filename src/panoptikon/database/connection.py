@@ -4,13 +4,15 @@ This module provides utilities for managing SQLite database connections,
 including connection pooling, thread safety, and proper cleanup.
 """
 
+from __future__ import annotations
+
 from collections.abc import Generator
 from contextlib import contextmanager
 import logging
 from pathlib import Path
 import sqlite3
 import threading
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 from ..core.errors import DatabaseError
 from ..core.service import ServiceInterface
@@ -127,7 +129,7 @@ class DatabaseConnection:
     def execute(
         self,
         query: str,
-        parameters: Optional[Union[Tuple[Any, ...], Dict[str, Any]]] = None,
+        parameters: Optional[Union[Tuple[object, ...], Dict[str, object]]] = None,
         *,
         use_registry: bool = True,
         monitor: bool = True,
@@ -172,7 +174,7 @@ class DatabaseConnection:
         self,
         conn: sqlite3.Connection,
         query: str,
-        parameters: Optional[Union[Tuple[Any, ...], Dict[str, Any]]],
+        parameters: Optional[Union[Tuple[object, ...], Dict[str, object]]],
         *,
         use_registry: bool,
         monitor: bool,
@@ -211,7 +213,7 @@ class DatabaseConnection:
     def execute_many(
         self,
         query: str,
-        parameters: List[Union[Tuple[Any, ...], Dict[str, Any]]],
+        parameters: List[Union[Tuple[object, ...], Dict[str, object]]],
         *,
         optimize: bool = False,
         batch: bool = True,

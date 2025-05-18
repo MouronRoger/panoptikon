@@ -1,0 +1,63 @@
+{
+    "include": [
+        "src",
+        "tests",
+        "scripts"
+    ],
+    "exclude": [
+        "**/__pycache__",
+        ".git",
+        ".github",
+        ".mypy_cache",
+        ".pytest_cache",
+        ".ruff_cache",
+        ".venv",
+        "actions-runner/externals"
+    ],
+    "typeCheckingMode": "strict",
+    "pythonVersion": "3.9",
+    "reportMissingImports": false,
+    "reportMissingTypeStubs": false,
+    "useLibraryCodeForTypes": true,
+    "strictListInference": true,
+    "strictDictionaryInference": true,
+    "strictSetInference": true,
+    "strictParameterNoneValue": true,
+    "enableTypeIgnoreComments": true,
+    "reportMissingParameterType": "error",
+    "reportUnknownParameterType": "error",
+    "reportUnknownArgumentType": "error",
+    "reportUnknownLambdaType": "error",
+    "reportUnknownVariableType": "error",
+    "reportUnknownMemberType": "error",
+    "reportMissingTypeArgument": "error",
+    "reportInvalidTypeVarUse": "error",
+    "reportCallInDefaultInitializer": "error",
+    "reportUntypedFunctionDecorator": "error",
+    "reportUntypedClassDecorator": "error",
+    "reportUntypedBaseClass": "error",
+    "reportUntypedNamedTuple": "error",
+    "reportUnusedImport": "warning",
+    "reportUnusedVariable": "warning",
+    "reportUnusedClass": "warning",
+    "reportUnusedFunction": "warning",
+    "stubPath": "src/panoptikon/typings",
+    "ignore": [
+        "objc",
+        "Foundation",
+        "AppKit",
+        "Cocoa",
+        "**/tests/ui/**/*.py"
+    ],
+    "extraPaths": [
+        "src/panoptikon/typings"
+    ],
+    "overrides": [
+        {
+            "include": [
+                "src/panoptikon/ui"
+            ],
+            "typeCheckingMode": "basic"
+        }
+    ]
+}

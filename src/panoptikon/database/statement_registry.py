@@ -5,10 +5,12 @@ and statement caching for SQLite connections. It is designed to be thread-safe a
 integrate with the existing connection pool.
 """
 
+from __future__ import annotations
+
 import sqlite3
 from threading import Lock
 import time
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Dict, Optional, Tuple, Union
 
 
 class StatementRegistry:
@@ -67,7 +69,7 @@ class StatementRegistry:
         self,
         conn: sqlite3.Connection,
         sql: str,
-        parameters: Optional[Union[Tuple[Any, ...], Dict[str, Any]]] = None,
+        parameters: Optional[Union[Tuple[object, ...], Dict[str, object]]] = None,
     ) -> sqlite3.Cursor:
         """Bind parameters and execute a prepared statement.
 
