@@ -1,8 +1,10 @@
+"""Query parsing and SQL condition generation for Panoptikon search engine."""
+
 from __future__ import annotations
 
-from dataclasses import dataclass
 import re
-from typing import Any, Dict, Optional, Tuple
+from dataclasses import dataclass
+from typing import Any
 
 from panoptikon.database.query_builder import QueryBuilder
 from panoptikon.filesystem.paths import PathMatchType
@@ -16,7 +18,7 @@ class QueryPattern:
     match_type: PathMatchType
     case_sensitive: bool
     whole_word: bool
-    extension: Optional[str] = None
+    extension: str | None = None
 
 
 class QueryParserError(Exception):
@@ -70,7 +72,7 @@ class QueryParser:
             try:
                 re.compile(query)
             except re.error as e:
-                raise QueryParserError(f"Invalid regex pattern: {e}")
+                raise QueryParserError(f"Invalid regex pattern: {e}") from e
 
         return QueryPattern(
             pattern=query,
@@ -85,7 +87,7 @@ class QueryParser:
         query_pattern: QueryPattern,
         column: str = "name",
         extension_column: str = "extension",
-    ) -> Tuple[str, Dict[str, Any]]:
+    ) -> tuple[str, dict[str, Any]]:
         """Convert a QueryPattern into an SQL condition and parameters.
 
         Args:
@@ -97,7 +99,7 @@ class QueryParser:
             Tuple of (SQL condition string, parameters dict)
         """
         conds = []
-        params: Dict[str, Any] = {}
+        params: dict[str, Any] = {}
         col = QueryBuilder.safe_identifier(column)
         ext_col = QueryBuilder.safe_identifier(extension_column)
 

@@ -209,3 +209,41 @@
     - Enforce strict Pyright in CI for core/UI code.
     - Incrementally improve test typing as tests are refactored or touched.
     - Continue with Phase 5 (Core Engine) and Phase 6 (UI Framework). 
+
+## [2025-05-18 20:00] #phase5.1 #query-parser #search-engine #milestone #done #testing #rationale
+- **Phase:** 5.1 (Query Parser)
+- **Summary:**
+    - Implemented the `QueryParser` class and supporting `QueryPattern` dataclass for Stage 5.1 (#done)
+    - Parser supports wildcards (*, ?), case-sensitivity, whole word, and extension filtering (via `ext:pdf` or `ext=pdf`) (#done)
+    - Robust pattern validation and error handling implemented (#done)
+    - SQL condition generation for all match types (exact, glob, regex) is safe and optimized (#done)
+    - Comprehensive unit tests cover all parsing, validation, and SQL generation scenarios (#done)
+    - All backend and search engine tests pass; only UI integration tests fail due to PyObjC environment, not backend logic (#done)
+    - Code is formatted, linted, and type-checked (Black, isort, Ruff, mypy --strict) (#done)
+    - Documentation updated to reflect new query parser and its integration points (#done)
+- **Tags:** #done #milestone #search-engine #query-parser #testing #rationale #stage5.1
+- **Rationale:**
+    - The query parser is a critical component for high-performance, flexible search. The implementation meets all requirements for pattern support, safety, and testability. Backend is robust and ready for integration with the search engine and database layers.
+- **Next Steps:**
+    - Integrate `QueryParser` with the search engine and database query flow (#todo)
+    - Add/extend integration tests for end-to-end search scenarios (#todo)
+    - Monitor for edge cases and performance regressions as search features expand (#todo)
+    - Address UI integration test failures if/when PyObjC is available (#todo) 
+
+## [2025-05-18 21:00] #phase5.2 #search-algorithm #done #milestone #testing #rationale #next
+- **Phase:** 5.2 (Search Algorithm)
+- **Summary:**
+    - Fully implemented the SearchEngine, SearchResult, and ResultSet classes for high-performance file search.
+    - Integrated with the query parser and database using prepared statements and index-based search.
+    - Implemented LRU caching, cache invalidation, and incremental result retrieval (paging).
+    - Comprehensive error handling and timeout logic included.
+    - All public interfaces are fully documented and type-annotated.
+    - Test suite covers exact, glob, regex, extension, case sensitivity, caching, pagination, grouping, and annotation.
+    - All code passes Black, isort, Ruff, and mypy --strict.
+- **Tags:** #done #milestone #testing #rationale #search-algorithm #phase5.2
+- **Rationale:**
+    - The search engine now meets all performance, memory, and correctness requirements for Stage 5.2. Robust caching and paging ensure scalability for large datasets. The implementation is fully tested and ready for integration with result management and UI layers.
+- **Next Steps:**
+    - Begin Stage 5.3 (Result Management)
+    - Monitor for edge cases and performance regressions
+    - Update documentation and integration guides as needed 
