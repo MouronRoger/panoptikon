@@ -1,0 +1,64 @@
+Collecting files from /Users/james...
+Collected 20000 files (encountered 0 permission errors)
+
+Running sorting benchmarks...
+
+Sorting Benchmark Results:
+=========================
+File count: 20000
+
+Sort by name (asc):
+  Average: 72.22ms
+  Median:  74.67ms
+  Min:     66.77ms
+  Max:     75.22ms
+
+Sort by name (desc):
+  Average: 75.67ms
+  Median:  75.55ms
+  Min:     74.94ms
+  Max:     76.53ms
+
+Sort by date_modified (asc):
+  Average: 22.94ms
+  Median:  25.79ms
+  Min:     17.06ms
+  Max:     25.98ms
+
+Sort by date_modified (desc):
+  Average: 22.41ms
+  Median:  24.50ms
+  Min:     17.30ms
+  Max:     25.43ms
+
+Sort by size (asc):
+  Average: 22.55ms
+  Median:  24.80ms
+  Min:     17.08ms
+  Max:     25.76ms
+
+Sort by size (desc):
+  Average: 22.62ms
+  Median:  24.68ms
+  Min:     17.32ms
+  Max:     25.87ms
+
+Sort by folder size (asc):
+  Average: 41.13ms
+  Median:  41.31ms
+  Min:     40.53ms
+  Max:     41.56ms
+
+Sort by folder size (desc):
+  Average: 38.36ms
+  Median:  40.53ms
+  Min:     32.51ms
+  Max:     42.03ms
+
+Sort by directory+name (asc):
+  Average: 83.45ms
+  Median:  86.00ms
+  Min:     77.77ms
+  Max:     86.58ms
+
+✅ All sort types meet the 100ms performance target!

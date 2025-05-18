@@ -300,3 +300,28 @@
     - Prepare and run a real-world benchmark using actual search results once the database is populated (#todo).
     - Integrate sorting system with UI and result management for user-driven sorting (#todo).
     - Continue to monitor and optimize for edge cases and large datasets (#todo). 
+
+## [2025-05-18 23:00] #phase5.4 #sorting-system #benchmark #regression #done #milestone #testing #rationale
+- **Phase:** 5.4 (Sorting System)
+- **Summary:**
+    - Successfully ran the live sorting system benchmark on 20,000 real files using the standalone script (`scripts/benchmark_sorting.py`).
+    - All sort types (name, date_modified, size, folder size, multi-key) completed well under the 100ms target:
+        - Sort by name (asc): Average 72.22ms
+        - Sort by name (desc): Average 75.67ms
+        - Sort by date_modified (asc): Average 22.94ms
+        - Sort by date_modified (desc): Average 22.41ms
+        - Sort by size (asc): Average 22.55ms
+        - Sort by size (desc): Average 22.62ms
+        - Sort by folder size (asc): Average 41.13ms
+        - Sort by folder size (desc): Average 38.36ms
+        - Sort by directory+name (asc): Average 83.45ms
+    - No permission errors or exceptions encountered during file collection or sorting.
+    - This performance is now set as the formal regression benchmark for Stage 5.4 and will be enforced by the formal test (`tests/test_search/test_sorting_performance.py`).
+    - All code and tests are compliant with Black, isort, Ruff, and mypy --strict.
+- **Tags:** #done #milestone #benchmark #regression #testing #sorting-system #rationale #phase5.4
+- **Rationale:**
+    - Confirms the sorting system meets all real-world performance requirements and is robust for large datasets. Establishes a clear, repeatable benchmark for future regression testing and performance validation.
+- **Next Steps:**
+    - Integrate sorting system with UI and result management for user-driven sorting (#todo)
+    - Continue to monitor and optimize for edge cases and large datasets (#todo)
+    - Maintain this benchmark as a regression test in CI (#regression) 

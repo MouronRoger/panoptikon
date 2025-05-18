@@ -7,9 +7,8 @@ multi-key, direction, custom comparators, and folder size handling.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from collections.abc import Sequence
 import functools
-from typing import Any, Callable, List, TypeVar, Union
+from typing import Any, Callable, TypeVar
 
 from panoptikon.search.result import SearchResult
 
@@ -50,13 +49,15 @@ class AttributeSortCriteria(SortCriteria):
     """Sort criteria for a specific SearchResult attribute."""
 
     def __init__(self, attribute: str) -> None:
+        """Initialize AttributeSortCriteria with the attribute name."""
         self.attribute = attribute
 
     def apply_to_query(self, query: Any, direction: str = "asc") -> Any:
-        # This is a placeholder; actual implementation will depend on query type
+        """Apply sort to database query (placeholder)."""
         return query  # To be implemented in integration
 
     def compare(self, result1: SearchResult, result2: SearchResult) -> int:
+        """Compare two results by the specified attribute."""
         v1 = getattr(result1, self.attribute, None)
         v2 = getattr(result2, self.attribute, None)
         if v1 is None and v2 is None:
@@ -72,27 +73,33 @@ class CustomSortCriteria(SortCriteria):
     """Sort criteria using a custom comparison function."""
 
     def __init__(self, compare_fn: Callable[[SearchResult, SearchResult], int]) -> None:
+        """Initialize CustomSortCriteria with a comparison function."""
         self.compare_fn = compare_fn
 
     def apply_to_query(self, query: Any, direction: str = "asc") -> Any:
-        # Cannot push custom sort to DB; must be client-side
+        """Cannot push custom sort to DB; must be client-side."""
         return query
 
     def compare(self, result1: SearchResult, result2: SearchResult) -> int:
+        """Compare two results using the custom function."""
         return self.compare_fn(result1, result2)
 
 
 class FolderSizeSortCriteria(SortCriteria):
     """Sort criteria for folder size, handling missing or pending values."""
 
+    def __init__(self) -> None:
+        """Initialize FolderSizeSortCriteria."""
+        pass
+
     def apply_to_query(self, query: Any, direction: str = "asc") -> Any:
-        # This is a placeholder; actual implementation will depend on query type
+        """Apply sort to database query (placeholder)."""
         return query  # To be implemented in integration
 
     def compare(self, result1: SearchResult, result2: SearchResult) -> int:
+        """Compare two results by folder size, handling None as smallest."""
         size1 = result1.metadata.get("folder_size")
         size2 = result2.metadata.get("folder_size")
-        # Treat missing or pending sizes as less than any known size
         if size1 is None and size2 is None:
             return 0
         if size1 is None:
@@ -107,10 +114,10 @@ class SortingEngine:
 
     def apply_sort(
         self,
-        result_set: Sequence[SearchResult],
-        criteria: Union[SortCriteria, List[SortCriteria]],
+        result_set: list[SearchResult],
+        criteria: SortCriteria | list[SortCriteria],
         direction: str = "asc",
-    ) -> List[SearchResult]:
+    ) -> list[SearchResult]:
         """Apply sort criteria to result set.
 
         Args:
@@ -123,11 +130,7 @@ class SortingEngine:
         """
         if not result_set:
             return list(result_set)
-        if isinstance(criteria, SortCriteria):
-            criteria_list = [criteria]
-        else:
-            criteria_list = criteria
-
+        criteria_list = [criteria] if isinstance(criteria, SortCriteria) else criteria
         # If any criteria is a CustomSortCriteria, use cmp_to_key with compare
         if any(isinstance(crit, CustomSortCriteria) for crit in criteria_list):
 
@@ -140,7 +143,6 @@ class SortingEngine:
 
             reverse = direction == "desc"
             return sorted(result_set, key=functools.cmp_to_key(cmp), reverse=reverse)
-
         reverse = direction == "desc"
         return sorted(
             result_set,
@@ -171,15 +173,16 @@ class SortKey:
     """Helper for multi-key sorting using SortCriteria."""
 
     def __init__(
-        self, result: SearchResult, criteria: List[SortCriteria], direction: str
+        self, result: SearchResult, criteria: list[SortCriteria], direction: str
     ) -> None:
+        """Initialize SortKey with result, criteria, and direction."""
         self.result = result
         self.criteria = criteria
         self.direction = direction
         self.values = [self._get_value(crit) for crit in criteria]
 
     def _get_value(self, crit: SortCriteria) -> Any:
-        # For AttributeSortCriteria, use attribute; for folder size, use metadata; never return the result object
+        """Get a comparable value for the given sort criteria."""
         if isinstance(crit, AttributeSortCriteria):
             v = getattr(self.result, crit.attribute, None)
         elif isinstance(crit, FolderSizeSortCriteria):
@@ -192,6 +195,7 @@ class SortKey:
         return v
 
     def __lt__(self, other: object) -> bool:
+        """Return True if self < other for sorting purposes."""
         if not isinstance(other, SortKey):
             return NotImplemented
         for v1, v2 in zip(self.values, other.values):
@@ -200,6 +204,7 @@ class SortKey:
         return False
 
     def __eq__(self, other: object) -> bool:
+        """Return True if self == other for sorting purposes."""
         if not isinstance(other, SortKey):
             return NotImplemented
         return self.values == other.values
