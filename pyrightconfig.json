@@ -52,11 +52,15 @@
     "extraPaths": [
         "src/panoptikon/typings"
     ],
-    "overrides": [
+    "executionEnvironments": [
         {
-            "include": [
-                "src/panoptikon/ui"
-            ],
+            "root": "src",
+            "extraPaths": [
+                "src/panoptikon/typings"
+            ]
+        },
+        {
+            "root": "tests",
             "typeCheckingMode": "basic"
         }
     ]

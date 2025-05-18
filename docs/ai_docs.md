@@ -191,3 +191,21 @@
 **Next Steps:**
 - Propagate this state to the MCP documentation system and Qdrant.
 - Continue with subsequent stages as per the project roadmap. 
+
+## [2025-05-18 18:10] #phase4 #pyright-migration #ui #decision #done #rationale
+- **Phase:** 4 (Database Foundation, UI Type Safety)
+- **Summary:**
+    - Completed Pyright migration for all core and UI modules. All production code is now strictly type-checked and compliant with project standards.
+    - Adopted a pragmatic approach for test typing: Pyright is set to strict for production code and basic for tests, minimizing noise and maximizing development velocity.
+    - Expanded and cleaned up PyObjC stubs, wrappers, and UI patterns for robust type safety at the Python/Objective-C boundary.
+    - Updated `pyrightconfig.json` to use `executionEnvironments` for strictness in `src/` and relaxed checking in `tests/`.
+    - All major UI files (`macos_app.py`, `objc_wrappers.py`, `window_interfaces.py`, `events.py`, `validators.py`) are now type-annotated, formatted, and compliant.
+- **Tags:** #done #migration #pyright #ui #rationale #milestone
+- **Rationale:**
+    - Focuses developer effort on high-ROI type safety in production code, while allowing incremental improvement in tests.
+    - Maintains momentum for upcoming phases (Core Engine, UI Framework) without Pyright bottlenecks.
+    - Aligns with the Land Rover philosophy: robust, pragmatic, and maintainable.
+- **Next Steps:**
+    - Enforce strict Pyright in CI for core/UI code.
+    - Incrementally improve test typing as tests are refactored or touched.
+    - Continue with Phase 5 (Core Engine) and Phase 6 (UI Framework). 
