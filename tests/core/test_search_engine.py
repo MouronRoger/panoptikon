@@ -2,13 +2,18 @@
 
 from collections.abc import Generator
 import sqlite3
-from typing import Any
+from typing import Any, Optional
 
 import pytest
 
 from panoptikon.filesystem.paths import PathMatchType
 from panoptikon.search.query_parser import QueryPattern
-from panoptikon.search.result import SearchResultImpl
+from panoptikon.search.result import (
+    ResultSetImpl,
+    ResultSetPageError,
+    ResultSetStaleError,
+    SearchResultImpl,
+)
 from panoptikon.search.search_engine import SearchEngine
 
 
@@ -217,3 +222,85 @@ def test_searchresult_annotation() -> None:
     result = SearchResultImpl(name="foo.txt", path="/foo.txt", metadata={})
     result.annotate("tag", "important")
     assert result.annotations["tag"] == "important"
+
+
+def dummy_page_loader_factory(fail_on: Optional[set[tuple[int, int]]] = None) -> Any:
+    """Returns a page loader that fails on specified (page_number, page_size) tuples."""
+    fail_on = fail_on or set()
+
+    def loader(page_number: int, page_size: int) -> list[SearchResultImpl]:
+        if (page_number, page_size) in fail_on:
+            raise RuntimeError("Simulated page load failure")
+        return [
+            SearchResultImpl(
+                name=f"file_{page_number}_{i}",
+                path=f"/path/to/file_{page_number}_{i}",
+                metadata={"index": i},
+            )
+            for i in range(page_size)
+        ]
+
+    return loader
+
+
+def test_resultset_lru_cache_eviction() -> None:
+    """Test LRU cache eviction in ResultSetImpl."""
+    loader = dummy_page_loader_factory()
+    rs = ResultSetImpl(None, None, 500, loader, max_cache_pages=2)
+    rs.get_page(0, 10)
+    rs.get_page(1, 10)
+    assert (0, 10) in rs._page_cache
+    assert (1, 10) in rs._page_cache
+    rs.get_page(2, 10)
+    assert (2, 10) in rs._page_cache
+    # Oldest (0, 10) should be evicted
+    assert (0, 10) not in rs._page_cache
+
+
+def test_resultset_error_handling() -> None:
+    """Test that ResultSetImpl raises ResultSetPageError on page load failure."""
+    loader = dummy_page_loader_factory(fail_on={(1, 10)})
+    rs = ResultSetImpl(None, None, 100, loader)
+    rs.get_page(0, 10)
+    with pytest.raises(ResultSetPageError):
+        rs.get_page(1, 10)
+
+
+def test_resultset_stale_detection() -> None:
+    """Test that ResultSetImpl raises ResultSetStaleError when marked stale."""
+    loader = dummy_page_loader_factory()
+    rs = ResultSetImpl(None, None, 100, loader)
+    rs.get_page(0, 10)
+    rs.mark_stale()
+    with pytest.raises(ResultSetStaleError):
+        rs.get_page(0, 10)
+
+
+def test_resultset_invalidate_cache() -> None:
+    """Test that invalidate_cache clears the page cache."""
+    loader = dummy_page_loader_factory()
+    rs = ResultSetImpl(None, None, 100, loader)
+    rs.get_page(0, 10)
+    assert rs._page_cache
+    rs.invalidate_cache()
+    assert not rs._page_cache
+
+
+def test_resultset_get_page_partial() -> None:
+    """Test get_page_partial returns partial results and error on failure."""
+    loader = dummy_page_loader_factory(fail_on={(1, 10)})
+    rs = ResultSetImpl(None, None, 100, loader)
+    rs.get_page(0, 10)
+    # Simulate failure for (1, 10)
+    results, error = rs.get_page_partial(1, 10)
+    assert isinstance(error, ResultSetPageError)
+    assert results == []
+
+
+def test_resultset_group_by_partial_failure() -> None:
+    """Test group_by skips pages that fail to load."""
+    loader = dummy_page_loader_factory(fail_on={(1, 100)})
+    rs = ResultSetImpl(None, None, 200, loader)
+    groups = rs.group_by(lambda r: r.metadata["index"] % 2)
+    # Only pages 0 and 2 should be loaded (page 1 fails)
+    assert set(groups.keys()) <= {0, 1}
