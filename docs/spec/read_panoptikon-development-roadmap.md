@@ -1,8 +1,9 @@
 # Panoptikon Development Roadmap - Pragmatic Approach
 
 > **Terminology:**
-> - "Phase" = One of the 4 high-level development units (matches directory and tags)
-> - "Stage" = One of the 11 implementation units (formerly called "prompt phases" in older docs)
+> - "Phase" = One of the 6 high-level development units (timeline-based milestones, matches directory and tags; formerly called "Development Stage" in some docs)
+> - "Stage" = One of the 11 implementation units (detailed, matches stage prompt files)
+> - See [docs/spec/stages/project_summary.md](project_summary.md) for the canonical stage list and mapping.
 > - This naming is chosen to maintain consistency with existing documentation and memory systems.
 
 ## 1. Overview
@@ -73,6 +74,9 @@ The roadmap is organized into **Development Phases** (timeline-based milestones)
 | Migration System | Build simple schema migration framework | 1 day |
 | Query Optimization | Design and implement prepared statements | 1 day |
 | Data Integrity | Configure WAL journaling and integrity checks | 1 day |
+| Folder Size Field | Add `folder_size` column to `files` table for directories (see Integration Report); introduced in schema version 1.1.0 | 0.5 day |
+| Folder Size Index | Add index on `folder_size` for efficient sorting | 0.5 day |
+| Dual-Window Preparation | Define window-related event classes and interfaces for future implementation | 0.5 day |
 
 ##### Milestone: Foundation Ready
 
@@ -83,6 +87,7 @@ The roadmap is organized into **Development Phases** (timeline-based milestones)
 - Key OS abstraction layers for critical components
 - SQLite database with schema versioning
 - Basic configuration system
+- Interface definitions for dual-window feature
 
 **Quality Gates**:
 - 95% test coverage for all components
@@ -90,6 +95,8 @@ The roadmap is organized into **Development Phases** (timeline-based milestones)
 - Documentation for all public interfaces
 - Successful database migrations
 - FSEvents wrapper properly isolated
+
+**Note:** The `folder_size` column is introduced in schema version 1.1.0. Stage 4.3 (migration) will ensure all existing databases are upgraded before folder size calculation and display logic is implemented in later stages.
 
 ### 2.2 Development Phase 2: Core Engine (Weeks 3-5)
 *Encompasses Stages 5-6*
@@ -127,6 +134,8 @@ The roadmap is organized into **Development Phases** (timeline-based milestones)
 | Batch Processing | Create efficient batch database operations | 1 day |
 | Progress Tracking | Implement indexing progress monitoring | 1 day |
 | Priority Management | Build intelligent scanning prioritization | 1 day |
+| Folder Size Calculation | Implement recursive folder size calculation and store in database | 2 days |
+| Folder Size Updates | Add incremental folder size updates on file changes | 1 day |
 
 ##### Metadata Extraction
 
@@ -154,6 +163,7 @@ The roadmap is organized into **Development Phases** (timeline-based milestones)
 - Path inclusion/exclusion rule evaluation
 - Permission-aware file operations
 - Basic file operations
+- Folder size calculation, storage, and display in results table
 
 **Quality Gates**:
 - Search completes in <50ms for 10k test files
@@ -162,6 +172,7 @@ The roadmap is organized into **Development Phases** (timeline-based milestones)
 - Path rules correctly filter files
 - Permission handling works with different access levels
 - 95% test coverage maintained
+- Folder size calculation is accurate, performant, and covered by tests
 
 ### 2.3 Development Phase 3: UI Framework (Weeks 6-8)
 *Encompasses Stage 7*
@@ -179,6 +190,18 @@ The roadmap is organized into **Development Phases** (timeline-based milestones)
 | Tab Bar | Build category filtering system | 2 days |
 | Results Table | Implement virtual table view for results | 3 days |
 | Column Management | Create customizable column system | 2 days |
+| Folder Size Column | Display folder sizes in results table, enable sorting and formatting | 1 day |
+
+##### Dual-Window Implementation
+
+| Task | Description | Estimated Effort |
+|------|-------------|------------------|
+| Dual Window Manager | Implement DualWindowManager service | 1.5 days |
+| Window State | Create WindowState management system | 1 day |
+| Window Toggle | Build window toggle and positioning logic | 0.5 days |
+| Active/Inactive States | Implement resource management for windows | 1 day |
+| Cross-Window Coordination | Enable drag operations between windows | 1.5 days |
+| Visual Differentiation | Create distinct styling for active/inactive windows | 1 day |
 
 ##### Interaction Model
 
@@ -218,6 +241,7 @@ The roadmap is organized into **Development Phases** (timeline-based milestones)
 - Progress visualization for background operations
 - Drag and drop support
 - Resilient UI implementation for key components
+- Dual-window support with cross-window drag-and-drop (USP)
 
 **Quality Gates**:
 - UI renders at 60fps during normal operations
@@ -226,6 +250,8 @@ The roadmap is organized into **Development Phases** (timeline-based milestones)
 - VoiceOver compatibility for accessibility
 - Tooltips provide clear guidance for both paradigms
 - Component abstraction properly isolates UI framework dependencies
+- Window switching performance <100ms
+- Cross-window drag-and-drop operations work reliably
 
 ### 2.4 Development Phase 4: Integration (Weeks 9-10)
 *Encompasses Stages 8-9*
@@ -265,7 +291,8 @@ The roadmap is organized into **Development Phases** (timeline-based milestones)
 | Dock Integration | Build proper dock icon behavior | 0.5 day |
 | Finder Integration | Implement reveal in Finder function | 1 day |
 | Permissions Management | Create Full Disk Access guidance | 1.5 days |
-| Multi-Window Support | Implement multiple window management | 2 days |
+| Dual-Window Enhancement | Add system integration for dual windows | 2 days |
+| Multi-Monitor Support | Add cross-monitor window positioning | 0.5 days |
 
 ##### Milestone: Complete Integration
 
@@ -275,7 +302,8 @@ The roadmap is organized into **Development Phases** (timeline-based milestones)
 - System integration with hotkey, menu bar, and dock
 - Permissions handling with graceful degradation
 - Complete file operations across all storage types
-- Multi-window support with independent searches
+- Dual-window support with cross-window drag-and-drop operations
+- Multi-monitor support for window placement
 
 **Quality Gates**:
 - Cloud files correctly identified and handled
@@ -284,7 +312,8 @@ The roadmap is organized into **Development Phases** (timeline-based milestones)
 - Graceful behavior with limited permissions
 - Operations work consistently across storage types
 - Alternative system integration methods work when primary fails
-- Multi-window drag-and-drop operations work reliably
+- Cross-window drag-and-drop operations work reliably
+- Windows position correctly on multi-monitor setups
 
 ### 2.5 Development Phase 5: Optimization (Weeks 11-12)
 *Encompasses Stage 10*
@@ -302,6 +331,7 @@ The roadmap is organized into **Development Phases** (timeline-based milestones)
 | UI Responsiveness | Ensure 60fps rendering at all times | 2 days |
 | Indexing Speed | Optimize to handle 250k files in <60s | 2 days |
 | Resource Usage | Minimize memory and CPU footprint | 2 days |
+| Window Switching | Optimize window switching to <100ms | 1 day |
 
 ##### Memory Management
 
@@ -312,6 +342,7 @@ The roadmap is organized into **Development Phases** (timeline-based milestones)
 | PyObjC Boundary | Optimize language crossing patterns | 2 days |
 | Thread Confinement | Ensure proper object ownership | 1 day |
 | Resource Scaling | Implement dynamic resource adjustment | 1 day |
+| Inactive Window | Reduce inactive window memory to <10MB | 1 day |
 
 ##### Resilience Verification
 
@@ -322,6 +353,7 @@ The roadmap is organized into **Development Phases** (timeline-based milestones)
 | Cloud Integration Testing | Test across cloud providers and conditions | 1 day |
 | UI Framework Testing | Verify component abstraction effectiveness | 1 day |
 | Error Recovery | Test and enhance recovery mechanisms | 1 day |
+| Cross-Window Testing | Test drag-drop operations | 0.5 days |
 
 ##### User Experience Refinement
 
@@ -332,6 +364,7 @@ The roadmap is organized into **Development Phases** (timeline-based milestones)
 | Keyboard Shortcuts | Finalize and document shortcuts | 0.5 day |
 | Visual Refinement | Polish UI details and animations | 2 days |
 | Feedback Mechanisms | Add subtle user guidance | 0.5 day |
+| Window Transitions | Enhance visual transitions | 0.5 day |
 
 ##### Milestone: Production Ready
 
@@ -342,6 +375,7 @@ The roadmap is organized into **Development Phases** (timeline-based milestones)
 - Polished user experience with first-run guidance
 - Complete help documentation
 - Final visual refinements
+- Optimized dual-window performance
 
 **Quality Gates**:
 - Launch time consistently <100ms
@@ -350,6 +384,8 @@ The roadmap is organized into **Development Phases** (timeline-based milestones)
 - Indexing handles 250k files in <60s
 - Idle memory usage <50MB
 - Bundle size <30MB
+- Window switching <100ms
+- Inactive window memory <10MB
 - All tests passing with ≥95% coverage
 - File monitoring works reliably across different conditions
 - Graceful behavior with permission changes
@@ -415,11 +451,11 @@ The roadmap is organized into **Development Phases** (timeline-based milestones)
 
 | Development Phase | Weeks | Stages | Focus |
 |------------------|-------|--------|-------|
-| Phase 1: Foundation | 1-2 | Stages 1-4 | Environment, Infrastructure, Abstractions, Database |
-| Phase 2: Core Engine | 3-5 | Stages 5-6 | Search Engine, Indexing System |
-| Phase 3: UI Framework | 6-8 | Stage 7 | User Interface & Interaction |
-| Phase 4: Integration | 9-10 | Stages 8-9 | Cloud Integration, System Integration |
-| Phase 5: Optimization | 11-12 | Stage 10 | Performance & User Experience |
+| Phase 1: Foundation | 1-2 | Stages 1-4 | Environment, Infrastructure, Abstractions, Database, Dual-Window Preparation |
+| Phase 2: Core Engine | 3-5 | Stages 5-6 | Search Engine, Indexing System, Folder Size Calculation (requires schema 1.1.0 and migration) |
+| Phase 3: UI Framework | 6-8 | Stage 7 | User Interface & Interaction, Folder Size Display, Dual-Window Implementation |
+| Phase 4: Integration | 9-10 | Stages 8-9 | Cloud Integration, System Integration, Dual-Window Enhancement |
+| Phase 5: Optimization | 11-12 | Stage 10 | Performance & User Experience, Dual-Window Optimization |
 | Phase 6: Packaging | 13 | Stage 11 | Final Build & Release |
 
 ## 4. Testing Strategy

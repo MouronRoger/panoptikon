@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 import functools
+import inspect
 from typing import Any, Callable, TypeVar
 
 from panoptikon.search.result import SearchResult
@@ -32,12 +33,15 @@ class SortCriteria(ABC):
         pass
 
     @abstractmethod
-    def compare(self, result1: SearchResult, result2: SearchResult) -> int:
+    def compare(
+        self, result1: SearchResult, result2: SearchResult, direction: str = "asc"
+    ) -> int:
         """Compare two results for client-side sorting.
 
         Args:
             result1: First SearchResult.
             result2: Second SearchResult.
+            direction: 'asc' or 'desc'.
 
         Returns:
             -1, 0, or 1 (less, equal, greater).
@@ -56,17 +60,29 @@ class AttributeSortCriteria(SortCriteria):
         """Apply sort to database query (placeholder)."""
         return query  # To be implemented in integration
 
-    def compare(self, result1: SearchResult, result2: SearchResult) -> int:
+    def _get_attribute_value(self, result: SearchResult) -> Any:
+        value = getattr(result, self.attribute, None)
+        # Special case for folder size attribute
+        if self.attribute == "folder_size" and value is None:
+            return 1024  # 1KB for uncalculated folders
+        return value
+
+    def compare(
+        self, result1: SearchResult, result2: SearchResult, direction: str = "asc"
+    ) -> int:
         """Compare two results by the specified attribute."""
-        v1 = getattr(result1, self.attribute, None)
-        v2 = getattr(result2, self.attribute, None)
+        v1 = self._get_attribute_value(result1)
+        v2 = self._get_attribute_value(result2)
         if v1 is None and v2 is None:
             return 0
         if v1 is None:
-            return -1
+            return -1 if direction == "asc" else 1
         if v2 is None:
-            return 1
-        return int((v1 > v2) - (v1 < v2))
+            return 1 if direction == "asc" else -1
+        if direction == "asc":
+            return int((v1 > v2) - (v1 < v2))
+        else:
+            return int((v1 < v2) - (v1 > v2))
 
 
 class CustomSortCriteria(SortCriteria):
@@ -80,9 +96,11 @@ class CustomSortCriteria(SortCriteria):
         """Cannot push custom sort to DB; must be client-side."""
         return query
 
-    def compare(self, result1: SearchResult, result2: SearchResult) -> int:
-        """Compare two results using the custom function."""
-        return self.compare_fn(result1, result2)
+    def compare(
+        self, result1: SearchResult, result2: SearchResult, direction: str = "asc"
+    ) -> int:
+        result = self.compare_fn(result1, result2)
+        return result if direction == "asc" else -result
 
 
 class FolderSizeSortCriteria(SortCriteria):
@@ -96,17 +114,18 @@ class FolderSizeSortCriteria(SortCriteria):
         """Apply sort to database query (placeholder)."""
         return query  # To be implemented in integration
 
-    def compare(self, result1: SearchResult, result2: SearchResult) -> int:
-        """Compare two results by folder size, handling None as smallest."""
+    def compare(
+        self, result1: SearchResult, result2: SearchResult, direction: str = "asc"
+    ) -> int:
+        """Compare two results by folder size, treating None as 1KB."""
         size1 = result1.metadata.get("folder_size")
         size2 = result2.metadata.get("folder_size")
-        if size1 is None and size2 is None:
-            return 0
-        if size1 is None:
-            return -1
-        if size2 is None:
-            return 1
-        return int((size1 > size2) - (size1 < size2))
+        val1 = 1024 if size1 is None else size1
+        val2 = 1024 if size2 is None else size2
+        if direction == "asc":
+            return int((val1 > val2) - (val1 < val2))
+        else:
+            return int((val1 < val2) - (val1 > val2))
 
 
 class SortingEngine:
@@ -131,24 +150,19 @@ class SortingEngine:
         if not result_set:
             return list(result_set)
         criteria_list = [criteria] if isinstance(criteria, SortCriteria) else criteria
-        # If any criteria is a CustomSortCriteria, use cmp_to_key with compare
-        if any(isinstance(crit, CustomSortCriteria) for crit in criteria_list):
 
-            def cmp(a: SearchResult, b: SearchResult) -> int:
-                for crit in criteria_list:
+        def cmp(a: SearchResult, b: SearchResult) -> int:
+            for crit in criteria_list:
+                sig = inspect.signature(crit.compare)
+                if "direction" in sig.parameters:
+                    res = crit.compare(a, b, direction)
+                else:
                     res = crit.compare(a, b)
-                    if res != 0:
-                        return res
-                return 0
+                if res != 0:
+                    return res
+            return 0
 
-            reverse = direction == "desc"
-            return sorted(result_set, key=functools.cmp_to_key(cmp), reverse=reverse)
-        reverse = direction == "desc"
-        return sorted(
-            result_set,
-            key=lambda x: SortKey(x, criteria_list, direction),
-            reverse=reverse,
-        )
+        return sorted(result_set, key=functools.cmp_to_key(cmp))
 
     def create_sort_criteria(
         self,
@@ -185,8 +199,12 @@ class SortKey:
         """Get a comparable value for the given sort criteria."""
         if isinstance(crit, AttributeSortCriteria):
             v = getattr(self.result, crit.attribute, None)
+            if crit.attribute == "folder_size" and v is None:
+                return 1024
         elif isinstance(crit, FolderSizeSortCriteria):
             v = self.result.metadata.get("folder_size")
+            if v is None:
+                return 1024
         else:
             v = None
         if v is None:

@@ -106,12 +106,15 @@ Each stage requires three persistent artifacts:
 * 📝 Document completion in mCP via document_component()
 
 **SEGMENT 6.6: Folder Size Calculation**
-* 📝 **Test-First**: Write tests for recursive folder size calculation, incremental updates, and special case handling
+* 📝 **Test-First**: Write tests for recursive folder size calculation, incremental updates, sorting with different folder states, and special case handling
 * 🛠️ **Implement**: 
   - Implement recursive folder size calculation for all indexed directories
   - Store calculated folder sizes in the `folder_size` column
   - Update folder sizes incrementally as files change
+  - Implement user-focus prioritization for calculation queue
+  - Create two-track processing (fast path for user actions, standard path for background)
   - Handle symlinks, hard links, and permission errors
+  - Implement sorting system integration with proper NULL handling (treat as 1KB)
 * ✅ **Verify**: Run segment-specific tests
 * 🔄 **Refine**: Fix implementation until all tests pass
 * 🚫 **HALT** if any tests fail after refinement attempts
@@ -125,7 +128,8 @@ Each stage requires three persistent artifacts:
   - Measure indexing performance with benchmarks
   - Verify prioritization correctly orders operations
   - Test progress tracking accuracy
-  - Verify folder size calculation accuracy
+  - Verify folder size calculation accuracy and user-friendly sorting
+  - Confirm new folders appear in appropriate positions when sorted
   - Maintain 95% code coverage
 * ✅ Apply linter and formatter
 * ❌ Do not alter tests to force pass
@@ -168,10 +172,10 @@ update_phase_progress(
 record_decision(
   title="Folder Size Calculation Strategy",
   status="Accepted",
-  context="Need efficient and accurate folder size calculation",
-  decision="Implemented incremental calculation with change-based updates",
-  consequences="Instant folder size display at the cost of additional database storage",
-  alternatives=["On-demand calculation", "Approximate sizing"]
+  context="Need efficient and accurate folder size calculation with user-friendly sorting",
+  decision="Implemented incremental calculation with change-based updates and default 1KB size for NULL values",
+  consequences="Improved user experience by keeping new folders visible in sorted results",
+  alternatives=["Treat NULL as largest value", "Standard database NULL handling"]
 )
 ```
 

@@ -7,7 +7,8 @@ from typing import Any, Optional
 import pytest
 
 from panoptikon.filesystem.paths import PathMatchType
-from panoptikon.search.query_parser import QueryPattern
+from panoptikon.search.filtering import CompositeFilter, ExtensionFilter, FileTypeFilter
+from panoptikon.search.query_parser import QueryParser, QueryPattern
 from panoptikon.search.result import (
     ResultSetImpl,
     ResultSetPageError,
@@ -304,3 +305,167 @@ def test_resultset_group_by_partial_failure() -> None:
     groups = rs.group_by(lambda r: r.metadata["index"] % 2)
     # Only pages 0 and 2 should be loaded (page 1 fails)
     assert set(groups.keys()) <= {0, 1}
+
+
+def setup_in_memory_db() -> Any:
+    conn = sqlite3.connect(":memory:")
+    conn.execute(
+        """
+        CREATE TABLE files (
+            id INTEGER PRIMARY KEY,
+            name TEXT,
+            path TEXT,
+            extension TEXT,
+            size INTEGER,
+            date_created TEXT,
+            date_modified TEXT,
+            file_type TEXT,
+            is_directory INTEGER,
+            cloud_provider TEXT,
+            cloud_status TEXT,
+            indexed_at TEXT
+        )
+        """
+    )
+    files = [
+        (
+            1,
+            "file1.txt",
+            "/test/dir1/file1.txt",
+            "txt",
+            100,
+            "2023-01-01T12:00:00",
+            "2023-01-01T12:00:00",
+            "file",
+            0,
+            "",
+            "",
+            "2023-01-01T12:00:00",
+        ),
+        (
+            2,
+            "file2.pdf",
+            "/test/dir2/file2.pdf",
+            "pdf",
+            2000,
+            "2023-02-01T12:00:00",
+            "2023-02-01T12:00:00",
+            "file",
+            0,
+            "",
+            "",
+            "2023-02-01T12:00:00",
+        ),
+        (
+            3,
+            "dir1",
+            "/test/dir1",
+            "",
+            0,
+            "2022-12-31T10:00:00",
+            "2022-12-31T10:00:00",
+            "directory",
+            1,
+            "",
+            "",
+            "2022-12-31T10:00:00",
+        ),
+    ]
+    conn.executemany(
+        "INSERT INTO files VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", files
+    )
+    conn.commit()
+
+    class TestConnectionPool:
+        def __init__(self, connection: Any) -> None:
+            self._conn = connection
+
+        def get_connection(self) -> Any:
+            class _Ctx:
+                def __enter__(self_c: Any) -> Any:
+                    return self._conn
+
+                def __exit__(self_c: Any, exc_type, exc_val, exc_tb) -> None:
+                    pass
+
+            return _Ctx()
+
+    return TestConnectionPool(conn)
+
+
+def test_search_engine_filetype_filter() -> None:
+    """Test SearchEngine.search with FileTypeFilter returns only files of that type."""
+    db = setup_in_memory_db()
+    engine = SearchEngine(db)
+    qp = QueryParser.parse("*")
+    f = FileTypeFilter("file")
+    rs = engine.search(qp, filter_criteria=f)
+    page = rs.get_page(0, 10)
+    names = [r.name for r in page]
+    assert sorted(names) == ["file1.txt", "file2.pdf"]
+    f_dir = FileTypeFilter("directory")
+    rs_dir = engine.search(qp, filter_criteria=f_dir, include_directories=True)
+    page_dir = rs_dir.get_page(0, 10)
+    names_dir = [r.name for r in page_dir]
+    print("\n--- DEBUG OUTPUT ---")
+    # Verify raw SQL results from database
+    conn = db._conn
+    raw_dirs = conn.execute(
+        "SELECT * FROM files WHERE file_type = 'directory'"
+    ).fetchall()
+    print(f"Raw directory entries in DB: {raw_dirs}")
+    # Check what's in the unfiltered results
+    qp_all = QueryParser.parse("*")
+    rs_all = engine.search(qp_all)
+    all_results = rs_all.get_page(0, 10)
+    print("All results:")
+    for r in all_results:
+        print(
+            f"  {r.name}: file_type={r.metadata.get('file_type')}, is_directory={r.metadata.get('is_directory')}"
+        )
+    # Check what the filter is actually doing
+    dir_filter = FileTypeFilter("directory")
+    print("Filter SQL condition:", dir_filter.apply_to_query("SELECT * FROM files"))
+    # Direct check if filter matches the directory
+    dir_match = [r for r in all_results if r.name == "dir1"]
+    if dir_match:
+        print(f"Does filter match 'dir1'? {dir_filter.matches(dir_match[0])}")
+        print(f"'dir1' metadata: {dir_match[0].metadata}")
+    assert names_dir == ["dir1"]
+
+
+def test_search_engine_extension_filter() -> None:
+    """Test SearchEngine.search with ExtensionFilter returns only files with that extension."""
+    db = setup_in_memory_db()
+    engine = SearchEngine(db)
+    qp = QueryParser.parse("*")
+    f = ExtensionFilter("pdf")
+    rs = engine.search(qp, filter_criteria=f)
+    page = rs.get_page(0, 10)
+    names = [r.name for r in page]
+    assert names == ["file2.pdf"]
+
+
+def test_search_engine_composite_filter() -> None:
+    """Test SearchEngine.search with CompositeFilter (AND) returns intersection."""
+    db = setup_in_memory_db()
+    engine = SearchEngine(db)
+    qp = QueryParser.parse("*")
+    f1 = FileTypeFilter("file")
+    f2 = ExtensionFilter("txt")
+    cf = CompositeFilter([f1, f2], operator="AND")
+    rs = engine.search(qp, filter_criteria=cf)
+    page = rs.get_page(0, 10)
+    names = [r.name for r in page]
+    assert names == ["file1.txt"]
+
+
+def test_search_engine_no_filter() -> None:
+    """Test SearchEngine.search with no filter returns all results."""
+    db = setup_in_memory_db()
+    engine = SearchEngine(db)
+    qp = QueryParser.parse("*")
+    rs = engine.search(qp)
+    page = rs.get_page(0, 10)
+    names = sorted([r.name for r in page])
+    assert names == ["dir1", "file1.txt", "file2.pdf"]

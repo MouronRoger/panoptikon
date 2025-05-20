@@ -6,6 +6,7 @@ from collections import OrderedDict
 import threading
 from typing import Any, Callable, cast
 
+from panoptikon.search.filtering import FilterCriteria, FilterEngine
 from panoptikon.search.query_parser import QueryParser, QueryPattern
 from panoptikon.search.result import ResultSetImpl, SearchResult, SearchResultImpl
 from panoptikon.search.sorting import (
@@ -29,11 +30,13 @@ class SearchEngine:
         self._db = database_connection
         self._cache_size = cache_size
         self._cache: OrderedDict[
-            tuple[str, int, int, str, str],
+            tuple[str, int, int, str, str, str, bool],
             tuple[int, Callable[[int, int], list[SearchResult]]],
         ] = OrderedDict()
         self._cache_lock = threading.Lock()
-        self._cache_index: dict[str, list[tuple[str, int, int, str, str]]] = {}
+        self._cache_index: dict[
+            str, list[tuple[str, int, int, str, str, str, bool]]
+        ] = {}
         self._sorting_engine = SortingEngine()
 
     def _get_sorting_info(
@@ -92,14 +95,25 @@ class SearchEngine:
         offset: int | None,
         sort_criteria: SortCriteria | list[SortCriteria] | None,
         direction: str,
-    ) -> tuple[str, int, int, str, str]:
-        """Construct a cache key for the search query and sorting."""
+        filter_criteria: FilterCriteria | None,
+        include_directories: bool,
+    ) -> tuple[str, int, int, str, str, str, bool]:
+        """Construct a cache key for the search query and additional parameters.
+
+        The cache key needs to uniquely identify queries that may differ based on
+        filtering or whether directories are included. Otherwise, we risk
+        returning stale or incorrect results from a previous query that happened
+        to share the same pattern/limit/offset, which is exactly what the unit
+        tests exposed.
+        """
         return (
             str(query_pattern),
             limit or -1,
             offset or 0,
             str(sort_criteria) if sort_criteria else "",
             direction,
+            repr(filter_criteria) if filter_criteria is not None else "",
+            include_directories,
         )
 
     def _make_sql(
@@ -115,17 +129,19 @@ class SearchEngine:
             f"{sql_cond} {order_by_clause} LIMIT :limit OFFSET :offset"
         )
 
-    def _make_page_loader(
+    def _make_filtered_page_loader(
         self,
         sql: str,
         params: dict[str, Any],
         sort_criteria: SortCriteria | list[SortCriteria] | None,
         criteria_list: list[SortCriteria],
         direction: str,
+        filter_criteria: FilterCriteria | None = None,
     ) -> Callable[[int, int], list[SearchResult]]:
-        """Create a page loader function for the result set."""
+        """Create a page loader that applies sorting and filtering as needed."""
+        filter_engine = FilterEngine() if filter_criteria is not None else None
 
-        def _page_loader(page_number: int, page_size: int) -> list[SearchResult]:
+        def loader(page_number: int, page_size: int) -> list[SearchResult]:
             page_offset = page_number * page_size
             page_params = dict(params)
             page_params["limit"] = page_size
@@ -155,6 +171,9 @@ class SearchEngine:
                             for row in cur.fetchall()
                         ],
                     )
+                    print(
+                        f"[DEBUG] Results before filtering: {[r.name for r in results]}"
+                    )
                     # If we could not push sort to DB, sort client-side
                     if sort_criteria is not None:
                         if not (
@@ -175,11 +194,18 @@ class SearchEngine:
                                 criteria_list,
                                 direction,
                             )
+                    # Apply client-side filtering if needed
+                    if filter_engine is not None and filter_criteria is not None:
+                        print(f"[DEBUG] Applying filter: {filter_criteria}")
+                        results = filter_engine.apply_filter(results, filter_criteria)
+                        print(
+                            f"[DEBUG] Results after filtering: {[r.name for r in results]}"
+                        )
                     return results
                 except Exception as e:
                     raise RuntimeError(f"Search page query failed: {e}") from e
 
-        return _page_loader
+        return loader
 
     def search(
         self,
@@ -188,8 +214,10 @@ class SearchEngine:
         offset: int | None = None,
         sort_criteria: SortCriteria | list[SortCriteria] | None = None,
         direction: str = "asc",
+        filter_criteria: FilterCriteria | None = None,
+        include_directories: bool = True,
     ) -> ResultSetImpl:
-        """Execute a search using the provided query pattern and optional sorting.
+        """Execute a search using the provided query pattern, optional sorting, filtering, and directory inclusion.
 
         Args:
             query_pattern: QueryPattern from QueryParser.
@@ -197,43 +225,87 @@ class SearchEngine:
             offset: Number of results to skip.
             sort_criteria: SortCriteria or list of criteria (optional).
             direction: 'asc' or 'desc' (default: 'asc').
+            filter_criteria: Optional FilterCriteria for filtering results.
+            include_directories: Whether to include directories in results (default: True).
 
         Returns:
             ResultSetImpl object containing matching files.
         """
-        cache_key = self._make_cache_key(
-            query_pattern, limit, offset, sort_criteria, direction
+        print("\n====== SEARCH DEBUG ======")
+        print(
+            f"Query pattern: {query_pattern.pattern}, type: {query_pattern.match_type}"
         )
-        with self._cache_lock:
-            if cache_key in self._cache:
-                total_count, page_loader = self._cache.pop(cache_key)
-                self._cache[cache_key] = (total_count, page_loader)
-                return ResultSetImpl(self, query_pattern, total_count, page_loader)
+        print(f"Include directories: {include_directories}")
         sql_cond, params = QueryParser.create_sql_condition(query_pattern)
+        print(f"SQL condition after QueryParser: {sql_cond}")
+        print(f"Params after QueryParser: {params}")
+        # Add directory inclusion condition if needed
+        if not include_directories:
+            if sql_cond:
+                sql_cond = f"({sql_cond}) AND is_directory = 0"
+            else:
+                sql_cond = "is_directory = 0"
+            print("Added directory exclusion: is_directory = 0")
+        else:
+            print("Not excluding directories")
+        # Apply DB-level filtering if possible
+        if filter_criteria is not None:
+            sql_cond = filter_criteria.apply_to_query(sql_cond)
+            print(f"SQL condition after filter_criteria: {sql_cond}")
         order_by_clause, criteria_list = self._get_sorting_info(
             sort_criteria, direction
         )
         sql = self._make_sql(sql_cond, order_by_clause)
+        print(f"FINAL SQL: {sql}")
+        print("====== END DEBUG ======\n")
         count_sql = f"SELECT COUNT(*) FROM files WHERE {sql_cond}"
         params_count = dict(params)
         params_count["limit"] = limit or 100
         params_count["offset"] = offset or 0
+        with self._cache_lock:
+            cache_key = self._make_cache_key(
+                query_pattern,
+                limit,
+                offset,
+                sort_criteria,
+                direction,
+                filter_criteria,
+                include_directories,
+            )
+            if cache_key in self._cache:
+                total_count, page_loader = self._cache.pop(cache_key)
+                # Re-insert to mark as most recently used
+                self._cache[cache_key] = (total_count, page_loader)
+                return ResultSetImpl(self, query_pattern, total_count, page_loader)
         with self._db.get_connection() as conn:
             try:
                 cur = conn.execute(count_sql, params)
                 total_count = int(cur.fetchone()[0])
             except Exception as e:
                 raise RuntimeError(f"Search count query failed: {e}") from e
-        page_loader = self._make_page_loader(
-            sql, params, sort_criteria, criteria_list, direction
+        page_loader = self._make_filtered_page_loader(
+            sql,
+            params,
+            sort_criteria,
+            criteria_list,
+            direction,
+            filter_criteria,
         )
         with self._cache_lock:
+            # Evict oldest entry if cache is full
             if len(self._cache) >= self._cache_size:
                 self._cache.popitem(last=False)
+            cache_key = self._make_cache_key(
+                query_pattern,
+                limit,
+                offset,
+                sort_criteria,
+                direction,
+                filter_criteria,
+                include_directories,
+            )
             self._cache[cache_key] = (total_count, page_loader)
-            if query_pattern.pattern not in self._cache_index:
-                self._cache_index[query_pattern.pattern] = []
-            self._cache_index[query_pattern.pattern].append(cache_key)
+            self._cache_index.setdefault(query_pattern.pattern, []).append(cache_key)
         return ResultSetImpl(self, query_pattern, total_count, page_loader)
 
     def invalidate_cache(self, path: str | None = None) -> None:
