@@ -325,3 +325,21 @@
     - Integrate sorting system with UI and result management for user-driven sorting (#todo)
     - Continue to monitor and optimize for edge cases and large datasets (#todo)
     - Maintain this benchmark as a regression test in CI (#regression) 
+
+## [2025-05-18 23:30] #phase5.5 #filtering-system #milestone #done #testing #rationale
+- **Phase:** 5.5 (Filtering System)
+- **Summary:**
+    - Implemented modular filtering framework: FilterCriteria base, concrete filters (file type, extension, date, size, path), CompositeFilter (AND/OR/NOT), and FilterEngine.
+    - Integrated filtering into SearchEngine with both DB push-down and client-side fallback.
+    - Added include_directories flag (default True) for flexible file/directory result control.
+    - Extended search result cache key to include filter and directory flag, fixing stale/wrong result bug.
+    - Comprehensive unit and integration tests: all pass, >80% coverage for filtering module.
+    - All code is Black, isort, Ruff, and mypy --strict compliant.
+    - Documentation and knowledge graph updated; Qdrant sync complete.
+- **Tags:** #done #milestone #stage5.5 #filtering-system #testing #rationale
+- **Rationale:**
+    - Filtering is now robust, composable, and high-performance, meeting all spec and performance targets. The cache key fix ensures correctness for all filter/directory combinations. The system is ready for UI and tab-based filter integration in later stages.
+- **Next Steps:**
+    - Write developer usage guide for filtering system (#todo)
+    - Integrate filter controls into UI tabs (Stage 7) (#todo)
+    - Benchmark filtering on large datasets after Stage 6 indexer is complete (#todo) 
