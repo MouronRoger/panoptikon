@@ -1,3 +1,7 @@
+# [Superseded] Knowledge Graph Prompt
+
+> **This document is superseded by `knowledge-system-mid-path-3.md`, the canonical knowledge system spec. Merge any unique, still-relevant content into that document. This file can be deleted if redundant.**
+
 # **. Entity Extraction**
 * Detect and extract **new entities** (📦 components, 🧱 modules, 🔧 services, 🧪 test types, ⚙️ configurations).
 * Classify them under existing architecture domains:

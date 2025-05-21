@@ -343,3 +343,16 @@
     - Write developer usage guide for filtering system (#todo)
     - Integrate filter controls into UI tabs (Stage 7) (#todo)
     - Benchmark filtering on large datasets after Stage 6 indexer is complete (#todo) 
+
+## [2025-05-19 10:00] #knowledge-system #migration #canonical #done #rationale #todo
+- **Summary:**
+    - Migrated to Version-2 Knowledge System (Robust Minimalism) as described in `docs/spec/knowledge-system-mid-path-3.md` (#canonical)
+    - Implemented new scripts: memory_manager.py, relationship_extractor.py, gen_template.py, doc_lint.py (#done)
+    - Updated pre-commit and CI to enforce relationship section quality (#done)
+    - Marked `knowledge-system-mid-path-3.md` as canonical; all other knowledge system docs to be merged or deleted unless uniquely relevant (#migration)
+    - Updated README and client spec to reference canonical spec and scripts (#done)
+- **Rationale:**
+    - Ensures a single source of truth for the knowledge system, robust authoring, and reliable relationship extraction/validation.
+- **Next Steps:**
+    - Merge or delete redundant knowledge system docs (#todo)
+    - Continue to enforce canonical spec and script usage for all documentation and knowledge graph operations (#todo) 

@@ -1,0 +1,29 @@
+name: Knowledge System Tests
+
+on:
+  push:
+    paths:
+      - 'docs/**/*.md'
+      - 'scripts/knowledge/**'
+
+jobs:
+  test-knowledge-system:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+      - name: Run relationship extractor tests
+        run: |
+          python -m pytest scripts/knowledge/test_relationship_extractor.py -v
+      - name: Lint documentation files
+        run: |
+          for file in $(find docs -name "*.md"); do
+            python scripts/knowledge/doc_lint.py "$file"
+          done 

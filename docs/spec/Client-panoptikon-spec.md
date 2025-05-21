@@ -1,5 +1,7 @@
 # 📑 **Panoptikon Client Specification**
 
+> **Note:** For all knowledge system, memory, entity, and relation management, see the canonical spec in `docs/spec/knowledge-system-mid-path-3.md` and use the scripts in `scripts/knowledge/`.
+
 ## 📋 **Release Strategy and Core Philosophy**
 
 **Stage 1 Focus - Minimal "Everything" Clone**: The initial release of Panoptikon will deliver a focused, high-performance file search application that indexes and searches by filename only, similar to the popular Windows utility "Everything". This approach prioritizes speed, reliability, and immediate utility while establishing the architectural foundation for future enhancements.

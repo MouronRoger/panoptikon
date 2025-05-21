@@ -75,4 +75,11 @@ repos:
         language: python
         types: [python, markdown]
         pass_filenames: false
-        always_run: true 
+        always_run: true
+
+    -   id: doc-lint
+        name: Documentation Linter
+        entry: python scripts/knowledge/doc_lint.py
+        language: system
+        files: ^docs/.+\.md$
+        pass_filenames: true 

@@ -1,5 +1,7 @@
 # Version-2 Knowledge System: Robust Minimalism
 
+> **Canonical Spec:** This document is the canonical specification for the Panoptikon knowledge system. All implementation, documentation, and authoring should reference this document. Any other knowledge system documentation should be merged here or deleted unless it contains unique, still-relevant content.
+
 ## Overview
 
 This document outlines a "just-right" knowledge system for Panoptikon that maintains simplicity while adding key safeguards to prevent system degradation over time. It enhances the stripped-down approach with minimal additions for long-term reliability.
@@ -350,3 +352,33 @@ jobs:
             python scripts/knowledge/doc_lint.py "$file"
           done
 ```
+
+---
+
+## Usage Guide: Knowledge System Scripts
+
+### memory_manager.py
+- CLI for adding, listing, and pruning entities and relations in the knowledge memory file.
+- Example: `python scripts/knowledge/memory_manager.py add-entity "MyComponent" Component --observation "A core module"`
+- See `--help` for all commands.
+
+### relationship_extractor.py
+- Extracts relationships from markdown documentation and adds them to the memory file.
+- Example: `python scripts/knowledge/relationship_extractor.py docs/components/my_component.md`
+- Can be run on multiple files at once.
+
+### gen_template.py
+- Generates documentation templates with a relationships section for components, decisions, or phases.
+- Example: `python scripts/knowledge/gen_template.py component "New Component"`
+
+### doc_lint.py
+- Lints documentation files to ensure relationship sections are present and non-empty.
+- Example: `python scripts/knowledge/doc_lint.py docs/components/my_component.md`
+- Used in pre-commit and CI.
+
+---
+
+## Migration Note for Authors
+- All new and updated documentation must use the templates and relationship section format described here.
+- Use the provided scripts for authoring, extraction, and validation.
+- If you find other knowledge system docs (e.g., knowledge-graph-prompt.md), merge their unique content here or delete them if redundant.

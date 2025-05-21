@@ -168,4 +168,16 @@ with pool.transaction() as conn:
   - All Pydantic validators have been migrated to v2 (`@field_validator`).
   - The connection pool now uses a custom exception hierarchy; update your error handling accordingly.
   - The pool exposes enhanced metrics and structured logging for easier debugging and monitoring.
-  - See the migration plan in `docs/spec/phases/phase4_3_migration_plan.md` for schema changes and data migration steps (if any). 
+  - See the migration plan in `docs/spec/phases/phase4_3_migration_plan.md` for schema changes and data migration steps (if any).
+
+## Knowledge System (Canonical)
+
+Panoptikon uses a robust, script-driven knowledge/documentation system. The canonical specification is in `docs/spec/knowledge-system-mid-path-3.md`.
+
+### Key Scripts
+- `scripts/knowledge/memory_manager.py`: CLI for adding, listing, and pruning entities and relations in the knowledge memory file.
+- `scripts/knowledge/relationship_extractor.py`: Extracts relationships from markdown documentation and adds them to the memory file.
+- `scripts/knowledge/gen_template.py`: Generates documentation templates with a relationships section for components, decisions, or phases.
+- `scripts/knowledge/doc_lint.py`: Lints documentation files to ensure relationship sections are present and non-empty (used in pre-commit and CI).
+
+**All documentation and knowledge graph operations should follow the canonical spec.** 
