@@ -12,7 +12,7 @@ import logging
 from pathlib import Path
 import sqlite3
 import threading
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Optional, Union
 
 from ..core.errors import DatabaseError
 from ..core.service import ServiceInterface
@@ -129,7 +129,7 @@ class DatabaseConnection:
     def execute(
         self,
         query: str,
-        parameters: Optional[Union[Tuple[object, ...], Dict[str, object]]] = None,
+        parameters: Optional[Union[tuple, dict]] = None,
         *,
         use_registry: bool = True,
         monitor: bool = True,
@@ -174,7 +174,7 @@ class DatabaseConnection:
         self,
         conn: sqlite3.Connection,
         query: str,
-        parameters: Optional[Union[Tuple[object, ...], Dict[str, object]]],
+        parameters: Optional[Union[tuple, dict]],
         *,
         use_registry: bool,
         monitor: bool,
@@ -213,7 +213,7 @@ class DatabaseConnection:
     def execute_many(
         self,
         query: str,
-        parameters: List[Union[Tuple[object, ...], Dict[str, object]]],
+        parameters: list[Union[tuple, dict]],
         *,
         optimize: bool = False,
         batch: bool = True,

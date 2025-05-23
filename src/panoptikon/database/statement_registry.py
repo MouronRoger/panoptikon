@@ -10,7 +10,7 @@ from __future__ import annotations
 import sqlite3
 from threading import Lock
 import time
-from typing import Dict, Optional, Tuple, Union
+from typing import Optional, Union
 
 
 class StatementRegistry:
@@ -18,8 +18,8 @@ class StatementRegistry:
 
     def __init__(self) -> None:
         """Initialize the statement registry."""
-        self._statements: Dict[str, sqlite3.Cursor] = {}
-        self._cache_times: Dict[str, float] = {}
+        self._statements: dict[str, sqlite3.Cursor] = {}
+        self._cache_times: dict[str, float] = {}
         self._lock = Lock()
         self._cache_ttl = 600.0  # seconds
 
@@ -69,7 +69,7 @@ class StatementRegistry:
         self,
         conn: sqlite3.Connection,
         sql: str,
-        parameters: Optional[Union[Tuple[object, ...], Dict[str, object]]] = None,
+        parameters: Optional[Union[tuple[object, ...], dict[str, object]]] = None,
     ) -> sqlite3.Cursor:
         """Bind parameters and execute a prepared statement.
 

@@ -1,7 +1,6 @@
 import os
 from pathlib import Path
 import sys
-from typing import List
 
 import pytest
 
@@ -16,10 +15,8 @@ from panoptikon.search.sorting import (
 )
 
 
-def collect_filesystem_data(
-    start_path: str, max_files: int = 20000
-) -> List[SearchResultImpl]:
-    files: List[SearchResultImpl] = []
+def collect_filesystem_data(start_path: str, max_files: int = 20000) -> list:
+    files: list = []
     for root, dirs, filenames in os.walk(start_path, topdown=True):
         if len(files) >= max_files:
             break

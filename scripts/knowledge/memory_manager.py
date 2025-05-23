@@ -5,7 +5,7 @@ import argparse
 import json
 import os
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 MEMORY_PATH = Path(
     os.getenv(
@@ -15,7 +15,7 @@ MEMORY_PATH = Path(
 )
 
 
-def load_memory() -> List[Dict[str, Any]]:
+def load_memory() -> list[dict[str, Any]]:
     """Load memory from the JSONL file."""
     if not MEMORY_PATH.exists():
         return []
@@ -23,7 +23,7 @@ def load_memory() -> List[Dict[str, Any]]:
         return [json.loads(line) for line in f if line.strip()]
 
 
-def save_memory(memory: List[Dict[str, Any]]) -> None:
+def save_memory(memory: list[dict[str, Any]]) -> None:
     """Save memory to the JSONL file."""
     with open(MEMORY_PATH, "w", encoding="utf-8") as f:
         for entry in memory:

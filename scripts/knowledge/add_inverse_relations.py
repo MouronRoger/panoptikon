@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import List, Set, Tuple
 
 from scripts.knowledge.models import Relation
 
@@ -40,14 +39,14 @@ def add_inverses(memory_path: Path = MEMORY_PATH) -> None:  # noqa: D401
     entries = [
         json.loads(line) for line in memory_path.read_text().splitlines() if line
     ]
-    existing_rel: Set[Tuple[str, str, str]] = set()
+    existing_rel: set[tuple[str, str, str]] = set()
     for e in entries:
         if e.get("type") == "relation":
             existing_rel.add(
                 (e.get("from", ""), e.get("to", ""), e.get("relationType", ""))
             )
 
-    new_relations: List[Relation] = []
+    new_relations: list[Relation] = []
     for src, tgt, rtype in existing_rel:
         inv_type = INVERSE_MAP.get(rtype)
         if not inv_type:

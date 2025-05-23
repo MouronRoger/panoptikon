@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import List, Optional, Tuple
+from typing import Optional
 
 from panoptikon.core.service import ServiceInterface
 
@@ -14,8 +14,8 @@ class WindowState:
         self.is_main: bool = is_main
         self.is_active: bool = is_main  # Main window starts as active
         self.search_query: str = ""
-        self.selected_files: List[str] = []
-        self.scroll_position: Tuple[float, float] = (0.0, 0.0)
+        self.selected_files: list = []
+        self.scroll_position: tuple = (0.0, 0.0)
 
 
 class WindowManagerInterface(ServiceInterface, ABC):
@@ -67,8 +67,6 @@ class WindowManagerInterface(ServiceInterface, ABC):
         pass
 
     @abstractmethod
-    def coordinate_drag_operation(
-        self, is_from_main_window: bool, files: List[str]
-    ) -> None:
+    def coordinate_drag_operation(self, is_from_main_window: bool, files: list) -> None:
         """Coordinate a drag operation between windows."""
         pass

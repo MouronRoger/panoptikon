@@ -7,7 +7,6 @@ dynamic query composition with type safety.
 from __future__ import annotations
 
 import re
-from typing import Dict, Tuple
 
 
 class QueryBuilder:
@@ -29,8 +28,8 @@ class QueryBuilder:
 
     @staticmethod
     def build_where_clause(
-        conditions: Dict[str, object], param_style: str = ":{name}"
-    ) -> Tuple[str, Dict[str, object]]:
+        conditions: dict[str, object], param_style: str = ":{name}"
+    ) -> tuple[str, dict[str, object]]:
         """Build a WHERE clause from a dict of conditions.
 
         Args:
@@ -52,8 +51,8 @@ class QueryBuilder:
 
     @staticmethod
     def build_insert(
-        table: str, data: Dict[str, object]
-    ) -> Tuple[str, Dict[str, object]]:
+        table: str, data: dict[str, object]
+    ) -> tuple[str, dict[str, object]]:
         """Build a parameterized INSERT statement.
 
         Args:
@@ -73,8 +72,8 @@ class QueryBuilder:
 
     @staticmethod
     def build_update(
-        table: str, data: Dict[str, object], where: Dict[str, object]
-    ) -> Tuple[str, Dict[str, object]]:
+        table: str, data: dict[str, object], where: dict[str, object]
+    ) -> tuple[str, dict[str, object]]:
         """Build a parameterized UPDATE statement.
 
         Args:

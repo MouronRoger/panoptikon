@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import List, Optional, Tuple
+from typing import Optional
 
 from panoptikon.core.events import EventBase
 
@@ -21,11 +21,11 @@ class WindowEvent(EventBase):
 class SecondaryWindowCreatedEvent(WindowEvent):
     """Event issued when the secondary window is created."""
 
-    position: Tuple[int, int]
+    position: tuple[int, int]
 
     def __init__(
         self,
-        position: Tuple[int, int],
+        position: tuple[int, int],
         event_id: Optional[str] = None,
         timestamp: Optional[datetime] = None,
         source: Optional[str] = None,
@@ -142,13 +142,13 @@ class WindowDragOperationEvent(WindowEvent):
 
     source_window: str  # "main" or "secondary"
     target_window: str  # "main" or "secondary"
-    files: List[str]
+    files: list[str]
 
     def __init__(
         self,
         source_window: str,
         target_window: str,
-        files: List[str],
+        files: list[str],
         event_id: Optional[str] = None,
         timestamp: Optional[datetime] = None,
         source: Optional[str] = None,

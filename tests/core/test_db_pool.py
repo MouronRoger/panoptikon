@@ -5,7 +5,7 @@ from pathlib import Path
 import sqlite3
 import threading
 import time
-from typing import List
+from typing import cast
 from unittest.mock import MagicMock
 
 import pytest
@@ -85,19 +85,19 @@ def test_pool_initialization(temp_db_path: Path) -> None:
 
     # Check that we have the minimum connections
     stats = pool.get_stats()
-    assert stats["idle_connections"] == 2
-    assert stats["active_connections"] == 0
-    assert stats["total_created"] == 2
-    assert stats["total_closed"] == 0
+    assert cast(int, stats["idle_connections"]) == 2
+    assert cast(int, stats["active_connections"]) == 0
+    assert cast(int, stats["total_created"]) == 2
+    assert cast(int, stats["total_closed"]) == 0
 
     # Clean up
     pool.shutdown()
 
     # Check cleanup
     stats = pool.get_stats()
-    assert stats["idle_connections"] == 0
-    assert stats["active_connections"] == 0
-    assert stats["total_closed"] >= 2
+    assert cast(int, stats["idle_connections"]) == 0
+    assert cast(int, stats["active_connections"]) == 0
+    assert cast(int, stats["total_closed"]) >= 2
 
 
 def test_pool_get_connection(connection_pool: ConnectionPool) -> None:
@@ -118,13 +118,18 @@ def test_pool_get_connection(connection_pool: ConnectionPool) -> None:
 
         # Check that we have one active connection
         stats = connection_pool.get_stats()
-        assert stats["active_connections"] == 1
-        assert stats["idle_connections"] == initial_stats["idle_connections"] - 1
+        assert cast(int, stats["active_connections"]) == 1
+        assert (
+            cast(int, stats["idle_connections"])
+            == cast(int, initial_stats["idle_connections"]) - 1
+        )
 
     # Check that the connection was returned to the pool
     stats = connection_pool.get_stats()
-    assert stats["active_connections"] == 0
-    assert stats["idle_connections"] == initial_stats["idle_connections"]
+    assert cast(int, stats["active_connections"]) == 0
+    assert cast(int, stats["idle_connections"]) == cast(
+        int, initial_stats["idle_connections"]
+    )
 
 
 def test_pool_connection_reuse(connection_pool: ConnectionPool) -> None:
@@ -170,8 +175,10 @@ def test_pool_max_connections(connection_pool: ConnectionPool) -> None:
 
     # All connections should now be returned to the pool
     stats = connection_pool.get_stats()
-    assert stats["active_connections"] == 0
-    assert stats["idle_connections"] >= initial_stats["idle_connections"]
+    assert cast(int, stats["active_connections"]) == 0
+    assert cast(int, stats["idle_connections"]) >= cast(
+        int, initial_stats["idle_connections"]
+    )
 
 
 def test_pool_connection_health_check(connection_pool: ConnectionPool) -> None:
@@ -217,7 +224,9 @@ def test_pool_connection_max_age(connection_pool: ConnectionPool) -> None:
         conn.execute("SELECT 1")
 
     # Check that we created a new connection
-    assert connection_pool.get_stats()["total_created"] > initial_created
+    assert cast(int, connection_pool.get_stats()["total_created"]) > cast(
+        int, initial_created
+    )
 
 
 def test_pool_transaction(connection_pool: ConnectionPool) -> None:
@@ -380,7 +389,7 @@ def test_pool_concurrent_access_param(
         num_threads: Number of concurrent threads to use.
     """
     connection_pool.max_connections = max(15, num_threads // 2)
-    errors: List[Exception] = []
+    errors = []
     successes = 0
     lock = threading.Lock()
 
@@ -436,7 +445,7 @@ def test_pool_writer_contention(connection_pool: ConnectionPool) -> None:
     """
     connection_pool.max_connections = 50
     num_threads = 50
-    errors: List[Exception] = []
+    errors = []
     successes = 0
     lock = threading.Lock()
 
@@ -483,7 +492,7 @@ def test_pool_stress_leak_prevention(connection_pool: ConnectionPool) -> None:
     connection_pool.max_connections = 30
     num_threads = 30
     iterations = 20
-    errors: List[Exception] = []
+    errors = []
 
     def worker(thread_id: int) -> None:
         for j in range(iterations):
@@ -510,8 +519,8 @@ def test_pool_stress_leak_prevention(connection_pool: ConnectionPool) -> None:
         t.join()
     # Check for leaks: all connections should be returned
     stats = connection_pool.get_stats()
-    assert stats["active_connections"] == 0
-    assert stats["idle_connections"] >= connection_pool.min_connections
+    assert cast(int, stats["active_connections"]) == 0
+    assert cast(int, stats["idle_connections"]) >= connection_pool.min_connections
     # Errors should be rare and not deadlocks
     if errors:
         for e in errors:
@@ -570,6 +579,9 @@ def test_pool_thread_safety() -> None:
     """Test thread safety of connection checkout/checkin."""
     # Create a pool with minimum settings for the test
     temp_path = Path("temp_thread_test.db")
+    # Ensure the file does not exist before the test
+    if temp_path.exists():
+        temp_path.unlink()
     try:
         pool = ConnectionPool(
             db_path=temp_path,
@@ -612,7 +624,7 @@ def test_pool_thread_safety() -> None:
         # Run concurrent threads
         num_threads = 10
         iterations_per_thread = 5
-        threads: List[threading.Thread] = []
+        threads = []
 
         for i in range(num_threads):
             thread = threading.Thread(
@@ -635,7 +647,7 @@ def test_pool_thread_safety() -> None:
         pool.shutdown()
 
     finally:
-        # Clean up the file
+        # Clean up the file after the test
         if temp_path.exists():
             temp_path.unlink()
 

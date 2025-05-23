@@ -9,7 +9,7 @@ from enum import Enum, auto
 import logging
 from pathlib import Path
 import threading
-from typing import Callable, List, Optional, Set
+from typing import Callable, Optional, Set
 
 from ..core.events import EventBus
 from ..core.service import ServiceInterface
@@ -359,7 +359,7 @@ class PollingWatcher(FSWatcher):
         except (PermissionError, FileNotFoundError) as e:
             logger.warning(f"Error refreshing watch state for {watch_path}: {e}")
 
-    def _scan_directory(self, directory: Path, recursive: bool) -> List[Path]:
+    def _scan_directory(self, directory: Path, recursive: bool) -> list[Path]:
         """Scan a directory for files.
 
         Args:

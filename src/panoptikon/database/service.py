@@ -6,7 +6,7 @@ connection, and configuration management.
 
 import logging
 import sqlite3
-from typing import Any, Dict, List, Optional, Tuple, Union, cast
+from typing import Any, Optional, Union, cast
 
 from ..core.config import ConfigurationSystem
 from ..core.errors import DatabaseError
@@ -134,7 +134,7 @@ class DatabaseService(ServiceInterface):
     def execute(
         self,
         query: str,
-        parameters: Optional[Union[Tuple[Any, ...], Dict[str, Any]]] = None,
+        parameters: Optional[Union[tuple[Any, ...], dict[str, Any]]] = None,
         *,
         use_registry: bool = True,
         monitor: bool = True,
@@ -174,7 +174,7 @@ class DatabaseService(ServiceInterface):
     def execute_many(
         self,
         query: str,
-        parameters: List[Union[Tuple[Any, ...], Dict[str, Any]]],
+        parameters: list[Union[tuple[Any, ...], dict[str, Any]]],
         *,
         optimize: bool = False,
         batch: bool = True,

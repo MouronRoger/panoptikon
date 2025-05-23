@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-import re
 from dataclasses import dataclass
+import re
 from typing import Any
 
 from panoptikon.database.query_builder import QueryBuilder

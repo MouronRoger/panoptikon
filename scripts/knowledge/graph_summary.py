@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """Generate summary statistics for knowledge graph."""
-import json
 from collections import Counter, defaultdict
+import json
 from pathlib import Path
-from typing import Dict, List, Set
 
 MEMORY_PATH = Path("/Users/james/Library/Application Support/Claude/panoptikon/memory.jsonl")
 
@@ -19,7 +18,7 @@ def summarize() -> None:
     entity_degrees = defaultdict(lambda: {"in": 0, "out": 0})
     
     # Load and analyze
-    with open(MEMORY_PATH, 'r') as f:
+    with open(MEMORY_PATH) as f:
         for line in f:
             if not line.strip():
                 continue

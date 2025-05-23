@@ -9,7 +9,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections.abc import Sequence
 from datetime import datetime
-from typing import Any, List, Optional
+from typing import Any, Optional
 
 from panoptikon.search.result import SearchResult
 
@@ -173,9 +173,9 @@ class FilterEngine:
 
     def apply_filter(
         self,
-        result_set: List[SearchResult],
+        result_set: list[SearchResult],
         criteria: FilterCriteria,
-    ) -> List[SearchResult]:
+    ) -> list[SearchResult]:
         """Apply filter criteria to result set.
 
         Args:

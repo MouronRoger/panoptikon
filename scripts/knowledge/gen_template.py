@@ -2,8 +2,8 @@
 """Simple template generator - creates documentation with relationship section"""
 
 import os
-import sys
 from pathlib import Path
+import sys
 
 DOCS_DIR = Path(
     os.getenv("PANOPTIKON_DOCS_DIR", "/Users/james/Documents/GitHub/panoptikon/docs")

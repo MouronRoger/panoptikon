@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Documentation linter - checks for empty relationship sections"""
 
+from pathlib import Path
 import re
 import sys
-from pathlib import Path
 
 
 def check_doc_file(filepath: str) -> bool:

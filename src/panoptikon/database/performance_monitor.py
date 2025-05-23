@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import sqlite3
 import time
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Optional, Union
 
 
 class QueryPerformanceMonitor:
@@ -16,9 +16,9 @@ class QueryPerformanceMonitor:
 
     def __init__(self) -> None:
         """Initialize the performance monitor."""
-        self.query_times: List[Tuple[str, float]] = []
-        self.slow_queries: List[Tuple[str, float]] = []
-        self.query_counts: Dict[str, int] = {}
+        self.query_times: list[tuple[str, float]] = []
+        self.slow_queries: list[tuple[str, float]] = []
+        self.query_counts: dict[str, int] = {}
         self.slow_threshold: float = 0.1  # seconds
 
     def time_query(
@@ -26,7 +26,7 @@ class QueryPerformanceMonitor:
         conn: sqlite3.Connection,
         sql: str,
         parameters: Optional[Union[tuple[object, ...], dict[str, object]]] = None,
-    ) -> Tuple[sqlite3.Cursor, float]:
+    ) -> tuple[sqlite3.Cursor, float]:
         """Execute a query and record its execution time.
 
         Args:
@@ -53,7 +53,7 @@ class QueryPerformanceMonitor:
         conn: sqlite3.Connection,
         sql: str,
         parameters: Optional[Union[tuple[object, ...], dict[str, object]]] = None,
-    ) -> List[Tuple[object, ...]]:
+    ) -> list[tuple[object, ...]]:
         """Run EXPLAIN QUERY PLAN and return the analysis.
 
         Args:
@@ -72,10 +72,10 @@ class QueryPerformanceMonitor:
         )
         return cursor.fetchall()
 
-    def get_slow_queries(self) -> List[Tuple[str, float]]:
+    def get_slow_queries(self) -> list[tuple[str, float]]:
         """Get a list of slow queries exceeding the threshold."""
         return self.slow_queries.copy()
 
-    def get_query_frequencies(self) -> Dict[str, int]:
+    def get_query_frequencies(self) -> dict[str, int]:
         """Get a mapping of query strings to execution counts."""
         return self.query_counts.copy()

@@ -8,7 +8,7 @@ import hashlib
 import json
 from pathlib import Path
 import shutil
-from typing import Any, Dict, List
+from typing import Any
 
 import frontmatter  # type: ignore[import-untyped]
 from qdrant_client import QdrantClient
@@ -36,13 +36,13 @@ def ensure_qdrant_collection(client: QdrantClient) -> None:
         print(f"Created Qdrant collection: {COLLECTION_NAME}")
 
 
-def scan_markdown_docs(docs_dir: Path) -> List[Path]:
+def scan_markdown_docs(docs_dir: Path) -> list[Path]:
     """Recursively find all markdown files in docs_dir."""
     return [p for p in docs_dir.rglob("*.md") if not p.name.startswith(".")]
 
 
 def index_in_qdrant(
-    docs: List[Dict[str, Any]], client: QdrantClient, model: SentenceTransformer
+    docs: list[dict[str, Any]], client: QdrantClient, model: SentenceTransformer
 ) -> None:
     """Index all docs in Qdrant."""
     points = []
@@ -75,7 +75,7 @@ def index_in_qdrant(
         print(f"Indexed {len(points)} docs in Qdrant (final batch)")
 
 
-def export_jsonld(docs: List[Dict[str, Any]], export_dir: Path) -> None:
+def export_jsonld(docs: list[dict[str, Any]], export_dir: Path) -> None:
     """Export all docs as JSON-LD nodes for the knowledge graph."""
     export_dir.mkdir(parents=True, exist_ok=True)
     nodes = []
@@ -100,7 +100,7 @@ def export_jsonld(docs: List[Dict[str, Any]], export_dir: Path) -> None:
     print(f"Exported {len(nodes)} docs as JSON-LD to {export_path}")
 
 
-def parse_markdown_doc(md_path: Path) -> Dict[str, Any]:
+def parse_markdown_doc(md_path: Path) -> dict[str, Any]:
     """Parse a markdown file into a doc dict."""
     post = frontmatter.load(md_path)
     return {

@@ -1,5 +1,5 @@
-import tempfile
 from pathlib import Path
+import tempfile
 from typing import Any
 
 from relationship_extractor import (

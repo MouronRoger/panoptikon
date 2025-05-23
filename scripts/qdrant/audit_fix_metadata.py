@@ -8,7 +8,7 @@
 
 from pathlib import Path
 import sys
-from typing import Any, Dict, List, Optional, Set
+from typing import Any
 
 import frontmatter  # type: ignore[import-untyped]
 from qdrant_client import QdrantClient
@@ -24,7 +24,7 @@ DOCS_DIR = Path(__file__).parent.parent.parent / "docs"
 REQUIRED_FIELDS = ["title", "path", "document"]
 
 
-def get_all_points(client: QdrantClient) -> List[Any]:
+def get_all_points(client: QdrantClient) -> list[Any]:
     """Fetch all points from the Qdrant collection."""
     offset = None
     all_points = []
@@ -43,7 +43,7 @@ def get_all_points(client: QdrantClient) -> List[Any]:
     return all_points
 
 
-def parse_markdown(md_path: Path) -> Optional[Dict[str, Any]]:
+def parse_markdown(md_path: Path) -> dict[str, Any] | None:
     """Parse a markdown file and return metadata/content dict."""
     if not md_path.exists():
         return None
@@ -87,7 +87,7 @@ def fix_point(point: Any, docs_dir: Path) -> Optional[PointStruct]:
     )
 
 
-def delete_points(client: QdrantClient, ids: Set[str]) -> None:
+def delete_points(client: QdrantClient, ids: set[str]) -> None:
     """Delete points from Qdrant by ID."""
     if not ids:
         print("No points to delete.")

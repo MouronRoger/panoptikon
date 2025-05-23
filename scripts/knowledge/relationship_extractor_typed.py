@@ -20,7 +20,7 @@ import os
 from pathlib import Path
 import re
 import sys
-from typing import Dict, Optional, Set, Tuple
+from typing import Optional
 
 # Ensure the scripts package is importable when the script is executed directly
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))  # noqa: E402
@@ -43,7 +43,7 @@ DEFAULT_MEMORY_PATH = Path(
     )
 )
 
-RELATION_TYPES: Dict[str, str] = {
+RELATION_TYPES: dict[str, str] = {
     "Contains": "contains",
     "Belongs To": "belongs_to",
     "Depends On": "depends_on",
@@ -65,9 +65,9 @@ class KnowledgeGraphManager:
 
     def __init__(self, memory_path: Optional[Path] = None) -> None:
         self.memory_path = memory_path or DEFAULT_MEMORY_PATH
-        self._entity_cache: Dict[str, Entity] = {}
-        self._relation_cache: Set[Tuple[str, str, str]] = set()
-        self._entity_type_by_name: Dict[str, str] = {}
+        self._entity_cache: dict[str, Entity] = {}
+        self._relation_cache: set[tuple[str, str, str]] = set()
+        self._entity_type_by_name: dict[str, str] = {}
         self._load_existing()
 
     # ------------------------------ Internals -----------------------------
