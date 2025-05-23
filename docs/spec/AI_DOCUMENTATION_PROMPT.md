@@ -95,7 +95,7 @@ This file defines how the AI should document all progress, decisions, and ration
 
 ## Entry Template
 ```
-## [YYYY-MM-DD HH:MM] #phase4.2 #connection-pool #decision #todo
+## [System time stamp] #phase4.2 #connection-pool #decision #todo
 - **Phase:** 4.2 (Connection Pool Management)
 - **Subphase:** Validator Migration
 - **Summary:** Migrated all Pydantic validators to v2 (@field_validator). Updated all tests and docs. No breaking changes.
