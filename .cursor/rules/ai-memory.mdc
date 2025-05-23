@@ -1,0 +1,47 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+Session Initialization: MCP Knowledge Graph Read
+At the start of every session, immediately query the MCP knowledge graph using the read-graph or semantic search API.
+This provides the current phase, stage, project status, and all recent decisions.
+Example:
+Apply
+)
+Use this as the authoritative context for all actions in the session.
+Documentation & Knowledge Graph Source of Truth
+All project knowledge, phase/stage progress, and decisions are tracked in markdown under docs/ (especially docs/ai_docs.md).
+The canonical knowledge graph is stored in /Users/james/Library/Application Support/Claude/panoptikon/memory.jsonl and is always kept in sync with documentation.
+Editing & Logging
+When making any major change, always:
+Update the relevant markdown documentation (e.g., docs/ai_docs.md).
+Use clear tags/flags: #decision, #todo, #done, #milestone, #rationale, etc.
+Include timestamps and summaries for all session logs and decisions.
+Syncing & Indexing
+After documentation or knowledge graph changes, always run:
+Apply
+py
+This will:
+Parse and index all docs to Qdrant (cloud collection: panoptikon)
+Export and reconcile the knowledge graph to the MCP server
+Ensure the canonical state is up-to-date for all tools and agents
+Validation
+After any migration or major update, validate the knowledge graph:
+Apply
+py
+Ensure there are no orphaned or duplicate entities/relations.
+Never Use Local Qdrant Instances
+All semantic search and KG operations must use the cloud Qdrant collection (panoptikon), never a local instance.
+Reference Procedures
+For any knowledge graph or documentation operation, always consult:
+docs/spec/kg-memory-update/kg-handover-brief.md
+docs/ai_docs.md
+The migration guide in docs/spec/kg-memory-update/kg-migration-guide.md
+Follow the step-by-step instructions and success criteria in these files.
+If in doubt, always:
+Query the MCP knowledge graph for current state at session start,
+Update the docs,
+Run dual_reindex.py,
+And validate the knowledge graph.
+This ensures a single source of truth and robust, automated project knowledge management.
