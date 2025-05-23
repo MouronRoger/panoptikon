@@ -1,6 +1,13 @@
 # Folder Size Implementation
 
 ## Overview
+
+## Relationships
+- **Belongs To**: Service Container
+- **Depends On**: DatabaseConnectionPool
+- **Used By**: UI, Indexing System
+- **Implements**: Folder Size Feature
+
 The folder size feature enables Panoptikon to display and sort by the total size of directories, providing instant visibility into space usage. This is a unique selling point compared to other file explorers.
 
 ## Status

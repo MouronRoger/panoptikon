@@ -11,6 +11,13 @@ updated: '2025-05-18T21:38:54.826530'
 # DatabaseConnectionPool
 
 ## Overview
+
+## Relationships
+- **Belongs To**: Service Container
+- **Depends On**: Service Container
+- **Used By**: Folder Size Implementation, Any component needing DB access
+- **Implements**: Connection Pooling Requirement
+
 Thread-safe connection pooling for SQLite
 
 ## Purpose

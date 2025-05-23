@@ -11,6 +11,13 @@ updated: '2025-05-14T00:30:05.946484'
 # Phase 2 - Core Infrastructure
 
 ## Objectives
+
+## Relationships
+- **Contains**: Service Container, Event Bus, Configuration System
+- **Depends On**: Phase 1 - Foundation
+- **Precedes**: Phase 3 - Filesystem Abstraction
+- **Follows**: Phase 1 - Foundation
+
 Service container, event bus, configuration, error handling
 
 ## Components

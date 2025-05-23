@@ -1,10 +1,13 @@
-name: Knowledge System Tests
+name: Knowledge Graph Maintenance
 
 on:
   push:
     paths:
       - 'docs/**/*.md'
       - 'scripts/knowledge/**'
+  schedule:
+    - cron: '0 0 * * 0'  # Weekly on Sunday
+  workflow_dispatch:  # Allow manual triggering
 
 jobs:
   test-knowledge-system:
@@ -14,16 +17,60 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: '3.9'  # Match project Python version
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytest
+          pip install -r requirements.txt
+          pip install pytest black isort ruff mypy
+      
+      - name: Lint knowledge scripts
+        run: |
+          cd scripts/knowledge
+          black --check .
+          isort --check .
+          ruff check .
+          # Only check typed files when they exist
+          if [ -f models.py ]; then
+            mypy --strict models.py || true  # Allow failure for now
+          fi
+      
       - name: Run relationship extractor tests
         run: |
           python -m pytest scripts/knowledge/test_relationship_extractor.py -v
+      
       - name: Lint documentation files
         run: |
           for file in $(find docs -name "*.md"); do
             python scripts/knowledge/doc_lint.py "$file"
-          done 
+          done
+      
+      - name: Create test memory location
+        run: |
+          mkdir -p "/tmp/claude"
+          echo "" > "/tmp/claude/memory.jsonl"
+      
+      - name: Test knowledge graph rebuild (dry run)
+        run: |
+          export PANOPTIKON_MCP_MEMORY="/tmp/claude/memory.jsonl"
+          cd scripts/knowledge
+          # Test the typed extractor in dry-run mode
+          if [ -f relationship_extractor_typed.py ]; then
+            python relationship_extractor_typed.py --dry-run ../../docs/phases/*.md || true
+          fi
+      
+      - name: Rebuild knowledge graph
+        run: |
+          export PANOPTIKON_MCP_MEMORY="/tmp/claude/memory.jsonl"
+          chmod +x scripts/knowledge/rebuild_graph.sh
+          ./scripts/knowledge/rebuild_graph.sh --skip-validation
+      
+      - name: Validate graph
+        run: |
+          export PANOPTIKON_MCP_MEMORY="/tmp/claude/memory.jsonl"
+          python scripts/knowledge/validate_graph.py
+      
+      - name: Show summary
+        run: |
+          export PANOPTIKON_MCP_MEMORY="/tmp/claude/memory.jsonl"
+          python scripts/knowledge/graph_summary.py 

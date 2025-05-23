@@ -376,9 +376,13 @@ jobs:
 - Example: `python scripts/knowledge/doc_lint.py docs/components/my_component.md`
 - Used in pre-commit and CI.
 
+> **Tip:** As you update or create documentation, always review and update the `## Relationships` section to reflect the current state of dependencies and usage. Prompt the AI or documentation system to help keep these sections accurate as work proceeds. **Always insert the system timestamp (not the AI's internal clock) when recording documentation entries, session logs, or knowledge system updates. This ensures accurate and reliable project history.**
+
 ---
 
 ## Migration Note for Authors
 - All new and updated documentation must use the templates and relationship section format described here.
 - Use the provided scripts for authoring, extraction, and validation.
 - If you find other knowledge system docs (e.g., knowledge-graph-prompt.md), merge their unique content here or delete them if redundant.
+- **Prompt the AI or documentation system to update the `## Relationships` section whenever you make architectural or dependency changes.**
+- **Always insert the system timestamp (not the AI's internal clock) when recording documentation entries, session logs, or knowledge system updates.**

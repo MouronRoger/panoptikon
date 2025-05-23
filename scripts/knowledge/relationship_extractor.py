@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
-"""Regex-based documentation extractor for relationships."""
+"""Regex-based documentation extractor for relationships.
+
+- Extracts the entity name from the first Markdown header (# ...).
+- Adds entities and relations to the memory file.
+- Skips relationship targets that are HTML comments (<!-- ... -->) or empty.
+"""
 
 import json
 import os
-import re
 from pathlib import Path
+import re
 from typing import Optional
 
 MEMORY_PATH = Path(
@@ -66,14 +71,38 @@ def standardize_relation_type(rel_type: str) -> Optional[str]:
     return RELATION_TYPES.get(rel_type.strip())
 
 
+def extract_entity_name_from_content(content: str, fallback: str) -> str:
+    """Extract the entity name from the first Markdown header (# ...), fallback to provided value."""
+    match = re.search(r"^#\s+(.+)$", content, re.MULTILINE)
+    if match:
+        return match.group(1).strip()
+    return fallback
+
+
+def is_real_entity_name(target: str) -> bool:
+    """Return True if the target is not an HTML comment, not empty, and not just dashes."""
+    target = target.strip()
+    if not target:
+        return False
+    # Match HTML comments with optional leading/trailing whitespace
+    if re.fullmatch(r"\s*<!--.*-->\s*", target):
+        return False
+    # Skip targets that are just dashes (e.g., '--')
+    if re.fullmatch(r"-+", target):
+        return False
+    return True
+
+
 def extract_relationships_from_file(filepath: str) -> None:
     """Extract relationships from a markdown file and add to memory."""
     path = Path(filepath)
     entity_type = get_entity_type(path)
-    entity_name = path.stem.replace("-", " ").title()
-    add_entity(entity_name, entity_type)
     with open(filepath, encoding="utf-8") as f:
         content = f.read()
+    entity_name = extract_entity_name_from_content(
+        content, path.stem.replace("-", " ").title()
+    )
+    add_entity(entity_name, entity_type)
     rel_section = re.search(
         r"## Relationships.*?(?=^##|\Z)", content, re.DOTALL | re.MULTILINE
     )
@@ -87,10 +116,8 @@ def extract_relationships_from_file(filepath: str) -> None:
         if not std_type:
             continue
         for target in re.split(r",\s*", targets):
-            target = target.strip()
-            if not target:
-                continue
-            add_relation(entity_name, target, std_type)
+            if is_real_entity_name(target):
+                add_relation(entity_name, target, std_type)
 
 
 def main() -> None:

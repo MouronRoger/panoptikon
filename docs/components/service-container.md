@@ -11,6 +11,12 @@ updated: '2025-05-14T00:30:12.693939'
 # Service Container
 
 ## Overview
+
+## Relationships
+- **Contains**: DatabaseConnectionPool, Folder Size Implementation
+- **Used By**: All core components
+- **Implements**: Dependency Injection Requirement
+
 Dependency injection container with lifecycle management
 
 ## Purpose

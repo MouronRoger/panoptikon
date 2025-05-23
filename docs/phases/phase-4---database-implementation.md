@@ -11,6 +11,12 @@ updated: '2025-05-14T00:30:08.915747'
 # Phase 4 - Database Implementation
 
 ## Objectives
+
+## Relationships
+- **Contains**: Database Schema, Connection Pool, Migration System
+- **Depends On**: Phase 3 - Filesystem Abstraction
+- **Follows**: Phase 3 - Filesystem Abstraction
+
 SQLite integration with connection pooling
 
 ## Components
