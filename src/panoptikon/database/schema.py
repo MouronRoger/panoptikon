@@ -96,6 +96,18 @@ CREATE TABLE IF NOT EXISTS permission_bookmarks (
 );
 """
 
+INDEXING_STATE_TABLE = """
+CREATE TABLE IF NOT EXISTS indexing_state (
+    id INTEGER PRIMARY KEY CHECK (id = 1),
+    operation_type TEXT NOT NULL,      -- 'initial', 'incremental', etc.
+    status TEXT NOT NULL,              -- 'in_progress', 'paused', 'completed', etc.
+    checkpoint_data TEXT,              -- JSON-encoded checkpoint info
+    started_at INTEGER NOT NULL,       -- Timestamp when indexing started
+    updated_at INTEGER NOT NULL,       -- Last update timestamp
+    completed_at INTEGER               -- Timestamp when indexing completed (nullable)
+);
+"""
+
 # Indexes for performance
 INDEXES = [
     "CREATE INDEX IF NOT EXISTS idx_files_name ON files(name_lower);",
@@ -197,6 +209,9 @@ class SchemaManager:
             cursor.execute(TABS_TABLE)
             cursor.execute(INDEXING_LOG_TABLE)
             cursor.execute(PERMISSION_BOOKMARKS_TABLE)
+            cursor.execute(
+                INDEXING_STATE_TABLE
+            )  # Stage 6.1: Core Indexing Checkpoint Table
 
             # Create indexes
             for index_sql in INDEXES:

@@ -378,3 +378,29 @@
     - Address any remaining linter warnings and long lines (#todo)
     - Further improve UI test robustness and coverage if/when PyObjC is available (#todo)
     - Log all future progress and decisions in the documentation system (#milestone) 
+
+## [2025-05-24 00:24] #phase6.1 #core-indexing #milestone #done #rationale #todo
+- **Phase:** 6.1 (Core Indexing Framework)
+- **Subphase:** Initial Scanner, State Management, Batch Indexing
+- **Summary:**
+    - Implemented the full Stage 6.1 core indexing infrastructure:
+        - Added `indexing_state` table to schema for checkpointing and recovery
+        - Implemented `IndexingStateManager` for atomic, JSON-based state persistence
+        - Built `IndexerService` with:
+            - Recursive file enumeration and metadata extraction
+            - Batch insert/update (1000 files per transaction) using `DatabaseService` and `QueryBuilder`
+            - Coarse-grained checkpointing after each batch (files processed, last path, batch number)
+            - Progress and error event publication (`IndexingProgressEvent`, `IndexingCompletedEvent`, `IndexingErrorEvent`)
+            - Resume-from-checkpoint logic for robust recovery
+        - All code is type-annotated, Black/isort/Ruff compliant, and follows project standards
+    - All major architectural and coding decisions are documented and aligned with Stage 6.1 spec and system rules
+- **Tags:** #done #milestone #core-indexing #checkpointing #batching #event #recovery #phase6.1 #rationale
+- **Rationale:**
+    - This infrastructure enables reliable, high-performance indexing with robust recovery and progress tracking. The design is intentionally simple and debuggable, with flexibility for future optimization and extension (e.g., incremental updates, folder size, cloud metadata).
+- **Next Steps:**
+    - Fix remaining linter/type errors (see #todo)
+    - Add/expand unit and integration tests for all new logic (#todo)
+    - Tune batch size, add rate/ETA calculation, and optimize progress tracking (#todo)
+    - Implement incremental update logic and event-driven indexing (Stage 6.4) (#todo)
+    - Proceed to Stage 6.2 (Initial Scanner) and Stage 6.3 (Metadata Extraction) as per the project roadmap (#todo)
+    - Maintain documentation and memory updates after each segment as required by the AI documentation prompt (#milestone) 
