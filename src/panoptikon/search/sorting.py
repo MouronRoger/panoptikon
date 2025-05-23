@@ -151,6 +151,100 @@ class SortingEngine:
             return list(result_set)
         criteria_list = [criteria] if isinstance(criteria, SortCriteria) else criteria
 
+        # Fast path: single AttributeSortCriteria or FolderSizeSortCriteria
+        if len(criteria_list) == 1 and isinstance(
+            criteria_list[0], (AttributeSortCriteria, FolderSizeSortCriteria)
+        ):
+            return self._fast_sort_single(result_set, criteria_list[0], direction)
+
+        # Fast path: all AttributeSortCriteria or FolderSizeSortCriteria
+        if all(
+            isinstance(c, (AttributeSortCriteria, FolderSizeSortCriteria))
+            for c in criteria_list
+        ):
+            return self._fast_sort_multi(result_set, criteria_list, direction)
+
+        # Fallback: comparator-based sort
+        return self._comparator_sort(result_set, criteria_list, direction)
+
+    def _fast_sort_single(
+        self,
+        result_set: list[SearchResult],
+        criteria: SortCriteria,
+        direction: str,
+    ) -> list[SearchResult]:
+        """Fast sort for a single attribute or folder size criteria.
+
+        For FolderSizeSortCriteria and AttributeSortCriteria('size'), None is always treated as float('-inf') (smallest), both in ascending and descending sorts.
+        """
+        reverse = direction == "desc"
+        if isinstance(criteria, AttributeSortCriteria):
+            attr = criteria.attribute
+
+            def key_fn(r: SearchResult) -> Any:
+                v = getattr(r, attr, None)
+                if attr in ("folder_size", "size") and v is None:
+                    return float("-inf")
+                if v is None:
+                    return float("-inf")
+                return v
+
+            return sorted(result_set, key=key_fn, reverse=reverse)
+        elif isinstance(criteria, FolderSizeSortCriteria):
+
+            def key_fn(r: SearchResult) -> Any:
+                v = r.metadata.get("folder_size")
+                if v is None:
+                    return float("-inf")
+                return v
+
+            return sorted(result_set, key=key_fn, reverse=reverse)
+        else:
+            # Should not reach here
+            return list(result_set)
+
+    def _fast_sort_multi(
+        self,
+        result_set: list[SearchResult],
+        criteria_list: list[SortCriteria],
+        direction: str,
+    ) -> list[SearchResult]:
+        """Fast multi-key sort for all attribute/folder size criteria.
+
+        For FolderSizeSortCriteria or AttributeSortCriteria('size'), None is always treated as float('-inf') (smallest), both in ascending and descending sorts.
+        """
+        reverse = direction == "desc"
+
+        def key_fn(r: SearchResult) -> tuple:
+            keys = []
+            for crit in criteria_list:
+                if isinstance(crit, AttributeSortCriteria):
+                    attr = crit.attribute
+                    v = getattr(r, attr, None)
+                    if attr in ("folder_size", "size") and v is None:
+                        v = float("-inf")
+                    if v is None:
+                        v = float("-inf")
+                    keys.append(v)
+                elif isinstance(crit, FolderSizeSortCriteria):
+                    v = r.metadata.get("folder_size")
+                    if v is None:
+                        v = float("-inf")
+                    keys.append(v)
+                else:
+                    keys.append(None)
+            return tuple(keys)
+
+        return sorted(result_set, key=key_fn, reverse=reverse)
+
+    def _comparator_sort(
+        self,
+        result_set: list[SearchResult],
+        criteria_list: list[SortCriteria],
+        direction: str,
+    ) -> list[SearchResult]:
+        """Fallback comparator-based sort for custom/mixed criteria."""
+
         def cmp(a: SearchResult, b: SearchResult) -> int:
             for crit in criteria_list:
                 sig = inspect.signature(crit.compare)

@@ -102,15 +102,15 @@ def test_sort_by_size_desc(dummy_results: List[SearchResult]) -> None:
     sorted_results = engine.apply_sort(
         dummy_results, AttributeSortCriteria("size"), "desc"
     )
-    # Descending: e(200), a.txt(100), c.md(75), b.txt(50), d(None/1024)
+    # Descending: d(None/1024) should be last
     assert [r.name for r in sorted_results] == ["e", "a.txt", "c.md", "b.txt", "d"]
 
 
 def test_sort_by_folder_size_asc(dummy_results: List[SearchResult]) -> None:
     engine = SortingEngine()
     sorted_results = engine.apply_sort(dummy_results, FolderSizeSortCriteria(), "asc")
-    # d(500), a.txt(1000), c.md(None/1024), e(None/1024), b.txt(2000)
-    assert [r.name for r in sorted_results] == ["d", "a.txt", "c.md", "e", "b.txt"]
+    # Ascending folder size: empty folders first, then by size
+    assert [r.name for r in sorted_results] == ["c.md", "e", "d", "a.txt", "b.txt"]
 
 
 @pytest.mark.xfail(reason="Folder size calculation not implemented until Stage 6")

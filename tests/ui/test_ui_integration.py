@@ -30,9 +30,12 @@ This approach is robust, cross-platform, and future-proof for conditional test c
 
 import sys
 
+import pytest
+
 # Check for PyObjC availability BEFORE any imports
 try:
-    __import__("objc")
+    import objc  # noqa: F401
+
     PYOBJC_AVAILABLE = True
 except ImportError:
     PYOBJC_AVAILABLE = False
@@ -51,10 +54,12 @@ except ImportError:
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from panoptikon.core.events import EventBus
 from panoptikon.ui.macos_app import FileSearchApp
+
+pytestmark = pytest.mark.skipif(
+    not PYOBJC_AVAILABLE, reason="PyObjC not available: skipping UI integration tests."
+)
 
 
 @pytest.fixture(autouse=True)
