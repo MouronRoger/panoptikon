@@ -1,158 +1,28 @@
-# Knowledge System Cleanup - Technical Implementation
+# Knowledge System Cleanup - Phased Implementation Plan
 
-**🚨 CRITICAL**: All timestamps MUST be system-generated. AI models cannot accurately generate timestamps and will hallucinate dates/times. This is non-negotiable for data integrity.
+## Executive Summary
 
-## Quick Reference - Ongoing Workflow
+This document provides a concrete, phased implementation plan for completing the Panoptikon knowledge system cleanup. Much of the preparatory work has been completed - this plan focuses on the remaining implementation tasks needed to achieve a fully functional two-document knowledge system.
 
-### After Each Work Session
-```bash
-# 1. Update progress in ai_docs.md
-echo "## [$(date +"%Y-%m-%d %H:%M")] #phase5 #wip" >> docs/ai_docs.md
-echo "- **Summary:** Implemented Query_Parser optimization" >> docs/ai_docs.md
-echo "- **Details:** Reduced parsing time by 40%" >> docs/ai_docs.md
+**Current State:**
+- ✅ Documents prepared (roadmap has relationships, ai_docs has timestamps)
+- ✅ Empty directories removed
+- ✅ Basic infrastructure exists (models, extractors)
+- ❌ Missing ai_docs parser
+- ❌ Missing key methods in KnowledgeGraphManager
+- ❌ rebuild_graph.sh references old structure
 
-# 2. Sync to knowledge graph
-cd scripts/knowledge
-./rebuild_graph.sh
+**Target State:**
+- 100+ entities (vs current 7)
+- Full progress tracking from ai_docs.md
+- Clean, simple two-document system
+- No external dependencies
 
-# 3. Verify in MCP (from AI assistant)
-# "Search for Query_Parser updates"
-```
+## Phase 1: Extend KnowledgeGraphManager (30 minutes)
 
-### Weekly Maintenance
-1. Review ai_docs.md for completeness
-2. Run full knowledge graph rebuild
-3. Check for any architectural changes needed in roadmap
-4. Backup current knowledge graph
+### 1.1 Add Missing Methods to relationship_extractor_typed.py
 
-This is a **living system** - the value comes from keeping it current!
-
-## Pre-Implementation Checklist
-
-```bash
-# 1. Backup current system WITH TIMESTAMP
-cd /Users/james/Documents/GitHub/panoptikon
-cp -r "/Users/james/Library/Application Support/Claude/panoptikon/memory.jsonl" \
-      "/Users/james/Library/Application Support/Claude/panoptikon/memory_backup_$(date +%Y%m%d_%H%M%S).jsonl"
-
-# 2. Create working branch
-git checkout -b knowledge-system-cleanup
-git add -A
-git commit -m "Backup before knowledge system cleanup - $(date +"%Y-%m-%d %H:%M")"
-```
-
-## Phase 1: Document Preparation
-
-### 1.1 Rename and Update Roadmap
-
-```bash
-# Rename to canonical name
-mv docs/read_panoptikon-development-roadmap.md docs/panoptikon_roadmap.md
-```
-
-### 1.2 Add Relationships Section to Roadmap
-
-Add this section to the end of `panoptikon_roadmap.md` with MCP-compliant naming:
-
-```markdown
-## Relationships
-
-### Phase Relationships
-- **Phase 1 - Foundation**
-  - **Precedes**: Phase 2 - Core Engine
-  - **Contains**: Stage 1 - Project Initialization, Stage 2 - Core Infrastructure, Stage 3 - Filesystem Abstraction, Stage 4 - Database Foundation
-
-- **Phase 2 - Core Engine**
-  - **Depends On**: Phase 1 - Foundation
-  - **Precedes**: Phase 3 - UI Framework
-  - **Contains**: Stage 5 - Search Engine, Stage 6 - Indexing System
-
-- **Phase 3 - UI Framework**
-  - **Depends On**: Phase 2 - Core Engine
-  - **Precedes**: Phase 4 - Integration
-  - **Contains**: Stage 7 - UI Framework
-
-- **Phase 4 - Integration**
-  - **Depends On**: Phase 3 - UI Framework
-  - **Precedes**: Phase 5 - Optimization
-  - **Contains**: Stage 8 - Cloud Integration, Stage 9 - System Integration
-
-- **Phase 5 - Optimization**
-  - **Depends On**: Phase 4 - Integration
-  - **Precedes**: Phase 6 - Packaging
-  - **Contains**: Stage 10 - Optimization
-
-- **Phase 6 - Packaging**
-  - **Depends On**: Phase 5 - Optimization
-  - **Contains**: Stage 11 - Packaging and Release
-
-### Stage Component Relationships (MCP naming conventions)
-- **Stage 1 - Project Initialization**
-  - **Contains**: Project_Structure, Build_System, Testing_Framework
-
-- **Stage 2 - Core Infrastructure**
-  - **Contains**: Service_Container, Event_Bus, Configuration_System
-
-- **Stage 3 - Filesystem Abstraction**
-  - **Contains**: FSEvents_Wrapper, Security_Bookmarks, Cloud_Detection
-
-- **Stage 4 - Database Foundation**
-  - **Contains**: Database_Schema, Connection_Pool, Migration_System, Query_Optimization
-
-- **Stage 5 - Search Engine**
-  - **Contains**: Query_Parser, Search_Algorithm, Result_Management, Sorting_System, Filtering_System
-
-- **Stage 6 - Indexing System**
-  - **Contains**: Initial_Scanner, Incremental_Updates, File_System_Monitoring, Folder_Size_Calculation
-
-- **Stage 7 - UI Framework**
-  - **Contains**: Main_Window, Search_Field, Results_Table, Dual_Window_Manager, Folder_Size_Display
-
-### Component Dependencies
-- **Service_Container**
-  - **Used By**: All core components
-
-- **Database_Schema**
-  - **Used By**: Connection_Pool, Migration_System, Search_Engine, Indexing_System
-
-- **Query_Parser**
-  - **Used By**: Search_Algorithm
-
-- **Search_Engine**
-  - **Depends On**: Database_Schema, Query_Parser
-  - **Used By**: UI_Framework
-
-### Feature Relationships
-- **Folder_Size_Feature**
-  - **Implemented By**: Folder_Size_Calculation, Folder_Size_Display
-  - **Depends On**: Database_Schema, Migration_System
-
-- **Dual_Window_Feature**
-  - **Implemented By**: Dual_Window_Manager
-  - **Depends On**: Main_Window, Event_Bus
-```
-
-### 1.3 Audit ai_docs.md Timestamps
-
-**CRITICAL STEP**: Verify all timestamps in ai_docs.md are in correct format:
-
-```bash
-# Check timestamp format in ai_docs.md
-grep -E "^## \[[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}\]" docs/ai_docs.md
-
-# Find any non-conforming date formats
-grep -E "^## \[" docs/ai_docs.md | grep -v -E "^\## \[[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}\]"
-
-# If any bad timestamps found, they must be fixed or entries will be skipped
-```
-
-**⚠️ WARNING**: Any entries without proper timestamps will be ignored by the parser. Do NOT add timestamps to historical entries - preserve them as-is.
-
-## Phase 2: Parser Development
-
-### 2.0 Update Memory Manager for MCP Support
-
-First, ensure `memory_manager_typed.py` has these methods:
+Add these methods to the `KnowledgeGraphManager` class:
 
 ```python
 def add_observation(self, entity_name: str, observation: str, *, dry_run: bool = False) -> None:
@@ -173,11 +43,17 @@ def add_observation(self, entity_name: str, observation: str, *, dry_run: bool =
     if dry_run:
         print(f"  [DRY] Would add observation to {entity.name}: {observation}")
         return
+    
+    # Check if observation already exists
+    if observation in entity.observations:
+        print(f"  [Skip] Observation already exists on {entity.name}")
+        return
         
     # Add observation to entity
     entity.observations.append(observation)
     
-    # Write updated entity to file
+    # Rewrite the entire entity with updated observations
+    # Note: This is inefficient but maintains compatibility with MCP format
     with self.memory_path.open("a", encoding="utf-8") as f:
         f.write(json.dumps(entity.to_jsonl_dict()) + "\n")
     print(f"  [Add] Observation to {entity.name}: {observation}")
@@ -187,11 +63,34 @@ def entity_exists(self, name: str) -> bool:
     normalized = normalize_name(name)
     return any(normalize_name(e.name) == normalized 
                for e in self._entity_cache.values())
+
+def search_entities(self, name: str) -> Optional[Entity]:
+    """Search for entity by normalized name."""
+    normalized = normalize_name(name)
+    for e in self._entity_cache.values():
+        if normalize_name(e.name) == normalized:
+            return e
+    return None
 ```
 
-### 2.1 Create ai_docs Parser
+### 1.2 Test the Extended Manager
 
-Create `scripts/knowledge/ai_docs_parser.py` with MCP-aware functionality:
+Create a quick test script to verify the new methods work:
+
+```bash
+cd /Users/james/Documents/GitHub/panoptikon
+python3 -c "
+from scripts.knowledge.relationship_extractor_typed import KnowledgeGraphManager
+km = KnowledgeGraphManager()
+print(f'Entity exists test: {km.entity_exists(\"Phase 5.1\")}')
+km.add_entity('Test_Entity', 'Component', 'Initial observation', dry_run=True)
+km.add_observation('Test_Entity', '[2025-05-24 23:00] Test observation', dry_run=True)
+"
+```
+
+## Phase 2: Create AI Docs Parser (2 hours)
+
+### 2.1 Create scripts/knowledge/ai_docs_parser.py
 
 ```python
 #!/usr/bin/env python3
@@ -203,20 +102,20 @@ CRITICAL: Only uses existing timestamps - NEVER generates dates/times.
 
 import re
 import sys
-from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
 
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
-from scripts.knowledge.models import entity_id, normalize_name
+from scripts.knowledge.relationship_extractor_typed import KnowledgeGraphManager
+from scripts.knowledge.models import normalize_name
 
 
 class AIDocsParser:
     """Parse ai_docs.md entries and extract progress information."""
     
-    def __init__(self, memory_manager):
+    def __init__(self, memory_manager: KnowledgeGraphManager):
         self.km = memory_manager
         self.processed_entries = set()
         
@@ -286,17 +185,11 @@ class AIDocsParser:
             entity_type = "Phase" if tag.startswith('phase') else "Stage"
             
             # Search for existing entity first (MCP best practice)
-            existing = self._search_entity(entity_name)
-            
-            if existing:
+            if self.km.entity_exists(entity_name):
                 # Add observation to existing entity
                 observations = self._create_atomic_observations(timestamp, status, summary)
                 for obs in observations:
-                    if dry_run:
-                        print(f"  [DRY] Would add observation to {entity_name}: {obs}")
-                    else:
-                        self.km.add_observation(entity_name, obs)
-                        print(f"  [Add] Observation to {entity_name}: {obs}")
+                    self.km.add_observation(entity_name, obs, dry_run=dry_run)
             else:
                 # Create new entity with initial observation
                 obs = f"[{timestamp}] Status: {status}"
@@ -315,10 +208,9 @@ class AIDocsParser:
                 component_name = self._mcp_component_name(component)
                 
                 # Search first
-                if self._search_entity(component_name):
+                if self.km.entity_exists(component_name):
                     obs = f"[{timestamp}] {summary[:100]}..."
-                    if not dry_run:
-                        self.km.add_observation(component_name, obs)
+                    self.km.add_observation(component_name, obs, dry_run=dry_run)
                 else:
                     self.km.add_entity(
                         component_name,
@@ -350,12 +242,6 @@ class AIDocsParser:
         component = component.replace(" class", "").replace(" component", "")
         # Convert to underscore format
         return component.strip().replace(" ", "_")
-        
-    def _search_entity(self, name: str) -> bool:
-        """Check if entity exists using normalized name."""
-        normalized = normalize_name(name)
-        return any(normalize_name(e.name) == normalized 
-                  for e in self.km._entity_cache.values())
         
     def _create_atomic_observations(self, timestamp: str, status: str, 
                                    summary: str) -> List[str]:
@@ -426,7 +312,6 @@ class AIDocsParser:
 def main():
     """CLI entry point."""
     import argparse
-    from scripts.knowledge.memory_manager_typed import KnowledgeGraphManager
     
     parser = argparse.ArgumentParser(description="Parse ai_docs.md progress entries")
     parser.add_argument("file", help="Path to ai_docs.md")
@@ -442,11 +327,22 @@ if __name__ == "__main__":
     main()
 ```
 
-## Phase 3: Update Rebuild Script
+### 2.2 Test the Parser
 
-### 3.1 Modify rebuild_graph.sh
+```bash
+# Dry run first
+cd /Users/james/Documents/GitHub/panoptikon
+python scripts/knowledge/ai_docs_parser.py docs/ai_docs.md --dry-run | head -50
 
-Update the extraction section in `scripts/knowledge/rebuild_graph.sh`:
+# Check if it's finding entries
+python scripts/knowledge/ai_docs_parser.py docs/ai_docs.md --dry-run | grep "Phase\|Stage\|Component"
+```
+
+## Phase 3: Update Rebuild Script (30 minutes)
+
+### 3.1 Update scripts/knowledge/rebuild_graph.sh
+
+Replace the current extraction section with:
 
 ```bash
 # Phase 2: Extract from Documentation
@@ -455,7 +351,11 @@ echo -e "\n[Phase 2] Document Extraction"
 # Extract from roadmap (structure and relationships)
 echo "  Extracting project structure from roadmap..."
 if [ -f "$DOCS_DIR/panoptikon_roadmap.md" ]; then
-    python "$EXTRACTOR" "$DOCS_DIR/panoptikon_roadmap.md"
+    if [ -f "$SCRIPTS_DIR/relationship_extractor_typed.py" ]; then
+        python "$SCRIPTS_DIR/relationship_extractor_typed.py" "$DOCS_DIR/panoptikon_roadmap.md"
+    else
+        python "$SCRIPTS_DIR/relationship_extractor.py" "$DOCS_DIR/panoptikon_roadmap.md"
+    fi
 else
     echo "  [ERROR] panoptikon_roadmap.md not found!"
     exit 1
@@ -478,351 +378,216 @@ fi
 # No longer processing phases/, components/, decisions/
 ```
 
-## Phase 4: Cleanup Operations
+### 3.2 Remove Qdrant References
 
-### 4.1 Archive Qdrant Dependencies
+Remove or comment out the entire "Optional: Sync to Qdrant" section:
+
+```bash
+# Phase 6: Summary
+echo -e "\n[Phase 6] Summary"
+if [ -f "$SCRIPTS_DIR/graph_summary.py" ]; then
+    python "$SCRIPTS_DIR/graph_summary.py"
+else
+    echo "  [Warn] graph_summary.py not found"
+    # Simple fallback
+    echo "  Entities: $(grep -c '"type":"entity"' "$MEMORY_PATH" 2>/dev/null || echo 0)"
+    echo "  Relations: $(grep -c '"type":"relation"' "$MEMORY_PATH" 2>/dev/null || echo 0)"
+fi
+
+# Removed Qdrant sync section - no longer needed
+
+echo -e "\n=== Rebuild Complete ==="
+echo "Finished at: $(date)"
+exit 0
+```
+
+## Phase 4: Testing & Validation (1 hour)
+
+### 4.1 Full System Test
 
 ```bash
 cd /Users/james/Documents/GitHub/panoptikon
 
-# Create archive directory
-mkdir -p scripts/archived/qdrant
+# Backup current knowledge graph
+cp "/Users/james/Library/Application Support/Claude/panoptikon/memory.jsonl" \
+   "/Users/james/Library/Application Support/Claude/panoptikon/memory_backup_$(date +%Y%m%d_%H%M%S).jsonl"
 
-# Move Qdrant-related files
-mv scripts/documentation/dual_reindex.py scripts/archived/qdrant/
-mv scripts/documentation/migrate_*.py scripts/archived/qdrant/
-mv scripts/qdrant/* scripts/archived/qdrant/ 2>/dev/null || true
-
-# Archive the directory with timestamp
-tar -czf scripts/archived/qdrant_backup_$(date +%Y%m%d_%H%M%S).tar.gz scripts/archived/qdrant
-```
-
-### 4.2 Simplify ai_docs.py
-
-Remove Qdrant dependencies from `scripts/documentation/ai_docs.py`:
-
-```python
-# Remove these imports
-# from qdrant_client import QdrantClient
-# from sentence_transformers import SentenceTransformer
-
-# Remove Qdrant initialization from __init__
-# Remove these methods:
-# - ensure_collection()
-# - search_docs()  
-# - index_document()
-
-# Keep only local file operations
-```
-
-### 4.3 Remove Empty Directories
-
-```bash
-# Remove empty documentation directories
-rm -rf docs/progress/
-rm -rf docs/decisions/
-rm -rf docs/kg_export/
-
-# Clean up any .DS_Store files
-find docs -name ".DS_Store" -delete
-```
-
-## Phase 5: Testing & Validation
-
-### 5.1 Test the New System
-
-```bash
+# Run the full rebuild
 cd scripts/knowledge
-
-# Dry run first
-./rebuild_graph.sh --dry-run
-
-# If looks good, run for real
 ./rebuild_graph.sh
 
-# Check the results
-wc -l "/Users/james/Library/Application Support/Claude/panoptikon/memory.jsonl"
-# Should show many more lines than before
+# Check results
+echo "Entity count: $(grep -c '"type":"entity"' "$MEMORY_PATH")"
+echo "Relation count: $(grep -c '"type":"relation"' "$MEMORY_PATH")"
 ```
 
-### 5.2 Validate Knowledge Graph with MCP
+### 4.2 Validation Script
+
+Create a validation script to check the results:
 
 ```python
-# Quick validation script using MCP functionality
-from scripts.knowledge.memory_manager_typed import KnowledgeGraphManager
-from datetime import datetime
+#!/usr/bin/env python3
+"""Validate the rebuilt knowledge graph."""
+
+from scripts.knowledge.relationship_extractor_typed import KnowledgeGraphManager
 
 km = KnowledgeGraphManager()
 
-print(f"Validation run at: {datetime.now().strftime('%Y-%m-%d %H:%M')}")
-
-# Check for Phase 5 entries with observations
-phase5_entities = [e for e in km._entity_cache.values() 
-                   if 'Phase 5' in e.name]
-print(f"\nPhase 5 entities: {len(phase5_entities)}")
-
-# Check observations on entities
-for entity in phase5_entities[:3]:  # First 3 as examples
-    print(f"\n{entity.name} ({entity.entityType}):")
-    for obs in entity.observations:
-        print(f"  - {obs}")
-
-# Check for proper MCP naming
-components = [e for e in km._entity_cache.values() 
-              if e.entityType == "Component"]
-mcp_named = [c for c in components if "_" in c.name]
-print(f"\nComponents with MCP naming: {len(mcp_named)}/{len(components)}")
-
-# Look for decisions
-decisions = [e for e in km._entity_cache.values() 
-             if e.entityType == "decision"]
-print(f"\nArchitecture decisions tracked: {len(decisions)}")
-
-# Verify atomic observations with timestamps
-import re
-all_observations = []
+# Count entities by type
+entity_types = {}
 for entity in km._entity_cache.values():
-    all_observations.extend(entity.observations)
-    
-timestamped = [o for o in all_observations if re.match(r'^\[\d{4}-\d{2}-\d{2}', o)]
-print(f"\nTimestamped observations: {len(timestamped)}/{len(all_observations)}")
+    entity_types[entity.entityType] = entity_types.get(entity.entityType, 0) + 1
 
-# Check for AI-generated timestamps (suspicious patterns)
-suspicious_times = []
-for obs in timestamped:
-    time_match = re.match(r'^\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2})\]', obs)
-    if time_match:
-        time_str = time_match.group(1)
-        # Check for patterns like always :00 or :30
-        if time_str.endswith(':00') or time_str.endswith(':30'):
-            suspicious_times.append(time_str)
-            
-if suspicious_times:
-    print(f"\n⚠️  WARNING: Found {len(suspicious_times)} suspicious timestamps ending in :00 or :30")
-    print("These may be AI-generated. Sample:", suspicious_times[:5])
+print("Entity counts by type:")
+for etype, count in sorted(entity_types.items()):
+    print(f"  {etype}: {count}")
+
+# Check for progress observations
+progress_count = 0
+for entity in km._entity_cache.values():
+    if any('Status:' in obs for obs in entity.observations):
+        progress_count += 1
+
+print(f"\nEntities with progress: {progress_count}")
+
+# Sample some phases
+print("\nSample Phase observations:")
+for entity in km._entity_cache.values():
+    if entity.entityType == "Phase" and entity.observations:
+        print(f"\n{entity.name}:")
+        for obs in entity.observations[:3]:
+            print(f"  - {obs}")
+        if len(entity.observations) > 3:
+            print(f"  ... and {len(entity.observations) - 3} more")
 ```
 
-## Phase 6: Documentation Updates
+### 4.3 MCP Tool Verification
 
-### 6.1 Update AI_DOCUMENTATION_GUIDE.md
+Test with MCP tools:
 
-Remove Qdrant references and align with MCP:
+```python
+# Use the MCP knowledge graph tools
+search_nodes("Phase 5")  # Should find Phase 5 entries
+open_nodes(["Phase 5.1", "Query_Parser"])  # Should show observations
+```
+
+## Phase 5: Cleanup & Documentation (30 minutes)
+
+### 5.1 Remove Old Files
+
+```bash
+# Archive any Qdrant-related scripts if found
+find scripts -name "*qdrant*" -o -name "*dual_reindex*" | while read f; do
+    echo "Found: $f"
+    # mkdir -p scripts/archived
+    # mv "$f" scripts/archived/
+done
+
+# Clean up any empty directories
+find docs -type d -empty -delete
+```
+
+### 5.2 Update Documentation
+
+Update AI_DOCUMENTATION_GUIDE.md to reflect the new system:
+- Remove Qdrant references from the core knowledge system
+- Update the workflow to use rebuild_graph.sh
+- Add examples of using MCP tools
+
+### 5.3 Create a Quick Reference Card
+
+Create `docs/guides/KNOWLEDGE_GRAPH_QUICK_REFERENCE.md`:
 
 ```markdown
-# AI Documentation Guide - Panoptikon
+# Knowledge Graph Quick Reference
 
-## Knowledge System Overview
+## Daily Workflow
 
-The Panoptikon knowledge system uses the MCP Knowledge Graph server for persistent memory:
-
-1. **panoptikon_roadmap.md** - Project structure and relationships
-2. **ai_docs.md** - Progress tracking and history  
-3. **MCP Knowledge Graph** - Combined view stored in JSONL format
-
-## Timestamp Requirements
-
-**🚨 CRITICAL**: All timestamps MUST be system-generated. AI cannot accurately estimate times.
-
-### Creating New Entries
-```bash
-# Correct - System generated
-echo "## [$(date +"%Y-%m-%d %H:%M")] Progress update" >> docs/ai_docs.md
-
-# WRONG - Never manually type timestamps
-echo "## [2025-05-24 14:30] Progress update" >> docs/ai_docs.md
-```
-
-### Python Timestamps
-```python
-from datetime import datetime
-timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
-entry = f"## [{timestamp}] Progress update"
-```
-
-## MCP Integration
-
-### Entity Naming Conventions
-- Phases/Stages: `Phase 5.1`, `Stage 10`
-- Components: `Query_Parser`, `Search_Engine` (use underscores)
-- Decisions: `Decision_2025-05-24` (use system date)
-- Consistency is key - entities are identified by name
-
-### Entity Types
-- `Phase` - Development phases
-- `Stage` - Implementation stages  
-- `Component` - Software modules
-- `decision` - Architecture decisions
-- `issue` - Problems/blockers
-- `technology` - Tools/frameworks
-
-### Observations
-- Progress stored as timestamped observations
-- Format: `[YYYY-MM-DD HH:MM] Status: X - Details`
-- Keep observations atomic (one fact each)
-- Automatically versioned by MCP
-
-## Workflow
-
-1. **Planning Changes**: Update panoptikon_roadmap.md relationships
-2. **Progress Tracking**: Update ai_docs.md with system-timestamped entries
-3. **Knowledge Graph**: Run `rebuild_graph.sh` to sync
-4. **Query**: Use MCP tools (search_nodes, read_graph) to explore
-
-## MCP Tools Available
-- `create_entities` - New entities with observations
-- `add_observations` - Add facts to existing entities
-- `create_relations` - Link entities
-- `search_nodes` - Find entities by name/type/content
-- `read_graph` - Get complete graph
-- `delete_entities` - Remove entities
-- `update_entities` - Modify entities
-
-## Best Practices
-- Always use system timestamps
-- Search before creating new entities
-- Use consistent naming (especially underscores)
-- Keep observations atomic and timestamped
-- Let MCP handle versioning automatically
-```
-
-## Handling Roadmap Changes
-
-### Change Process
-
-When architectural changes are needed:
-
-1. **Update panoptikon_roadmap.md**
+1. **Update Progress**
    ```bash
-   # Add system timestamp to change log
-   echo "## [$(date +"%Y-%m-%d %H:%M")] Architectural Change" >> docs/panoptikon_roadmap.md
-   echo "- Added new Stage 5.6 - Performance Monitoring" >> docs/panoptikon_roadmap.md
-   echo "- Updated relationships section" >> docs/panoptikon_roadmap.md
-   echo "- Reason: Need dedicated performance tracking" >> docs/panoptikon_roadmap.md
+   echo "## [$(date +"%Y-%m-%d %H:%M")] #phase5 #wip" >> docs/ai_docs.md
+   echo "- **Summary:** Implemented feature X" >> docs/ai_docs.md
    ```
 
-2. **Update affected stage files** (if they exist)
-   ```bash
-   # Check which stages reference changed components
-   grep -r "Component Name" docs/stages/
-   ```
-
-3. **Record in ai_docs.md**
-   ```bash
-   # System timestamp for progress entry
-   echo "## [$(date +"%Y-%m-%d %H:%M")] #architecture #change #stage5.6" >> docs/ai_docs.md
-   echo "- **Phase:** 5 (Search Engine)" >> docs/ai_docs.md
-   echo "- **Summary:** Added Stage 5.6 for performance monitoring" >> docs/ai_docs.md
-   echo "- **Rationale:** Separate performance concerns from optimization" >> docs/ai_docs.md
-   ```
-
-4. **Rebuild knowledge graph**
+2. **Sync Knowledge Graph**
    ```bash
    cd scripts/knowledge
    ./rebuild_graph.sh
    ```
 
-### Cascade Handling
+3. **Query from AI**
+   - Use: search_nodes("component name")
+   - Use: open_nodes(["Phase 5.1"])
 
-For cascading changes:
-- Manual review ensures consistency
-- Git diff shows what changed
-- Knowledge graph rebuild captures new state
-- ai_docs.md provides audit trail with accurate timestamps
+## Key Files
+- Structure: `/docs/panoptikon_roadmap.md`
+- Progress: `/docs/ai_docs.md`
+- Graph: `.../Claude/panoptikon/memory.jsonl`
+
+## MCP Entity Naming
+- Phases: `Phase 5.1` (with space)
+- Stages: `Stage 10` (with space)
+- Components: `Query_Parser` (underscore)
+- Decisions: `Decision_2025-05-24`
+```
+
+## Success Criteria
+
+After implementation:
+
+1. **Entity Count**: 100+ entities (vs current 7)
+   - All 6 phases represented
+   - All 11 stages represented
+   - Major components tracked
+   - Progress observations attached
+
+2. **Observations**: 
+   - Each phase/stage has status observations
+   - Timestamps preserved from ai_docs.md
+   - Atomic, meaningful observations
+
+3. **Performance**:
+   - Rebuild completes in <10 seconds
+   - No network calls (all local)
+   - Clean output with clear progress
+
+4. **Cleanliness**:
+   - No Qdrant dependencies in core workflow
+   - Simple two-document system
+   - Clear documentation
 
 ## Rollback Plan
 
 If issues arise:
 
 ```bash
-# Restore from timestamped backup
+# Restore from backup
 cp "/Users/james/Library/Application Support/Claude/panoptikon/memory_backup_[timestamp].jsonl" \
    "/Users/james/Library/Application Support/Claude/panoptikon/memory.jsonl"
 
-# Or rebuild from last known good state
-git checkout [last-good-commit] -- docs/panoptikon_roadmap.md docs/ai_docs.md
+# Or rebuild from git state
+git stash  # Save any changes
+git checkout main -- docs/panoptikon_roadmap.md docs/ai_docs.md
+cd scripts/knowledge
 ./rebuild_graph.sh
 ```
 
-## Success Verification with MCP
+## Time Estimate
 
-After implementation:
+- Phase 1: 30 minutes (extend manager)
+- Phase 2: 2 hours (create parser)
+- Phase 3: 30 minutes (update scripts)
+- Phase 4: 1 hour (test & validate)
+- Phase 5: 30 minutes (cleanup & docs)
 
-1. **Entity Count**: Should see 100+ entities (vs ~30 before)
-2. **Progress Tracking**: Phase 5 entities should exist with observations
-3. **Relationships**: All roadmap relationships preserved
-4. **Performance**: Rebuild takes <5 seconds (no network calls)
-5. **MCP Compliance**: 
-   - Components use underscore naming
-   - Observations are timestamped
-   - Decisions tracked as separate entity type
-   - Search functionality prevents duplicates
-6. **JSONL Integrity**: Each line is valid JSON with proper MCP structure
-7. **Timestamp Integrity**: No AI-generated timestamps in the system
+**Total: ~4.5 hours of focused work**
 
-## MCP Tool Usage
+## Next Actions
 
-After cleanup, you can use MCP tools directly:
+1. Start with Phase 1 - extend KnowledgeGraphManager
+2. Test the extensions work correctly
+3. Move to Phase 2 - create the parser
+4. Continue through phases sequentially
+5. Validate at each step before proceeding
 
-```python
-from datetime import datetime
-
-# Search for components
-results = search_nodes("Query_Parser")
-
-# Read full graph
-graph = read_graph()
-
-# Add new observations with system timestamp
-timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
-add_observations([{
-    "entityName": "Phase 5.1",
-    "contents": [f"[{timestamp}] Deployed to production"]
-}])
-
-# Create new relations
-create_relations([{
-    "from": "Query_Parser",
-    "to": "Search_Engine", 
-    "relationType": "used_by"
-}])
-```
-
-## Timestamp Validation Script
-
-Use this to check for AI-generated timestamps:
-
-```python
-#!/usr/bin/env python3
-"""Validate timestamps in ai_docs.md for AI hallucinations."""
-
-import re
-from pathlib import Path
-from collections import Counter
-
-def check_timestamps(filepath):
-    content = filepath.read_text()
-    timestamps = re.findall(r'\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2})\]', content)
-    
-    # Check for suspicious patterns
-    minute_endings = Counter(ts.split(':')[1] for ts in timestamps)
-    
-    print(f"Total timestamps: {len(timestamps)}")
-    print(f"Minute endings distribution:")
-    for minute, count in minute_endings.most_common():
-        pct = (count / len(timestamps)) * 100
-        flag = "⚠️ " if minute in ['00', '30'] and pct > 20 else ""
-        print(f"  :{minute} - {count} times ({pct:.1f}%) {flag}")
-        
-    # Check for sequential patterns
-    print("\nChecking for suspicious sequential patterns...")
-    for i in range(1, len(timestamps)):
-        prev = timestamps[i-1]
-        curr = timestamps[i]
-        # If timestamps are exactly 30 or 60 minutes apart, flag
-        # (This would be very unlikely with real system timestamps)
-        
-if __name__ == "__main__":
-    check_timestamps(Path("docs/ai_docs.md"))
-```
-
-The cleaned system fully leverages MCP capabilities while maintaining simplicity and timestamp integrity.
+The system will be significantly more valuable once this cleanup is complete, providing accurate project state to the AI assistant.

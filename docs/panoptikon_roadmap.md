@@ -467,3 +467,79 @@ The roadmap is organized into **Development Phases** (timeline-based milestones)
 This development roadmap provides a structured approach to delivering Panoptikon using a clear hierarchy of Development Phases (timeline milestones) and Stages (implementation details). By organizing the work into these two levels, the plan offers both high-level progress tracking and detailed implementation guidance.
 
 The emphasis on early implementation of high-risk components, multiple implementation strategies for volatile OS interfaces, and comprehensive testing will ensure a high-quality, performant, and resilient application that delivers on the promise: "it knows where everything is with no blindspots."
+
+## Relationships
+
+### Phase Relationships
+- **Phase 1 - Foundation**
+  - **Precedes**: Phase 2 - Core Engine
+  - **Contains**: Stage 1 - Project Initialization, Stage 2 - Core Infrastructure, Stage 3 - Filesystem Abstraction, Stage 4 - Database Foundation
+
+- **Phase 2 - Core Engine**
+  - **Depends On**: Phase 1 - Foundation
+  - **Precedes**: Phase 3 - UI Framework
+  - **Contains**: Stage 5 - Search Engine, Stage 6 - Indexing System
+
+- **Phase 3 - UI Framework**
+  - **Depends On**: Phase 2 - Core Engine
+  - **Precedes**: Phase 4 - Integration
+  - **Contains**: Stage 7 - UI Framework
+
+- **Phase 4 - Integration**
+  - **Depends On**: Phase 3 - UI Framework
+  - **Precedes**: Phase 5 - Optimization
+  - **Contains**: Stage 8 - Cloud Integration, Stage 9 - System Integration
+
+- **Phase 5 - Optimization**
+  - **Depends On**: Phase 4 - Integration
+  - **Precedes**: Phase 6 - Packaging
+  - **Contains**: Stage 10 - Optimization
+
+- **Phase 6 - Packaging**
+  - **Depends On**: Phase 5 - Optimization
+  - **Contains**: Stage 11 - Packaging and Release
+
+### Stage Component Relationships (MCP naming conventions)
+- **Stage 1 - Project Initialization**
+  - **Contains**: Project_Structure, Build_System, Testing_Framework
+
+- **Stage 2 - Core Infrastructure**
+  - **Contains**: Service_Container, Event_Bus, Configuration_System
+
+- **Stage 3 - Filesystem Abstraction**
+  - **Contains**: FSEvents_Wrapper, Security_Bookmarks, Cloud_Detection
+
+- **Stage 4 - Database Foundation**
+  - **Contains**: Database_Schema, Connection_Pool, Migration_System, Query_Optimization
+
+- **Stage 5 - Search Engine**
+  - **Contains**: Query_Parser, Search_Algorithm, Result_Management, Sorting_System, Filtering_System
+
+- **Stage 6 - Indexing System**
+  - **Contains**: Initial_Scanner, Incremental_Updates, File_System_Monitoring, Folder_Size_Calculation
+
+- **Stage 7 - UI Framework**
+  - **Contains**: Main_Window, Search_Field, Results_Table, Dual_Window_Manager, Folder_Size_Display
+
+### Component Dependencies
+- **Service_Container**
+  - **Used By**: All core components
+
+- **Database_Schema**
+  - **Used By**: Connection_Pool, Migration_System, Search_Engine, Indexing_System
+
+- **Query_Parser**
+  - **Used By**: Search_Algorithm
+
+- **Search_Engine**
+  - **Depends On**: Database_Schema, Query_Parser
+  - **Used By**: UI_Framework
+
+### Feature Relationships
+- **Folder_Size_Feature**
+  - **Implemented By**: Folder_Size_Calculation, Folder_Size_Display
+  - **Depends On**: Database_Schema, Migration_System
+
+- **Dual_Window_Feature**
+  - **Implemented By**: Dual_Window_Manager
+  - **Depends On**: Main_Window, Event_Bus
