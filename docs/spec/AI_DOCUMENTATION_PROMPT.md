@@ -95,7 +95,9 @@ This file defines how the AI should document all progress, decisions, and ration
 
 ## Entry Template
 ```
-## [System time stamp] #phase4.2 #connection-pool #decision #todo
+## [SYSTEM_TIMESTAMP] #phase4.2 #connection-pool #decision #todo
+<!-- WARNING: Use actual system time, not AI-generated timestamp -->
+<!-- Get timestamp with: from scripts.documentation.ai_docs import get_system_timestamp -->
 - **Phase:** 4.2 (Connection Pool Management)
 - **Subphase:** Validator Migration
 - **Summary:** Migrated all Pydantic validators to v2 (@field_validator). Updated all tests and docs. No breaking changes.
@@ -126,7 +128,8 @@ This file defines how the AI should document all progress, decisions, and ration
 
 ## Example Entry
 ```
-## [YYYY-MM-DD HH:MM] #phase4.2 #connection-pool #decision #done
+## [2025-05-24 14:30] #phase4.2 #connection-pool #decision #done
+<!-- NOTE: This timestamp should be generated from system time, not hardcoded -->
 - **Phase:** 4.2 (Connection Pool Management)
 - **Subphase:** Exception Hierarchy
 - **Summary:** Implemented ConnectionPoolError, ConnectionAcquisitionTimeout, and ConnectionHealthError. Updated all pool code and tests to use new exceptions.

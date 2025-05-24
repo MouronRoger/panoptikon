@@ -13,6 +13,18 @@ from qdrant_client import QdrantClient
 from sentence_transformers import SentenceTransformer
 
 
+def get_system_timestamp() -> str:
+    """Get current system timestamp in standard format.
+    
+    WARNING: Always use this instead of hardcoded timestamps
+    to avoid AI date hallucination.
+    
+    Returns:
+        String timestamp in format [YYYY-MM-DD HH:MM]
+    """
+    return datetime.now().strftime("[%Y-%m-%d %H:%M]")
+
+
 class AIDocumentationSystem:
     """System for managing AI-accessible project documentation."""
 
@@ -274,7 +286,7 @@ class AIDocumentationSystem:
         with open(filepath, encoding="utf-8") as f:
             post = frontmatter.load(f)
         new_entry = f"""
-## {datetime.now().strftime("%Y-%m-%d %H:%M")}
+## {get_system_timestamp()}
 - **Status**: {updates.get("status", "In Progress")}
 - **Completed**: {updates.get("completed", [])}
 - **Issues**: {updates.get("issues", [])}
@@ -374,6 +386,21 @@ def update_phase_progress(phase: str, **updates: Any) -> bool:
     docs = AIDocumentationSystem()
     docs.validate_category("progress")
     return docs.update_progress(phase, updates)
+
+
+# Export key functions for easy import
+__all__ = [
+    "get_system_timestamp",
+    "read_documentation",
+    "update_documentation",
+    "create_documentation",
+    "search_documentation",
+    "document_component",
+    "document_phase",
+    "record_decision",
+    "update_phase_progress",
+    "AIDocumentationSystem",
+]
 
 
 if __name__ == "__main__":

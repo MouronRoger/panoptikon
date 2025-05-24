@@ -418,4 +418,22 @@
     - Prepares for future migration to multi-row/history design.
 - **Next Steps:**
     - Proceed to integration substage.
-    - Use `reset()` in any future tests requiring state cleanup. 
+    - Use `reset()` in any future tests requiring state cleanup.
+
+## [2025-05-24 17:00] #documentation #timestamp-policy #decision #done #rationale
+- **Phase:** Documentation System
+- **Summary:**
+    - Made system timestamp requirement prominent in all key documentation files to prevent AI date hallucination.
+    - Added ⚠️ CRITICAL sections at the top of AI_DOCUMENTATION_GUIDE.md and knowledge-system-mid-path-3.md.
+    - Created `get_system_timestamp()` utility function in ai_docs.py for consistent timestamp formatting.
+    - Updated documentation templates with timestamp warnings and usage examples.
+    - Added pre-commit hook `timestamp-check` to warn about hardcoded timestamps in documentation.
+- **Tags:** #done #decision #documentation #timestamp #rationale
+- **Rationale:**
+    - AI models don't have real-time clocks and often hallucinate dates, contaminating project history.
+    - Making the requirement prominent prevents this common mistake.
+    - Utility function and pre-commit hook provide both convenience and enforcement.
+- **Next Steps:**
+    - Use `from scripts.documentation.ai_docs import get_system_timestamp` in all documentation scripts.
+    - Monitor pre-commit hook effectiveness.
+    - Update any existing documentation generators to use system timestamps. 

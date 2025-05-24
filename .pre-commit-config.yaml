@@ -82,4 +82,12 @@ repos:
         entry: python scripts/knowledge/doc_lint.py
         language: system
         files: ^docs/.+\.md$
-        pass_filenames: true 
+        pass_filenames: true
+
+    -   id: timestamp-check
+        name: Check for hardcoded timestamps
+        entry: python scripts/checks/timestamp_check.py
+        language: python
+        files: ^docs/.*\.(md|markdown)$
+        pass_filenames: true
+        description: Warns about hardcoded timestamps that should use system time 
