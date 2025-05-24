@@ -404,3 +404,18 @@
     - Implement incremental update logic and event-driven indexing (Stage 6.4) (#todo)
     - Proceed to Stage 6.2 (Initial Scanner) and Stage 6.3 (Metadata Extraction) as per the project roadmap (#todo)
     - Maintain documentation and memory updates after each segment as required by the AI documentation prompt (#milestone) 
+
+## [2025-05-24 01:36] #stage6.1a #indexing #state-manager #testing #done #rationale
+- **Phase:** 6.1a (Enhanced Indexing State Module)
+- **Summary:**
+    - Added a public `reset()` method to `IndexingStateManager` for safe, encapsulated state cleanup.
+    - Updated the test suite to use `state_manager.reset()` in an autouse fixture, ensuring each test starts with a clean state.
+    - All tests for the enhanced state manager now pass, confirming correct isolation and behavior.
+- **Tags:** #done #test #isolation #encapsulation #rationale
+- **Rationale:**
+    - Encapsulates cleanup logic, making tests more maintainable and robust to future changes.
+    - Ensures test isolation for the single-row design.
+    - Prepares for future migration to multi-row/history design.
+- **Next Steps:**
+    - Proceed to integration substage.
+    - Use `reset()` in any future tests requiring state cleanup. 

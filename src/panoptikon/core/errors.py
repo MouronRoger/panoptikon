@@ -318,6 +318,34 @@ class ServiceNotRegisteredError(ApplicationError):
         )
 
 
+class IndexingError(ApplicationError):
+    """Raised for errors in the indexing state management system."""
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        severity: ErrorSeverity = ErrorSeverity.ERROR,
+        inner_exception: Optional[Exception] = None,
+        context: Optional[ErrorContext] = None,
+    ) -> None:
+        """Initialize a new indexing error.
+
+        Args:
+            message: Human-readable error message.
+            severity: Severity level of the error.
+            inner_exception: Optional exception that caused this error.
+            context: Optional context information for the error.
+        """
+        super().__init__(
+            message,
+            severity=severity,
+            category=ErrorCategory.DATABASE,
+            inner_exception=inner_exception,
+            context=context,
+        )
+
+
 class ErrorManager:
     """Central error management and reporting system.
 

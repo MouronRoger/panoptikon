@@ -53,6 +53,38 @@ The Incremental Updates module ensures the index remains fresh by efficiently pr
   - Extract and update metadata for changed files
   - Handle file creation and deletion
   - Process file moves and renames
+  - Track processed updates in checkpoint:
+    ```python
+    def process_incremental_updates(self, changes, state_manager, operation_id):
+        """Process file changes with checkpoint tracking."""
+        processed = 0
+        errors = []
+        
+        for change in changes:
+            try:
+                # Process the change
+                self.apply_change(change)
+                processed += 1
+                
+                # Update checkpoint periodically
+                if processed % 100 == 0:
+                    state_manager.update_checkpoint(
+                        operation_id,
+                        files_processed=processed,
+                        current_path=change['path'],
+                        last_file=change['file']
+                    )
+            except Exception as e:
+                errors.append({
+                    'path': change['path'],
+                    'error': str(e)
+                })
+                state_manager.update_checkpoint(
+                    operation_id,
+                    files_processed=processed,
+                    error={'path': change['path'], 'error': str(e)}
+                )
+    ```
 
 - Create directory update propagation:
   - Update parent directory on child changes

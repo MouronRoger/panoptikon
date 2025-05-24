@@ -15,44 +15,55 @@ The Progress Tracking and Feedback module provides users with accurate, non-intr
 
 ### 1. Progress Calculation
 
-- Implement file count estimation:
+- Implement progress retrieval from IndexingStateManager:
+  ```python
+  def get_progress_from_checkpoint(self, state_manager):
+      """Get real progress data from state manager."""
+      active_op = state_manager.get_active_operation()
+      if not active_op:
+          return None
+          
+      checkpoint = active_op['checkpoint']
+      
+      # Calculate progress metrics
+      progress_data = {
+          'operation_id': checkpoint.operation_id,
+          'operation_type': checkpoint.operation_type,
+          'files_processed': checkpoint.files_processed,
+          'total_files': checkpoint.total_files,
+          'percent': 0.0,
+          'rate': checkpoint.rate,
+          'eta': None,
+          'current_path': checkpoint.current_path,
+          'errors': len(checkpoint.errors),
+          'duration': checkpoint.duration
+      }
+      
+      # Calculate percentage if total is known
+      if checkpoint.total_files and checkpoint.total_files > 0:
+          progress_data['percent'] = (
+              checkpoint.files_processed / checkpoint.total_files * 100
+          )
+      
+      # Calculate ETA if rate is available
+      if checkpoint.rate > 0 and checkpoint.total_files:
+          remaining = checkpoint.total_files - checkpoint.files_processed
+          progress_data['eta'] = remaining / checkpoint.rate
+      
+      return progress_data
+  ```
+
+- Implement file count estimation (only used for initial total):
   ```python
   def estimate_total_files(paths):
-      """Estimate total number of files to be indexed."""
-      # Start with a statistical sample for large directories
-      sample_count = 0
-      sample_dirs = 0
-      
-      for path in paths:
-          try:
-              # Sample top-level directories
-              if os.path.isdir(path):
-                  entries = list(os.scandir(path))
-                  sample_count += len([e for e in entries if e.is_file()])
-                  
-                  # Count subdirectories and sample some
-                  subdirs = [e for e in entries if e.is_dir()]
-                  sample_dirs += len(subdirs)
-                  
-                  # Sample some subdirectories (limited to avoid long startup)
-                  for subdir in subdirs[:5]:
-                      try:
-                          subentries = list(os.scandir(subdir.path))
-                          sample_count += len([e for e in subentries if e.is_file()])
-                      except OSError:
-                          continue
-          except OSError:
-              continue
-              
-      # Use statistical model based on samples
-      # (simplified - actual implementation would be more sophisticated)
-      if sample_dirs > 0:
-          avg_files_per_dir = sample_count / (sample_dirs + len(paths))
-          # Estimate based on directory depth and breadth analysis
-          # This is a placeholder for a more complex algorithm
-          return int(avg_files_per_dir * estimate_total_directories(paths))
-      else:
-          return sample_count
+      """Estimate total number of files for initial operation setup."""
+      # This is now only used when starting a new operation
+      # The actual progress comes from checkpoint data
+      total = 0
+      for root in paths:
+          for _, _, files in os.walk(root):
+              total += len(files)
+      return total
   ```
 
 - Create progress percentage calculation:

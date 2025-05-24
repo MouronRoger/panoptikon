@@ -66,6 +66,32 @@ The Initial Scanner is responsible for efficiently traversing the file system to
   - Create thread pool for parallel directory traversal
   - Implement work stealing for balanced load
   - Maintain thread safety for database operations
+  - Update checkpoint after each batch:
+    ```python
+    def scan_with_checkpointing(self, paths, state_manager, operation_id):
+        """Scan directories with checkpoint updates."""
+        files_processed = 0
+        batch_size = 1000
+        batch = []
+        
+        for path in self.scan_directory(paths):
+            batch.append(path)
+            
+            if len(batch) >= batch_size:
+                # Process batch
+                self.process_batch(batch)
+                files_processed += len(batch)
+                
+                # Update checkpoint
+                state_manager.update_checkpoint(
+                    operation_id,
+                    files_processed=files_processed,
+                    current_path=os.path.dirname(path),
+                    last_file=path
+                )
+                
+                batch = []
+    ```
 
 - Create scan prioritization:
   - Prioritize user directories over system locations
