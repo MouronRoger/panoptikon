@@ -6,6 +6,14 @@
 
 This document outlines a "just-right" knowledge system for Panoptikon that maintains simplicity while adding key safeguards to prevent system degradation over time. It enhances the stripped-down approach with minimal additions for long-term reliability.
 
+## ⚠️ Timestamp Policy
+
+**ALWAYS use system timestamps (not AI timestamps) for all documentation!**
+- AI models can hallucinate dates/times
+- Use actual system clock for accuracy  
+- This applies to all logs, documentation entries, and session records
+- Format: `[YYYY-MM-DD HH:MM]` using system time
+
 ## Core Components
 
 | Component | Description | Purpose |
