@@ -283,6 +283,21 @@ class IndexingStateManager:
         self._clear_state()
         self._current_operation_id = None
 
+    def get_last_operation(self) -> Optional[dict[str, Any]]:
+        """Get the most recent operation, regardless of status."""
+        state = self._load_state()
+        if not state:
+            return None
+        checkpoint = IndexingCheckpoint.from_json(state["checkpoint_data"])
+        return {
+            "operation_id": checkpoint.operation_id,
+            "operation_type": checkpoint.operation_type,
+            "status": IndexingStatus(state["status"]),
+            "checkpoint": checkpoint,
+            "started_at": datetime.fromtimestamp(state["started_at"]),
+            "updated_at": datetime.fromtimestamp(state["updated_at"]),
+        }
+
     # Private methods matching existing implementation
     def _save_state(self, **kwargs: Any) -> None:
         """Save state using existing single-row design."""

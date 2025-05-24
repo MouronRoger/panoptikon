@@ -89,7 +89,7 @@ class FileSearchApp:
 
         # Import PyObjC modules only within the methods that use them
         import AppKit  # type: ignore[import-untyped]
-        import Foundation  # type: ignore[import-untyped]
+        import Foundation
 
         # Create a window
         frame = (200, 200, 800, 600)  # x, y, width, height
@@ -127,13 +127,28 @@ class FileSearchApp:
         self._table_view.add_column("2", "Size", 100)
         self._table_view.add_column("3", "Date", 150)
 
+        # Create status label for indexing state
+        status_frame = (20, frame[3] - 130, frame[2] - 40, 24)
+        self._status_label = AppKit.NSTextField.alloc().initWithFrame_(
+            Foundation.NSMakeRect(*status_frame)
+        )
+        self._status_label.setEditable_(False)
+        self._status_label.setBezeled_(False)
+        self._status_label.setDrawsBackground_(False)
+        self._status_label.setStringValue_("Indexing status: Unknown")
+        self._status_label.setFont_(AppKit.NSFont.systemFontOfSize_(13))
+
         # Add components to window
         content_view.addSubview_(self._search_field.ns_object)
         content_view.addSubview_(self._search_options.ns_object)
         content_view.addSubview_(self._table_view.ns_scroll_view)
+        content_view.addSubview_(self._status_label)
 
         # Set up delegates
         self._set_up_delegates()
+
+        # Start polling for indexing status
+        self._start_status_polling()
 
     def _set_up_delegates(self) -> None:
         """Set up the delegates for UI components."""
@@ -214,6 +229,32 @@ class FileSearchApp:
         option_index: int = self._search_options.get_selected_segment()
         option_name: str = ["Name", "Content", "Date", "Size"][option_index]
         print(f"Search option changed to: {option_name}")
+
+    def _start_status_polling(self) -> None:
+        """Start a timer to poll the indexing status and update the label."""
+        if not self._pyobjc_available:
+            return
+        import Foundation
+
+        self._status_timer = Foundation.NSTimer.scheduledTimerWithTimeInterval_target_selector_userInfo_repeats_(
+            2.0, self, "updateIndexingStatusLabel", None, True
+        )
+
+    def updateIndexingStatusLabel(self) -> None:
+        """Update the status label with the current indexing status."""
+        # TODO: Replace this with a real call to IndexerService.get_indexing_status()
+        # For now, simulate status cycling
+        import random
+
+        states = [
+            ("idle", "Idle"),
+            ("in_progress", "Indexing in progress..."),
+            ("paused", "Indexing paused"),
+            ("completed", "Indexing completed"),
+            ("failed", "Indexing failed!"),
+        ]
+        state, label = random.choice(states)
+        self._status_label.setStringValue_(f"Indexing status: {label}")
 
 
 # PyObjC delegate and data source classes

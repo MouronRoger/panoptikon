@@ -2,6 +2,25 @@
 
 **IMPORTANT: The only canonical source of project documentation is the Markdown files in `/docs`, which are automatically indexed to the Qdrant cloud instance (`panoptikon` collection) for semantic search and MCP server integration. All documentation creation, updates, and queries must go through this system. Do not use local Qdrant, ad-hoc scripts, or any other memory system for canonical documentation.**
 
+## ⚠️ CRITICAL: Timestamp Requirements
+
+**ALWAYS use system timestamps, NOT AI-generated timestamps!**
+
+When recording documentation entries, session logs, or any dated entries:
+- Use the actual system clock time
+- Do NOT rely on AI's internal timestamp (which can hallucinate dates)
+- Format: `[YYYY-MM-DD HH:MM]` using system time
+
+Example:
+```python
+# CORRECT - uses system time
+from datetime import datetime
+timestamp = datetime.now().strftime("[%Y-%m-%d %H:%M]")
+
+# WRONG - AI might hallucinate this
+timestamp = "[2025-05-24 14:30]"  # Don't hardcode!
+```
+
 This guide provides comprehensive information about the Panoptikon documentation system, which uses Qdrant for semantic search and integrates with the MCP server.
 
 ## System Overview
