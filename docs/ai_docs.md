@@ -436,4 +436,23 @@
 - **Next Steps:**
     - Use `from scripts.documentation.ai_docs import get_system_timestamp` in all documentation scripts.
     - Monitor pre-commit hook effectiveness.
-    - Update any existing documentation generators to use system timestamps. 
+    - Update any existing documentation generators to use system timestamps.
+
+## [2025-05-24 18:30] #documentation #knowledge-system #hierarchy #decision #done #rationale
+- **Phase:** Documentation System
+- **Summary:**
+    - Clarified the knowledge system hierarchy to prevent confusion about Qdrant's role.
+    - Established clear hierarchy: 1) Markdown files (truth), 2) MCP Knowledge Graph (relationships), 3) Session logs (history).
+    - Demoted Qdrant to "supporting search tool" status - it helps find docs but is NOT authoritative.
+    - Updated AI_DOCUMENTATION_GUIDE.md with prominent hierarchy section and visual indicators.
+    - Updated AI_DOCUMENTATION_PROMPT.md to reinforce that Markdown files are the source of truth.
+    - Added warnings against confusing Qdrant search results with actual knowledge.
+- **Tags:** #done #decision #documentation #hierarchy #clarification #rationale
+- **Rationale:**
+    - AI was incorrectly treating Qdrant as the core knowledge system when it's just a search index.
+    - The actual knowledge lives in Markdown files (truth) and MCP knowledge graph (relationships).
+    - This confusion could lead to treating search results as authoritative instead of reading source files.
+- **Next Steps:**
+    - Always read Markdown files for authoritative information.
+    - Use Qdrant search only to find relevant docs, then read the actual files.
+    - Ensure future documentation maintains this hierarchy distinction. 

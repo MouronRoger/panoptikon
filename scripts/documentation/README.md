@@ -1,21 +1,37 @@
 # Documentation System Scripts
 
-This directory contains scripts for managing and migrating project documentation.
+This directory contains scripts for managing the Panoptikon knowledge system.
+
+## 🎯 Knowledge System Architecture
+
+**Core Components (in order of authority):**
+1. **📄 Markdown Files** (`/docs/*`) - The canonical source of truth
+2. **🧠 MCP Knowledge Graph** (`memory.jsonl`) - Relational knowledge from documentation
+3. **📝 Session Logs** (`ai_docs.md`) - Project history and decisions
+
+**Supporting Tool:**
+- **🔍 Qdrant** - Semantic search index (NOT the source of truth!)
 
 ## Main AI Documentation System
 
-- **ai_docs.py**: The main entry point for the AI-accessible documentation system. This file is located at `scripts/documentation/ai_docs.py`.
+- **ai_docs.py**: The main entry point for the AI-accessible documentation system.
+  - Creates and updates Markdown files (the actual knowledge)
+  - Automatically triggers Qdrant indexing for search
+  - Provides all documentation management functions
 
   Example usage:
   ```python
   from scripts.documentation.ai_docs import *
-  # ...
+  
+  # Read from Markdown files (the truth)
+  doc = read_documentation("components", "MyComponent")
+  
+  # Search using Qdrant (just helps find docs)
   results = search_documentation("current phase status")
+  
+  # Update Markdown documentation
   update_phase_progress("Phase 4", status="In Progress", ...)
-  record_decision("Title", status="Accepted", ...)
   ```
-
-- All documentation operations should use this module and its APIs. Do not reference or use `scripts/ai_docs.py` (which does not exist).
 
 ## Migration and Utility Scripts
 
@@ -25,8 +41,10 @@ This directory contains scripts for managing and migrating project documentation
 
 ## Notes
 
-- All documentation is stored in the `/docs` directory and indexed to the Qdrant cloud instance using the MCP-compatible workflow.
-- For Qdrant integration and indexing, see `../qdrant/README.md` and use only the MCP-compatible scripts.
+- **Markdown files in `/docs` are the canonical source** - everything else derives from them
+- **MCP Knowledge Graph** is built from the Relationships sections in documentation
+- **Qdrant is just for search** - never treat search results as authoritative
+- Always read the actual Markdown files for truth
 
 ## Directory Structure
 
@@ -143,9 +161,19 @@ See `docs/README.md` for a full mapping and onboarding guide.
 - Use the provided Python API or CLI for all documentation operations.
 - If unsure, use the `list_valid_categories()` function or consult the AI assistant.
 
-## Dual Re-Indexing
+## Dual System Updates
 
-- `dual_reindex.py`: Scans all markdown docs in `docs/`, indexes them in Qdrant for semantic search, and exports them as JSON-LD nodes for knowledge graph ingestion. Ensures cross-references and canonical status are preserved. Run this script after any major documentation update to keep both search and KG in sync.
+- **dual_reindex.py**: Updates BOTH systems from documentation:
+  - Rebuilds Qdrant search index from Markdown files
+  - Exports knowledge graph (JSON-LD) from documentation relationships
+  - Run after major documentation updates to sync both systems
+
+## Knowledge Graph Management
+
+See `/scripts/knowledge/` for MCP knowledge graph tools:
+- **memory_manager.py** - Direct knowledge graph manipulation
+- **relationship_extractor.py** - Extract relationships from docs
+- **doc_lint.py** - Ensure docs have proper relationship sections
 
 ## Metadata Audit & Fix
 

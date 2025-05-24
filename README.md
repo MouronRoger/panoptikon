@@ -1,6 +1,6 @@
 # Panoptikon
 
-> **NOTE:** The MCP server (Qdrant Cloud) is the canonical knowledge node for all documentation sync and semantic search. Always sync and query from the MCP server, not a local Qdrant instance. See [AI_DOCUMENTATION_PROMPT.md](AI_DOCUMENTATION_PROMPT.md) for details.
+> **Knowledge System:** The canonical sources are: 1) Markdown files in `/docs/*` (truth), 2) MCP Knowledge Graph in `memory.jsonl` (relationships), 3) Session logs in `ai_docs.md` (history). Qdrant is just a search tool. See [AI_DOCUMENTATION_GUIDE.md](docs/AI_DOCUMENTATION_GUIDE.md) for details.
 
 A high-performance file search application inspired by Windows 'Everything'.
 

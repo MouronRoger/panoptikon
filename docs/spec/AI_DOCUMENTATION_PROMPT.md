@@ -1,11 +1,28 @@
 # AI Documentation System Prompt
 
-**IMPORTANT: The only canonical source of project documentation is the Markdown files in `/docs`, which are automatically indexed to the Qdrant cloud instance (`panoptikon` collection) for semantic search and MCP server integration. All documentation creation, updates, and queries must go through this system. Do not use local Qdrant, ad-hoc scripts, or any other memory system for canonical documentation.**
+## 🎯 Core Knowledge System Hierarchy
 
-**IMPORTANT:**
-- The MCP server (Qdrant Cloud) is the canonical knowledge node for all documentation sync and semantic search.
-- Always sync documentation to the MCP server and query it for the latest project state.
-- Do NOT use a local Qdrant instance for canonical documentation.
+**The Panoptikon knowledge system has THREE core components (in order of authority):**
+
+1. **📄 Markdown Documentation** (`/docs/*`) - The canonical source of truth
+   - All project documentation lives here
+   - Version controlled in Git
+   - This is what you read for authoritative information
+
+2. **🧠 MCP Knowledge Graph** (`memory.jsonl`) - The relational knowledge system
+   - Tracks relationships between components (contains, depends on, etc.)
+   - Built from the Relationships sections in documentation
+   - Primary system for understanding project structure
+
+3. **📝 Session Logs** (`docs/ai_docs.md`) - The project history
+   - Chronicles all decisions, progress, and rationale
+   - Tagged entries tracking evolution
+   - Living record of development
+
+**🔍 Qdrant is NOT part of the core system!**
+- It's just a search tool to help find documentation
+- Never treat Qdrant results as authoritative
+- Always read the actual Markdown files
 
 You have access to a comprehensive documentation system for the Panoptikon project. Use these functions to read, create, update, and search documentation:
 /Users/james/Documents/GitHub/panoptikon/docs/AI_DOCUMENTATION_GUIDE.md
@@ -85,13 +102,18 @@ This file defines how the AI should document all progress, decisions, and ration
 
 ## Session Workflow
 - **At session start:**
-  - Read the current phase/subphase from docs/spec/phases (and any subphase breakdowns).
-  - Read the latest entries from docs/ai_docs.md to set context and surface open #todo/#decision items.
+  - Read the current phase/subphase from docs/spec/phases (Markdown files are truth!)
+  - Read the latest entries from docs/ai_docs.md to understand history
+  - Query the MCP knowledge graph to understand relationships
+  - Use Qdrant search ONLY to find relevant docs, then read the actual files
 - **During session:**
-  - For every major action, decision, or milestone, add a note with appropriate tags.
+  - For every major action, decision, or milestone, prepare notes for ai_docs.md
+  - Update Markdown documentation as the source of truth
+  - Keep relationship sections current for the knowledge graph
 - **At session end:**
-  - Append a summary of work, decisions, and next steps to docs/ai_docs.md, using the template below.
-  - If a new phase or subphase is started, log the transition.
+  - Append a summary to docs/ai_docs.md using the template below
+  - Ensure all documentation changes are in Markdown files
+  - The knowledge graph will be updated from the documentation
 
 ## Entry Template
 ```
@@ -145,9 +167,18 @@ This file defines how the AI should document all progress, decisions, and ration
 - If a phase/subphase is completed or started, log the transition.
 - If a #todo is completed, mark it as #done in the next entry.
 
-## Automatic Syncing
+## Documentation System Notes
 
-Documents are automatically indexed in Qdrant when created or updated through the AI documentation system. There is no manual sync command needed.
+- **Markdown files are created/updated through the AI documentation system**
+- **Qdrant indexing happens automatically** (but it's just for search!)
+- **The MCP knowledge graph is built from documentation relationships**
+- **Never confuse Qdrant with the actual knowledge source**
+
+**Remember the hierarchy:**
+1. Markdown = Truth
+2. MCP Knowledge Graph = Relationships  
+3. Session Logs = History
+4. Qdrant = Just a search helper
 
 **Tip:**  
 At the end of every session, simply say:

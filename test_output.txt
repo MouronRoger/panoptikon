@@ -1,581 +1,662 @@
 ============================= test session starts ==============================
-platform darwin -- Python 3.9.18, pytest-8.3.5, pluggy-1.5.0
+platform darwin -- Python 3.9.18, pytest-8.3.5, pluggy-1.5.0 -- /Users/james/Documents/GitHub/panoptikon/.venv/bin/python
+cachedir: .pytest_cache
 rootdir: /Users/james/Documents/GitHub/panoptikon
 configfile: pyproject.toml
 testpaths: tests
 plugins: anyio-4.9.0, asyncio-0.26.0, mock-3.14.0, cov-6.1.1
 asyncio: mode=strict, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
-collected 381 items
+collecting ... collected 394 items
 
-tests/core/test_bookmarks.py ...................                         [  4%]
-tests/core/test_bootstrap.py .                                           [  5%]
-tests/core/test_cloud_storage.py ...............                         [  9%]
-tests/core/test_config.py .......                                        [ 11%]
-tests/core/test_config_hot_reload.py ......s...                          [ 13%]
-tests/core/test_database_connection.py .......                           [ 15%]
-tests/core/test_database_schema.py ......................                [ 21%]
-tests/core/test_database_service.py ...................                  [ 26%]
-tests/core/test_db_pool.py ......................                        [ 32%]
-tests/core/test_db_pool_service.py .....................                 [ 37%]
-tests/core/test_errors.py .........                                      [ 39%]
-tests/core/test_events.py ........................                       [ 46%]
-tests/core/test_filesystem.py ................                           [ 50%]
-tests/core/test_filesystem_access.py ............................        [ 57%]
-tests/core/test_filesystem_watcher.py ..........................sss...   [ 66%]
-tests/core/test_filtering.py ..........                                  [ 68%]
-tests/core/test_integration.py ..                                        [ 69%]
-tests/core/test_lifecycle.py .........                                   [ 71%]
-tests/core/test_paths.py ........                                        [ 73%]
-tests/core/test_query_parser.py ............                             [ 76%]
-tests/core/test_search_engine.py ..................                      [ 81%]
-tests/core/test_service.py .........                                     [ 83%]
-tests/core/test_sorting.py ..FFFF...                                     [ 86%]
-tests/core/test_sorting_benchmark.py F                                   [ 86%]
-tests/core/test_ui.py .......                                            [ 88%]
-tests/test_core.py .                                                     [ 88%]
-tests/test_main.py ...                                                   [ 89%]
-tests/test_search/test_sorting_performance.py F                          [ 89%]
-tests/ui/test_macos_app.py ........                                      [ 91%]
-tests/ui/test_macos_app_extended.py .....                                [ 93%]
-tests/ui/test_objc_integration.py ....                                   [ 94%]
-tests/ui/test_ui_integration.py FFFFFFFFF                                [ 96%]
-tests/ui/test_ui_mocking.py ....                                         [ 97%]
-tests/ui/test_validators.py .........                                    [100%]
+tests/core/test_bookmarks.py::TestBookmarkDataClass::test_bookmark_creation PASSED
+tests/core/test_bookmarks.py::TestBookmarkServiceBasics::test_initialization PASSED
+tests/core/test_bookmarks.py::TestBookmarkServiceBasics::test_shutdown PASSED
+tests/core/test_bookmarks.py::TestBookmarkServiceBasics::test_has_bookmark PASSED
+tests/core/test_bookmarks.py::TestBookmarkServiceBasics::test_is_valid PASSED
+tests/core/test_bookmarks.py::TestBookmarkServiceBasics::test_get_bookmarked_paths PASSED
+tests/core/test_bookmarks.py::TestBookmarkStorage::test_path_to_filename PASSED
+tests/core/test_bookmarks.py::TestBookmarkStorage::test_save_and_read_bookmark PASSED
+tests/core/test_bookmarks.py::TestBookmarkStorage::test_remove_bookmark PASSED
+tests/core/test_bookmarks.py::TestBookmarkStorage::test_remove_bookmark_with_active_access PASSED
+tests/core/test_bookmarks.py::TestBookmarkStorage::test_load_bookmarks PASSED
+tests/core/test_bookmarks.py::TestMacOSBookmarkOperations::test_create_bookmark PASSED
+tests/core/test_bookmarks.py::TestMacOSBookmarkOperations::test_create_bookmark_error PASSED
+tests/core/test_bookmarks.py::TestMacOSBookmarkOperations::test_start_access PASSED
+tests/core/test_bookmarks.py::TestMacOSBookmarkOperations::test_start_access_no_bookmark PASSED
+tests/core/test_bookmarks.py::TestMacOSBookmarkOperations::test_start_access_already_active PASSED
+tests/core/test_bookmarks.py::TestMacOSBookmarkOperations::test_stop_access PASSED
+tests/core/test_bookmarks.py::TestMacOSBookmarkOperations::test_stop_access_not_active PASSED
+tests/core/test_bookmarks.py::TestMacOSBookmarkOperations::test_verify_bookmark PASSED
+tests/core/test_bootstrap.py::test_system_bootstrap_and_minimal_flow PASSED
+tests/core/test_cloud_storage.py::TestCloudProviderDetectorAdvanced::test_initialize_providers_non_existent_paths PASSED
+tests/core/test_cloud_storage.py::TestCloudProviderDetectorAdvanced::test_check_provider_online_exceptions PASSED
+tests/core/test_cloud_storage.py::TestCloudProviderDetectorAdvanced::test_detect_provider_path_variants PASSED
+tests/core/test_cloud_storage.py::TestCloudProviderDetectorAdvanced::test_detect_provider_macos_private_prefix PASSED
+tests/core/test_cloud_storage.py::TestCloudProviderDetectorAdvanced::test_refresh_provider_status PASSED
+tests/core/test_cloud_storage.py::TestCloudProviderDetectorAdvanced::test_initialize_providers_mac_real_paths PASSED
+tests/core/test_cloud_storage.py::TestCloudProviderDetectorAdvanced::test_detect_provider_real_paths PASSED
+tests/core/test_cloud_storage.py::TestCloudStorageServiceAdvanced::test_initialize_publishes_events PASSED
+tests/core/test_cloud_storage.py::TestCloudStorageServiceAdvanced::test_get_provider_for_path_caching PASSED
+tests/core/test_cloud_storage.py::TestCloudStorageServiceAdvanced::test_get_provider_for_path_cache_limit PASSED
+tests/core/test_cloud_storage.py::TestCloudStorageServiceAdvanced::test_is_cloud_path PASSED
+tests/core/test_cloud_storage.py::TestCloudStorageServiceAdvanced::test_get_provider_type PASSED
+tests/core/test_cloud_storage.py::TestCloudStorageServiceAdvanced::test_is_provider_online PASSED
+tests/core/test_cloud_storage.py::TestCloudStorageServiceAdvanced::test_refresh_provider_status_publishes_events PASSED
+tests/core/test_cloud_storage.py::TestCloudStorageServiceAdvanced::test_get_all_providers PASSED
+tests/core/test_config.py::test_initialization PASSED
+tests/core/test_config.py::test_register_section PASSED
+tests/core/test_config.py::test_set_config_value PASSED
+tests/core/test_config.py::test_update_section PASSED
+tests/core/test_config.py::test_save_and_reload PASSED
+tests/core/test_config.py::test_reset_to_defaults PASSED
+tests/core/test_config.py::test_error_handling PASSED
+tests/core/test_config_hot_reload.py::test_config_validation PASSED
+tests/core/test_config_hot_reload.py::test_get_as_model_validation PASSED
+tests/core/test_config_hot_reload.py::test_config_file_error_handling PASSED
+tests/core/test_config_hot_reload.py::test_load_invalid_config_file PASSED
+tests/core/test_config_hot_reload.py::test_hot_reload PASSED
+tests/core/test_config_hot_reload.py::test_emit_config_change_events PASSED
+tests/core/test_config_hot_reload.py::test_windows_config_dir SKIPPED
+tests/core/test_config_hot_reload.py::test_config_dir_detection PASSED
+tests/core/test_config_hot_reload.py::test_file_watching PASSED
+tests/core/test_config_hot_reload.py::test_config_changed_event_validation PASSED
+tests/core/test_database_connection.py::test_connection_init PASSED
+tests/core/test_database_connection.py::test_connect PASSED
+tests/core/test_database_connection.py::test_transaction PASSED
+tests/core/test_database_connection.py::test_close PASSED
+tests/core/test_database_connection.py::test_execute PASSED
+tests/core/test_database_connection.py::test_execute_many PASSED
+tests/core/test_database_connection.py::test_thread_safety PASSED
+tests/core/test_database_schema.py::test_schema_manager_init PASSED
+tests/core/test_database_schema.py::test_database_exists PASSED
+tests/core/test_database_schema.py::test_create_schema PASSED
+tests/core/test_database_schema.py::test_create_schema_directory_error PASSED
+tests/core/test_database_schema.py::test_validate_schema PASSED
+tests/core/test_database_schema.py::test_validate_schema_version PASSED
+tests/core/test_database_schema.py::test_get_schema_version PASSED
+tests/core/test_database_schema.py::test_validate_schema_error PASSED
+tests/core/test_database_schema.py::test_check_version_compatibility PASSED
+tests/core/test_database_schema.py::test_migrate_to_latest_adds_folder_size PASSED
+tests/core/test_database_schema.py::test_migrate_to_latest_idempotent PASSED
+tests/core/test_database_schema.py::test_migrate_to_latest_noop_on_1_1_0 PASSED
+tests/core/test_database_schema.py::test_set_and_get_schema_version PASSED
+tests/core/test_database_schema.py::test_compare_schema_version PASSED
+tests/core/test_database_schema.py::test_find_migrations_sequential PASSED
+tests/core/test_database_schema.py::test_find_migrations_no_path PASSED
+tests/core/test_database_schema.py::test_registry_extensible PASSED
+tests/core/test_database_schema.py::test_backup_database_creates_file PASSED
+tests/core/test_database_schema.py::test_backup_database_skips_if_missing PASSED
+tests/core/test_database_schema.py::test_restore_database_restores_file PASSED
+tests/core/test_database_schema.py::test_migration_executor_success PASSED
+tests/core/test_database_schema.py::test_migration_executor_failure_and_rollback PASSED
+tests/core/test_database_service.py::test_database_service_init PASSED
+tests/core/test_database_service.py::test_database_service_initialize PASSED
+tests/core/test_database_service.py::test_database_service_shutdown PASSED
+tests/core/test_database_service.py::test_database_service_get_connection PASSED
+tests/core/test_database_service.py::test_database_service_execute PASSED
+tests/core/test_database_service.py::test_database_service_execute_many PASSED
+tests/core/test_database_service.py::test_database_service_properties PASSED
+tests/core/test_database_service.py::test_execute_with_statement_registry PASSED
+tests/core/test_database_service.py::test_execute_with_performance_monitor PASSED
+tests/core/test_database_service.py::test_execute_with_optimizer_index_hint PASSED
+tests/core/test_database_service.py::test_execute_with_result_cache PASSED
+tests/core/test_database_service.py::test_execute_many_with_batch PASSED
+tests/core/test_database_service.py::test_query_builder_safe_identifier_valid PASSED
+tests/core/test_database_service.py::test_query_builder_safe_identifier_invalid PASSED
+tests/core/test_database_service.py::test_query_builder_build_where_clause PASSED
+tests/core/test_database_service.py::test_query_builder_build_insert PASSED
+tests/core/test_database_service.py::test_query_builder_build_update PASSED
+tests/core/test_database_service.py::test_statement_registry_prepare_and_bind PASSED
+tests/core/test_database_service.py::test_statement_registry_cleanup_and_clear PASSED
+tests/core/test_db_pool.py::test_pool_initialization PASSED
+tests/core/test_db_pool.py::test_pool_get_connection PASSED
+tests/core/test_db_pool.py::test_pool_connection_reuse PASSED
+tests/core/test_db_pool.py::test_pool_max_connections PASSED
+tests/core/test_db_pool.py::test_pool_connection_health_check PASSED
+tests/core/test_db_pool.py::test_pool_connection_max_age PASSED
+tests/core/test_db_pool.py::test_pool_transaction PASSED
+tests/core/test_db_pool.py::test_pool_different_isolation_levels PASSED
+tests/core/test_db_pool.py::test_pool_savepoint PASSED
+tests/core/test_db_pool.py::test_pool_savepoint_context_manager PASSED
+tests/core/test_db_pool.py::test_pool_concurrent_access_param[10] PASSED
+tests/core/test_db_pool.py::test_pool_concurrent_access_param[50] PASSED
+tests/core/test_db_pool.py::test_pool_concurrent_access_param[100] PASSED
+tests/core/test_db_pool.py::test_pool_concurrent_access_param[150] PASSED
+tests/core/test_db_pool.py::test_pool_writer_contention PASSED
+tests/core/test_db_pool.py::test_pool_stress_leak_prevention PASSED
+tests/core/test_db_pool.py::test_pool_manager PASSED
+tests/core/test_db_pool.py::test_pool_thread_safety PASSED
+tests/core/test_db_pool.py::test_connection_health_status PASSED
+tests/core/test_db_pool.py::test_transaction_isolation_level PASSED
+tests/core/test_db_pool.py::test_pooled_connection PASSED
+tests/core/test_db_pool.py::test_pool_invalid_params PASSED
+tests/core/test_db_pool_service.py::test_pool_service_initialization PASSED
+tests/core/test_db_pool_service.py::test_pool_service_create_database_if_missing PASSED
+tests/core/test_db_pool_service.py::test_pool_service_recreate_schema_if_invalid PASSED
+tests/core/test_db_pool_service.py::test_pool_service_fail_if_missing_and_not_create PASSED
+tests/core/test_db_pool_service.py::test_pool_service_execute PASSED
+tests/core/test_db_pool_service.py::test_pool_service_execute_many PASSED
+tests/core/test_db_pool_service.py::test_pool_service_transaction PASSED
+tests/core/test_db_pool_service.py::test_pool_service_savepoint PASSED
+tests/core/test_db_pool_service.py::test_pool_service_get_connection PASSED
+tests/core/test_db_pool_service.py::test_pool_service_get_stats PASSED
+tests/core/test_db_pool_service.py::test_pool_service_shutdown PASSED
+tests/core/test_db_pool_service.py::test_pool_service_concurrent_access_integration[10] PASSED
+tests/core/test_db_pool_service.py::test_pool_service_concurrent_access_integration[50] PASSED
+tests/core/test_db_pool_service.py::test_pool_service_concurrent_access_integration[100] PASSED
+tests/core/test_db_pool_service.py::test_pool_service_writer_contention_integration PASSED
+tests/core/test_db_pool_service.py::test_pool_service_stress_leak_prevention_integration PASSED
+tests/core/test_db_pool_service.py::test_pool_execute_with_statement_registry PASSED
+tests/core/test_db_pool_service.py::test_pool_execute_with_performance_monitor PASSED
+tests/core/test_db_pool_service.py::test_pool_execute_with_optimizer_index_hint PASSED
+tests/core/test_db_pool_service.py::test_pool_execute_with_result_cache PASSED
+tests/core/test_db_pool_service.py::test_pool_execute_many_with_batch PASSED
+tests/core/test_errors.py::test_error_context PASSED
+tests/core/test_errors.py::test_application_error PASSED
+tests/core/test_errors.py::test_specific_errors PASSED
+tests/core/test_errors.py::test_error_manager_initialization PASSED
+tests/core/test_errors.py::test_error_manager_handlers PASSED
+tests/core/test_errors.py::test_error_manager_recovery PASSED
+tests/core/test_errors.py::test_error_manager_history PASSED
+tests/core/test_errors.py::test_error_manager_exception_conversion PASSED
+tests/core/test_errors.py::test_error_manager_handler_inheritance PASSED
+tests/core/test_events.py::TestEventBase::test_to_dict PASSED
+tests/core/test_events.py::TestEventBase::test_to_json PASSED
+tests/core/test_events.py::TestErrorEvent::test_validation PASSED
+tests/core/test_events.py::TestErrorEvent::test_to_dict PASSED
+tests/core/test_events.py::TestEventBusBasics::test_initialization PASSED
+tests/core/test_events.py::TestEventBusBasics::test_simple_publish_subscribe PASSED
+tests/core/test_events.py::TestEventBusBasics::test_multiple_handlers PASSED
+tests/core/test_events.py::TestEventBusBasics::test_unsubscribe PASSED
+tests/core/test_events.py::TestEventHistoryManagement::test_event_history_management PASSED
+tests/core/test_events.py::TestEventHistoryManagement::test_record_history_setting PASSED
+tests/core/test_events.py::TestEventHistoryManagement::test_invalid_history_size PASSED
+tests/core/test_events.py::TestEventDelivery::test_priority_ordering PASSED
+tests/core/test_events.py::TestEventDelivery::test_error_handling PASSED
+tests/core/test_events.py::TestEventDelivery::test_nested_error_handling PASSED
+tests/core/test_events.py::TestEventDelivery::test_event_delivery_modes PASSED
+tests/core/test_events.py::TestEventDelivery::test_auto_detect_delivery_mode PASSED
+tests/core/test_events.py::TestAsyncEventHandling::test_async_handlers PASSED
+tests/core/test_events.py::TestAsyncEventHandling::test_no_event_loop_error PASSED
+tests/core/test_events.py::TestHandlerTypes::test_callable_handlers PASSED
+tests/core/test_events.py::TestHandlerTypes::test_invalid_handler_types PASSED
+tests/core/test_events.py::TestHandlerTypes::test_handler_type_checking PASSED
+tests/core/test_events.py::TestHandlerTypes::test_deliver_to_correct_handler_types PASSED
+tests/core/test_events.py::TestEventInheritance::test_inheritance_subscription PASSED
+tests/core/test_events.py::TestEventInheritance::test_event_source_auto_detection PASSED
+tests/core/test_filesystem.py::TestFileSystemEvent::test_initialization PASSED
+tests/core/test_filesystem.py::TestFileSystemEvent::test_to_dict PASSED
+tests/core/test_filesystem.py::TestFileChangeEvent::test_initialization PASSED
+tests/core/test_filesystem.py::TestFileChangeEvent::test_to_dict PASSED
+tests/core/test_filesystem.py::TestOtherEventTypes::test_bookmark_event PASSED
+tests/core/test_filesystem.py::TestOtherEventTypes::test_cloud_storage_event PASSED
+tests/core/test_filesystem.py::TestOtherEventTypes::test_directory_limit_event PASSED
+tests/core/test_filesystem.py::TestOtherEventTypes::test_file_permission_event PASSED
+tests/core/test_filesystem.py::TestOtherEventTypes::test_filesystem_error_event PASSED
+tests/core/test_filesystem.py::TestOtherEventTypes::test_watched_paths_changed_event PASSED
+tests/core/test_filesystem.py::TestFilesystemIntegration::test_file_access_integration PASSED
+tests/core/test_filesystem.py::TestFilesystemIntegration::test_macos_symlink_resolution PASSED
+tests/core/test_filesystem.py::TestFilesystemIntegration::test_path_manager_integration PASSED
+tests/core/test_filesystem.py::TestFilesystemComponentIntegration::test_watcher_events_path_manager PASSED
+tests/core/test_filesystem.py::TestFilesystemComponentIntegration::test_access_bookmarks_cloud_detection PASSED
+tests/core/test_filesystem.py::TestFilesystemComponentIntegration::test_full_permission_flow PASSED
+tests/core/test_filesystem_access.py::TestBasicFileOperations::test_can_read_existing_file PASSED
+tests/core/test_filesystem_access.py::TestBasicFileOperations::test_can_write_existing_file PASSED
+tests/core/test_filesystem_access.py::TestBasicFileOperations::test_read_file_contents PASSED
+tests/core/test_filesystem_access.py::TestBasicFileOperations::test_write_file_contents PASSED
+tests/core/test_filesystem_access.py::TestBasicFileOperations::test_create_directory PASSED
+tests/core/test_filesystem_access.py::TestBasicFileOperations::test_delete_file PASSED
+tests/core/test_filesystem_access.py::TestBasicFileOperations::test_move_file PASSED
+tests/core/test_filesystem_access.py::TestFileOperationHandlers::test_standard_write_file_not_exists PASSED
+tests/core/test_filesystem_access.py::TestFileOperationHandlers::test_standard_delete_non_existent PASSED
+tests/core/test_filesystem_access.py::TestFileOperationHandlers::test_standard_rename_non_existent PASSED
+tests/core/test_filesystem_access.py::TestFileOperationHandlers::test_standard_read_permission_error PASSED
+tests/core/test_filesystem_access.py::TestFileOperationHandlers::test_standard_write_permission_error PASSED
+tests/core/test_filesystem_access.py::TestFileOperationHandlers::test_standard_delete_permission_error PASSED
+tests/core/test_filesystem_access.py::TestFileOperationHandlers::test_standard_rename_permission_error PASSED
+tests/core/test_filesystem_access.py::TestFileOperationHandlers::test_standard_move_permission_error PASSED
+tests/core/test_filesystem_access.py::TestFileOperationHandlers::test_standard_create_permission_error PASSED
+tests/core/test_filesystem_access.py::TestFileOperationHandlers::test_standard_metadata_permission_error PASSED
+tests/core/test_filesystem_access.py::TestFileOperationHandlers::test_get_operation_handler_fallback PASSED
+tests/core/test_filesystem_access.py::TestFileOperationHandlers::test_get_operation_handler_not_found PASSED
+tests/core/test_filesystem_access.py::TestFileOperationHandlers::test_cloud_operation_not_implemented_logs_warning PASSED
+tests/core/test_filesystem_access.py::TestFileOperationHandlers::test_handle_access_denied_silent_fail PASSED
+tests/core/test_filesystem_access.py::TestFileOperationHandlers::test_handle_access_denied_other_strategies_publishes_event PASSED
+tests/core/test_filesystem_access.py::TestFileOperationHandlers::test_request_access_user_prompt PASSED
+tests/core/test_filesystem_access.py::TestFileOperationHandlers::test_request_access_silent_fail PASSED
+tests/core/test_filesystem_access.py::TestAccessRequestHandling::test_get_operation_handler_cloud_provider PASSED
+tests/core/test_filesystem_access.py::TestAccessRequestHandling::test_handle_bookmark_access_not_needed PASSED
+tests/core/test_filesystem_access.py::TestAccessRequestHandling::test_handle_bookmark_access_macos_home PASSED
+tests/core/test_filesystem_access.py::TestBookmarkIntegration::test_bookmark_integration PASSED
+tests/core/test_filesystem_watcher.py::TestFSWatcherBase::test_abstract_methods PASSED
+tests/core/test_filesystem_watcher.py::TestPollingWatcher::test_initialization PASSED
+tests/core/test_filesystem_watcher.py::TestPollingWatcher::test_start_stop PASSED
+tests/core/test_filesystem_watcher.py::TestPollingWatcher::test_add_remove_watch PASSED
+tests/core/test_filesystem_watcher.py::TestPollingWatcher::test_detect_file_creation PASSED
+tests/core/test_filesystem_watcher.py::TestPollingWatcher::test_add_watch_nonexistent_path_logs_warning PASSED
+tests/core/test_filesystem_watcher.py::TestPollingWatcher::test_remove_watch_nonexistent_path_logs_debug PASSED
+tests/core/test_filesystem_watcher.py::TestPollingWatcher::test_double_add_watch_logs_debug PASSED
+tests/core/test_filesystem_watcher.py::TestPollingWatcher::test_double_remove_watch_logs_debug PASSED
+tests/core/test_filesystem_watcher.py::TestPollingWatcher::test_refresh_watch_state_permission_error PASSED
+tests/core/test_filesystem_watcher.py::TestPollingWatcher::test_scan_directory_permission_error PASSED
+tests/core/test_filesystem_watcher.py::TestPollingWatcher::test_handle_deleted_path_emits_events PASSED
+tests/core/test_filesystem_watcher.py::TestPollingWatcher::test_thread_cleanup_on_stop PASSED
+tests/core/test_filesystem_watcher.py::TestPollingWatcher::test_recursive_vs_nonrecursive_watch PASSED
+tests/core/test_filesystem_watcher.py::TestPollingWatcher::test_fsevents_importerror PASSED
+tests/core/test_filesystem_watcher.py::TestPollingWatcher::test_filesystemwatchservice_fallback_to_polling PASSED
+tests/core/test_filesystem_watcher.py::TestPollingWatcher::test_watch_thread_error_handling PASSED
+tests/core/test_filesystem_watcher.py::TestPollingWatcher::test_process_new_and_modified_files PASSED
+tests/core/test_filesystem_watcher.py::TestPollingWatcher::test_process_deleted_files PASSED
+tests/core/test_filesystem_watcher.py::TestPollingWatcher::test_emit_file_event PASSED
+tests/core/test_filesystem_watcher.py::TestPollingWatcher::test_double_start_stop PASSED
+tests/core/test_filesystem_watcher.py::TestPollingWatcher::test_filesystemwatchservice_configure_switch_types PASSED
+tests/core/test_filesystem_watcher.py::TestPollingWatcher::test_filesystemwatchservice_start_stop_edge_cases PASSED
+tests/core/test_filesystem_watcher.py::TestPollingWatcher::test_filesystemwatchservice_add_remove_watch_edge_cases PASSED
+tests/core/test_filesystem_watcher.py::TestPollingWatcher::test_filesystemwatchservice_create_watcher_error_fallback PASSED
+tests/core/test_filesystem_watcher.py::TestPollingWatcher::test_fseventswatcher_add_remove_watch_error PASSED
+tests/core/test_filesystem_watcher.py::TestFSEventsWatcher::test_initialization SKIPPED
+tests/core/test_filesystem_watcher.py::TestFSEventsWatcher::test_start_stop SKIPPED
+tests/core/test_filesystem_watcher.py::TestFSEventsWatcher::test_add_remove_watch SKIPPED
+tests/core/test_filesystem_watcher.py::TestFileSystemWatchService::test_initialization PASSED
+tests/core/test_filesystem_watcher.py::TestFileSystemWatchService::test_add_watch PASSED
+tests/core/test_filesystem_watcher.py::TestFileSystemWatchService::test_remove_watch PASSED
+tests/core/test_filtering.py::test_file_type_filter PASSED
+tests/core/test_filtering.py::test_extension_filter PASSED
+tests/core/test_filtering.py::test_date_range_filter PASSED
+tests/core/test_filtering.py::test_size_range_filter PASSED
+tests/core/test_filtering.py::test_path_filter PASSED
+tests/core/test_filtering.py::test_composite_filter_and PASSED
+tests/core/test_filtering.py::test_composite_filter_or PASSED
+tests/core/test_filtering.py::test_composite_filter_not PASSED
+tests/core/test_filtering.py::test_filter_engine_apply_filter PASSED
+tests/core/test_filtering.py::test_filter_engine_create_and_combine PASSED
+tests/core/test_integration.py::test_core_integration[EventBus-EventBase-core] PASSED
+tests/core/test_integration.py::test_core_integration[EventBus-EventBase-patched] PASSED
+tests/core/test_lifecycle.py::test_lifecycle_initialization PASSED
+tests/core/test_lifecycle.py::test_startup_hook_registration PASSED
+tests/core/test_lifecycle.py::test_shutdown_hook_registration PASSED
+tests/core/test_lifecycle.py::test_state_transitions PASSED
+tests/core/test_lifecycle.py::test_shutdown_request PASSED
+tests/core/test_lifecycle.py::test_wait_for_shutdown_timeout PASSED
+tests/core/test_lifecycle.py::test_hook_error_handling PASSED
+tests/core/test_lifecycle.py::test_invalid_state_transitions PASSED
+tests/core/test_lifecycle.py::test_service_initialization PASSED
+tests/core/test_paths.py::TestPathManager::test_is_subpath PASSED
+tests/core/test_paths.py::TestPathManager::test_normalize_path PASSED
+tests/core/test_paths.py::TestPathManager::test_path_rule_matching PASSED
+tests/core/test_paths.py::TestPathManager::test_path_rule_set PASSED
+tests/core/test_paths.py::TestPathManager::test_path_rule_set_includes_and_excludes PASSED
+tests/core/test_paths.py::TestPathManager::test_paths_equal PASSED
+tests/core/test_paths.py::TestPathManager::test_rule_match_types PASSED
+tests/core/test_paths.py::TestPathManager::test_rule_set_management PASSED
+tests/core/test_query_parser.py::test_parse_exact_match PASSED
+tests/core/test_query_parser.py::test_parse_wildcard PASSED
+tests/core/test_query_parser.py::test_parse_regex PASSED
+tests/core/test_query_parser.py::test_parse_case_sensitive PASSED
+tests/core/test_query_parser.py::test_parse_whole_word PASSED
+tests/core/test_query_parser.py::test_parse_extension_filter PASSED
+tests/core/test_query_parser.py::test_parse_invalid_regex PASSED
+tests/core/test_query_parser.py::test_parse_empty_query PASSED
+tests/core/test_query_parser.py::test_create_sql_condition_exact PASSED
+tests/core/test_query_parser.py::test_create_sql_condition_wildcard PASSED
+tests/core/test_query_parser.py::test_create_sql_condition_regex PASSED
+tests/core/test_query_parser.py::test_create_sql_condition_extension PASSED
+tests/core/test_search_engine.py::test_exact_match 
+====== SEARCH DEBUG ======
+Query pattern: document.txt, type: PathMatchType.EXACT
+Include directories: True
+SQL condition after QueryParser: "name" = :pattern
+Params after QueryParser: {'pattern': 'document.txt'}
+Not excluding directories
+FINAL SQL: SELECT id, name, path, extension, size, date_created, date_modified, file_type, is_directory, cloud_provider, cloud_status, indexed_at FROM files WHERE "name" = :pattern ORDER BY name LIMIT :limit OFFSET :offset
+====== END DEBUG ======
+
+[DEBUG] Results before filtering: ['document.txt']
+PASSED
+tests/core/test_search_engine.py::test_wildcard_search 
+====== SEARCH DEBUG ======
+Query pattern: *.md, type: PathMatchType.GLOB
+Include directories: True
+SQL condition after QueryParser: LOWER("name") LIKE LOWER(:pattern)
+Params after QueryParser: {'pattern': '%.md'}
+Not excluding directories
+FINAL SQL: SELECT id, name, path, extension, size, date_created, date_modified, file_type, is_directory, cloud_provider, cloud_status, indexed_at FROM files WHERE LOWER("name") LIKE LOWER(:pattern) ORDER BY name LIMIT :limit OFFSET :offset
+====== END DEBUG ======
+
+[DEBUG] Results before filtering: ['README.md', 'notes.md']
+PASSED
+tests/core/test_search_engine.py::test_extension_filter 
+====== SEARCH DEBUG ======
+Query pattern: , type: PathMatchType.EXACT
+Include directories: True
+SQL condition after QueryParser: "extension" = :ext AND "name" LIKE :pattern
+Params after QueryParser: {'ext': 'py', 'pattern': '%%'}
+Not excluding directories
+FINAL SQL: SELECT id, name, path, extension, size, date_created, date_modified, file_type, is_directory, cloud_provider, cloud_status, indexed_at FROM files WHERE "extension" = :ext AND "name" LIKE :pattern ORDER BY name LIMIT :limit OFFSET :offset
+====== END DEBUG ======
+
+[DEBUG] Results before filtering: ['script.py']
+PASSED
+tests/core/test_search_engine.py::test_cache_hit_and_miss 
+====== SEARCH DEBUG ======
+Query pattern: *.md, type: PathMatchType.GLOB
+Include directories: True
+SQL condition after QueryParser: LOWER("name") LIKE LOWER(:pattern)
+Params after QueryParser: {'pattern': '%.md'}
+Not excluding directories
+FINAL SQL: SELECT id, name, path, extension, size, date_created, date_modified, file_type, is_directory, cloud_provider, cloud_status, indexed_at FROM files WHERE LOWER("name") LIKE LOWER(:pattern) ORDER BY name LIMIT :limit OFFSET :offset
+====== END DEBUG ======
+
+
+====== SEARCH DEBUG ======
+Query pattern: *.txt, type: PathMatchType.GLOB
+Include directories: True
+SQL condition after QueryParser: LOWER("name") LIKE LOWER(:pattern)
+Params after QueryParser: {'pattern': '%.txt'}
+Not excluding directories
+FINAL SQL: SELECT id, name, path, extension, size, date_created, date_modified, file_type, is_directory, cloud_provider, cloud_status, indexed_at FROM files WHERE LOWER("name") LIKE LOWER(:pattern) ORDER BY name LIMIT :limit OFFSET :offset
+====== END DEBUG ======
+
+
+====== SEARCH DEBUG ======
+Query pattern: *.jpg, type: PathMatchType.GLOB
+Include directories: True
+SQL condition after QueryParser: LOWER("name") LIKE LOWER(:pattern)
+Params after QueryParser: {'pattern': '%.jpg'}
+Not excluding directories
+FINAL SQL: SELECT id, name, path, extension, size, date_created, date_modified, file_type, is_directory, cloud_provider, cloud_status, indexed_at FROM files WHERE LOWER("name") LIKE LOWER(:pattern) ORDER BY name LIMIT :limit OFFSET :offset
+====== END DEBUG ======
+
+
+====== SEARCH DEBUG ======
+Query pattern: *.md, type: PathMatchType.GLOB
+Include directories: True
+SQL condition after QueryParser: LOWER("name") LIKE LOWER(:pattern)
+Params after QueryParser: {'pattern': '%.md'}
+Not excluding directories
+FINAL SQL: SELECT id, name, path, extension, size, date_created, date_modified, file_type, is_directory, cloud_provider, cloud_status, indexed_at FROM files WHERE LOWER("name") LIKE LOWER(:pattern) ORDER BY name LIMIT :limit OFFSET :offset
+====== END DEBUG ======
+
+[DEBUG] Results before filtering: ['README.md', 'notes.md']
+PASSED
+tests/core/test_search_engine.py::test_invalidate_cache 
+====== SEARCH DEBUG ======
+Query pattern: *.zip, type: PathMatchType.GLOB
+Include directories: True
+SQL condition after QueryParser: LOWER("name") LIKE LOWER(:pattern)
+Params after QueryParser: {'pattern': '%.zip'}
+Not excluding directories
+FINAL SQL: SELECT id, name, path, extension, size, date_created, date_modified, file_type, is_directory, cloud_provider, cloud_status, indexed_at FROM files WHERE LOWER("name") LIKE LOWER(:pattern) ORDER BY name LIMIT :limit OFFSET :offset
+====== END DEBUG ======
+
+
+====== SEARCH DEBUG ======
+Query pattern: *.zip, type: PathMatchType.GLOB
+Include directories: True
+SQL condition after QueryParser: LOWER("name") LIKE LOWER(:pattern)
+Params after QueryParser: {'pattern': '%.zip'}
+Not excluding directories
+FINAL SQL: SELECT id, name, path, extension, size, date_created, date_modified, file_type, is_directory, cloud_provider, cloud_status, indexed_at FROM files WHERE LOWER("name") LIKE LOWER(:pattern) ORDER BY name LIMIT :limit OFFSET :offset
+====== END DEBUG ======
+
+[DEBUG] Results before filtering: ['archive.zip']
+PASSED
+tests/core/test_search_engine.py::test_pagination 
+====== SEARCH DEBUG ======
+Query pattern: *.*, type: PathMatchType.GLOB
+Include directories: True
+SQL condition after QueryParser: LOWER("name") LIKE LOWER(:pattern)
+Params after QueryParser: {'pattern': '%.%'}
+Not excluding directories
+FINAL SQL: SELECT id, name, path, extension, size, date_created, date_modified, file_type, is_directory, cloud_provider, cloud_status, indexed_at FROM files WHERE LOWER("name") LIKE LOWER(:pattern) ORDER BY name LIMIT :limit OFFSET :offset
+====== END DEBUG ======
+
+[DEBUG] Results before filtering: ['README.md', 'archive.zip']
+[DEBUG] Results before filtering: ['document.txt', 'image.jpg']
+PASSED
+tests/core/test_search_engine.py::test_resultset_group_by 
+====== SEARCH DEBUG ======
+Query pattern: *.*, type: PathMatchType.GLOB
+Include directories: True
+SQL condition after QueryParser: LOWER("name") LIKE LOWER(:pattern)
+Params after QueryParser: {'pattern': '%.%'}
+Not excluding directories
+FINAL SQL: SELECT id, name, path, extension, size, date_created, date_modified, file_type, is_directory, cloud_provider, cloud_status, indexed_at FROM files WHERE LOWER("name") LIKE LOWER(:pattern) ORDER BY name LIMIT :limit OFFSET :offset
+====== END DEBUG ======
+
+[DEBUG] Results before filtering: ['README.md', 'archive.zip', 'document.txt', 'image.jpg', 'notes.md', 'script.py']
+PASSED
+tests/core/test_search_engine.py::test_searchresult_annotation PASSED
+tests/core/test_search_engine.py::test_resultset_lru_cache_eviction PASSED
+tests/core/test_search_engine.py::test_resultset_error_handling PASSED
+tests/core/test_search_engine.py::test_resultset_stale_detection PASSED
+tests/core/test_search_engine.py::test_resultset_invalidate_cache PASSED
+tests/core/test_search_engine.py::test_resultset_get_page_partial PASSED
+tests/core/test_search_engine.py::test_resultset_group_by_partial_failure PASSED
+tests/core/test_search_engine.py::test_search_engine_filetype_filter 
+====== SEARCH DEBUG ======
+Query pattern: *, type: PathMatchType.GLOB
+Include directories: True
+SQL condition after QueryParser: LOWER("name") LIKE LOWER(:pattern)
+Params after QueryParser: {'pattern': '%'}
+Not excluding directories
+SQL condition after filter_criteria: LOWER("name") LIKE LOWER(:pattern)
+FINAL SQL: SELECT id, name, path, extension, size, date_created, date_modified, file_type, is_directory, cloud_provider, cloud_status, indexed_at FROM files WHERE LOWER("name") LIKE LOWER(:pattern) ORDER BY name LIMIT :limit OFFSET :offset
+====== END DEBUG ======
+
+[DEBUG] Results before filtering: ['dir1', 'file1.txt', 'file2.pdf']
+[DEBUG] Applying filter: <panoptikon.search.filtering.FileTypeFilter object at 0x10d87d7f0>
+[DEBUG] Results after filtering: ['file1.txt', 'file2.pdf']
+
+====== SEARCH DEBUG ======
+Query pattern: *, type: PathMatchType.GLOB
+Include directories: True
+SQL condition after QueryParser: LOWER("name") LIKE LOWER(:pattern)
+Params after QueryParser: {'pattern': '%'}
+Not excluding directories
+SQL condition after filter_criteria: LOWER("name") LIKE LOWER(:pattern)
+FINAL SQL: SELECT id, name, path, extension, size, date_created, date_modified, file_type, is_directory, cloud_provider, cloud_status, indexed_at FROM files WHERE LOWER("name") LIKE LOWER(:pattern) ORDER BY name LIMIT :limit OFFSET :offset
+====== END DEBUG ======
+
+[DEBUG] Results before filtering: ['dir1', 'file1.txt', 'file2.pdf']
+[DEBUG] Applying filter: <panoptikon.search.filtering.FileTypeFilter object at 0x10d87daf0>
+[DEBUG] Results after filtering: ['dir1']
+
+--- DEBUG OUTPUT ---
+Raw directory entries in DB: [(3, 'dir1', '/test/dir1', '', 0, '2022-12-31T10:00:00', '2022-12-31T10:00:00', 'directory', 1, '', '', '2022-12-31T10:00:00')]
+
+====== SEARCH DEBUG ======
+Query pattern: *, type: PathMatchType.GLOB
+Include directories: True
+SQL condition after QueryParser: LOWER("name") LIKE LOWER(:pattern)
+Params after QueryParser: {'pattern': '%'}
+Not excluding directories
+FINAL SQL: SELECT id, name, path, extension, size, date_created, date_modified, file_type, is_directory, cloud_provider, cloud_status, indexed_at FROM files WHERE LOWER("name") LIKE LOWER(:pattern) ORDER BY name LIMIT :limit OFFSET :offset
+====== END DEBUG ======
+
+[DEBUG] Results before filtering: ['dir1', 'file1.txt', 'file2.pdf']
+All results:
+  dir1: file_type=directory, is_directory=True
+  file1.txt: file_type=file, is_directory=False
+  file2.pdf: file_type=file, is_directory=False
+Filter SQL condition: SELECT * FROM files
+Does filter match 'dir1'? True
+'dir1' metadata: {'id': 3, 'extension': '', 'size': 0, 'date_created': '2022-12-31T10:00:00', 'date_modified': '2022-12-31T10:00:00', 'file_type': 'directory', 'is_directory': True, 'cloud_provider': '', 'cloud_status': '', 'indexed_at': '2022-12-31T10:00:00'}
+PASSED
+tests/core/test_search_engine.py::test_search_engine_extension_filter 
+====== SEARCH DEBUG ======
+Query pattern: *, type: PathMatchType.GLOB
+Include directories: True
+SQL condition after QueryParser: LOWER("name") LIKE LOWER(:pattern)
+Params after QueryParser: {'pattern': '%'}
+Not excluding directories
+SQL condition after filter_criteria: LOWER("name") LIKE LOWER(:pattern)
+FINAL SQL: SELECT id, name, path, extension, size, date_created, date_modified, file_type, is_directory, cloud_provider, cloud_status, indexed_at FROM files WHERE LOWER("name") LIKE LOWER(:pattern) ORDER BY name LIMIT :limit OFFSET :offset
+====== END DEBUG ======
+
+[DEBUG] Results before filtering: ['dir1', 'file1.txt', 'file2.pdf']
+[DEBUG] Applying filter: <panoptikon.search.filtering.ExtensionFilter object at 0x10d87d550>
+[DEBUG] Results after filtering: ['file2.pdf']
+PASSED
+tests/core/test_search_engine.py::test_search_engine_composite_filter 
+====== SEARCH DEBUG ======
+Query pattern: *, type: PathMatchType.GLOB
+Include directories: True
+SQL condition after QueryParser: LOWER("name") LIKE LOWER(:pattern)
+Params after QueryParser: {'pattern': '%'}
+Not excluding directories
+SQL condition after filter_criteria: LOWER("name") LIKE LOWER(:pattern)
+FINAL SQL: SELECT id, name, path, extension, size, date_created, date_modified, file_type, is_directory, cloud_provider, cloud_status, indexed_at FROM files WHERE LOWER("name") LIKE LOWER(:pattern) ORDER BY name LIMIT :limit OFFSET :offset
+====== END DEBUG ======
+
+[DEBUG] Results before filtering: ['dir1', 'file1.txt', 'file2.pdf']
+[DEBUG] Applying filter: <panoptikon.search.filtering.CompositeFilter object at 0x10d92e820>
+[DEBUG] Results after filtering: ['file1.txt']
+PASSED
+tests/core/test_search_engine.py::test_search_engine_no_filter 
+====== SEARCH DEBUG ======
+Query pattern: *, type: PathMatchType.GLOB
+Include directories: True
+SQL condition after QueryParser: LOWER("name") LIKE LOWER(:pattern)
+Params after QueryParser: {'pattern': '%'}
+Not excluding directories
+FINAL SQL: SELECT id, name, path, extension, size, date_created, date_modified, file_type, is_directory, cloud_provider, cloud_status, indexed_at FROM files WHERE LOWER("name") LIKE LOWER(:pattern) ORDER BY name LIMIT :limit OFFSET :offset
+====== END DEBUG ======
+
+[DEBUG] Results before filtering: ['dir1', 'file1.txt', 'file2.pdf']
+PASSED
+tests/core/test_service.py::test_registration_and_resolution PASSED
+tests/core/test_service.py::test_singleton_lifecycle PASSED
+tests/core/test_service.py::test_transient_lifecycle PASSED
+tests/core/test_service.py::test_factory_registration PASSED
+tests/core/test_service.py::test_dependency_injection PASSED
+tests/core/test_service.py::test_unregistered_service PASSED
+tests/core/test_service.py::test_circular_dependency_detection PASSED
+tests/core/test_service.py::test_dependency_validation PASSED
+tests/core/test_service.py::test_invalid_registration PASSED
+tests/core/test_sorting.py::test_sort_by_name_asc PASSED
+tests/core/test_sorting.py::test_sort_by_name_desc PASSED
+tests/core/test_sorting.py::test_sort_by_size_asc PASSED
+tests/core/test_sorting.py::test_sort_by_size_desc PASSED
+tests/core/test_sorting.py::test_sort_by_folder_size_asc PASSED
+tests/core/test_sorting.py::test_sort_by_folder_size_desc XPASS (Fol...)
+tests/core/test_sorting.py::test_sort_by_extension_then_name PASSED
+tests/core/test_sorting.py::test_custom_sort PASSED
+tests/core/test_sorting.py::test_sort_stability PASSED
+tests/core/test_sorting_benchmark.py::test_sorting_performance_mock_data[10000] Sort by name: 6.48 ms
+Sort by size: 4.69 ms
+Sort by date: 5.15 ms
+Sort by folder size: 6.38 ms
+Sort by extension+name: 16.16 ms
+PASSED
+tests/core/test_ui.py::test_assert_objc_method_exists_success PASSED
+tests/core/test_ui.py::test_assert_objc_method_exists_failure PASSED
+tests/core/test_ui.py::test_assert_objc_protocol_conformance_success PASSED
+tests/core/test_ui.py::test_assert_objc_protocol_conformance_failure PASSED
+tests/core/test_ui.py::test_validate_search_field_delegate_true PASSED
+tests/core/test_ui.py::test_validate_search_field_delegate_false PASSED
+tests/core/test_ui.py::test_macos_app_pyobjc_unavailable PyObjC not available - UI features disabled
+PASSED
+tests/test_core.py::test_placeholder PASSED
+tests/test_indexing/test_indexer_integration.py::TestIndexerIntegration::test_initial_indexing_with_state PASSED
+tests/test_indexing/test_indexer_integration.py::TestIndexerIntegration::test_pause_resume_indexing PASSED
+tests/test_indexing/test_indexer_integration.py::TestIndexerIntegration::test_operation_recovery_on_init PASSED
+tests/test_indexing/test_indexer_integration.py::TestIndexerIntegration::test_checkpoint_throttling PASSED
+tests/test_indexing/test_indexer_integration.py::TestIndexerIntegration::test_error_handling_updates_state PASSED
+tests/test_indexing/test_state_manager.py::TestIndexingStateManager::test_start_operation PASSED
+tests/test_indexing/test_state_manager.py::TestIndexingStateManager::test_prevent_concurrent_operations PASSED
+tests/test_indexing/test_state_manager.py::TestIndexingStateManager::test_update_checkpoint PASSED
+tests/test_indexing/test_state_manager.py::TestIndexingStateManager::test_pause_resume_operation PASSED
+tests/test_indexing/test_state_manager.py::TestIndexingStateManager::test_complete_operation PASSED
+tests/test_indexing/test_state_manager.py::TestIndexingStateManager::test_fail_operation PASSED
+tests/test_indexing/test_state_manager.py::TestIndexingStateManager::test_checkpoint_serialization PASSED
+tests/test_indexing/test_state_manager.py::TestIndexingStateManager::test_rate_calculation PASSED
+tests/test_main.py::test_setup_logging PASSED
+tests/test_main.py::test_main_success PASSED
+tests/test_main.py::test_main_error PASSED
+tests/test_search/test_sorting_performance.py::test_sorting_performance_live PASSED
+tests/ui/test_macos_app.py::TestFileSearchApp::test_init_without_pyobjc PyObjC not available - UI features disabled
+PASSED
+tests/ui/test_macos_app.py::TestFileSearchApp::test_init_with_pyobjc FAILED
 
 =================================== FAILURES ===================================
-____________________________ test_sort_by_size_asc _____________________________
+___________________ TestFileSearchApp.test_init_with_pyobjc ____________________
 
-dummy_results = [<tests.core.test_sorting.DummyResult object at 0x10e3d5760>, <tests.core.test_sorting.DummyResult object at 0x10e3d59...ests.core.test_sorting.DummyResult object at 0x10e3d5040>, <tests.core.test_sorting.DummyResult object at 0x10e3d5dc0>]
+self = <test_macos_app.TestFileSearchApp object at 0x10e0d8550>
+mock_objc_modules = None, mock_wrappers = None
 
-    def test_sort_by_size_asc(dummy_results: List[SearchResult]) -> None:
-        engine = SortingEngine()
-        sorted_results = engine.apply_sort(
-            dummy_results, AttributeSortCriteria("size"), "asc"
-        )
->       assert [r.name for r in sorted_results][:3] == ["d", "c.md", "b.txt"]
-E       AssertionError: assert ['a.txt', 'b.txt', 'c.md'] == ['d', 'c.md', 'b.txt']
-E         
-E         At index 0 diff: 'a.txt' != 'd'
-E         Use -v to get more diff
-
-tests/core/test_sorting.py:86: AssertionError
-____________________________ test_sort_by_size_desc ____________________________
-
-dummy_results = [<tests.core.test_sorting.DummyResult object at 0x10e39bb80>, <tests.core.test_sorting.DummyResult object at 0x10e39b6...ests.core.test_sorting.DummyResult object at 0x10e39b5e0>, <tests.core.test_sorting.DummyResult object at 0x10e39bc10>]
-
-    def test_sort_by_size_desc(dummy_results: List[SearchResult]) -> None:
-        engine = SortingEngine()
-        sorted_results = engine.apply_sort(
-            dummy_results, AttributeSortCriteria("size"), "desc"
-        )
->       assert [r.name for r in sorted_results][0] == "e"
-E       AssertionError: assert 'a.txt' == 'e'
-E         
-E         - e
-E         + a.txt
-
-tests/core/test_sorting.py:94: AssertionError
-_________________________ test_sort_by_folder_size_asc _________________________
-
-dummy_results = [<tests.core.test_sorting.DummyResult object at 0x10ee77fd0>, <tests.core.test_sorting.DummyResult object at 0x10ee77c...ests.core.test_sorting.DummyResult object at 0x10ee778b0>, <tests.core.test_sorting.DummyResult object at 0x10ee77a60>]
-
-    def test_sort_by_folder_size_asc(dummy_results: List[SearchResult]) -> None:
-        engine = SortingEngine()
-        sorted_results = engine.apply_sort(dummy_results, FolderSizeSortCriteria(), "asc")
-        # d (500), a.txt (1000), b.txt (2000), c.md (None), e (None)
->       assert [r.name for r in sorted_results][:3] == ["d", "a.txt", "b.txt"]
-E       AssertionError: assert ['c.md', 'e', 'd'] == ['d', 'a.txt', 'b.txt']
-E         
-E         At index 0 diff: 'c.md' != 'd'
-E         Use -v to get more diff
-
-tests/core/test_sorting.py:101: AssertionError
-________________________ test_sort_by_folder_size_desc _________________________
-
-dummy_results = [<tests.core.test_sorting.DummyResult object at 0x10e7149a0>, <tests.core.test_sorting.DummyResult object at 0x10e7143...ests.core.test_sorting.DummyResult object at 0x10e714580>, <tests.core.test_sorting.DummyResult object at 0x10e714250>]
-
-    def test_sort_by_folder_size_desc(dummy_results: List[SearchResult]) -> None:
-        engine = SortingEngine()
-        sorted_results = engine.apply_sort(dummy_results, FolderSizeSortCriteria(), "desc")
->       assert [r.name for r in sorted_results][0] == "b.txt"
-E       AssertionError: assert 'c.md' == 'b.txt'
-E         
-E         - b.txt
-E         + c.md
-
-tests/core/test_sorting.py:107: AssertionError
-__________________ test_sorting_performance_mock_data[10000] ___________________
-
-n = 10000
-
-    @pytest.mark.parametrize("n", [10_000])
-    def test_sorting_performance_mock_data(n: int) -> None:
-        engine = SortingEngine()
-        results = generate_mock_results(n)
-        # Sort by name
-        t0 = time.perf_counter()
-        engine.apply_sort(results, AttributeSortCriteria("name"), "asc")
-        t1 = time.perf_counter()
-        # Sort by size
-        engine.apply_sort(results, AttributeSortCriteria("size"), "asc")
-        t2 = time.perf_counter()
-        # Sort by date
-        engine.apply_sort(results, AttributeSortCriteria("date_created"), "asc")
-        t3 = time.perf_counter()
-        # Sort by folder size
-        engine.apply_sort(results, FolderSizeSortCriteria(), "asc")
-        t4 = time.perf_counter()
-        # Multi-key sort (extension, then name)
-        engine.apply_sort(
-            results,
-            [AttributeSortCriteria("extension"), AttributeSortCriteria("name")],
-            "asc",
-        )
-        t5 = time.perf_counter()
-        print(f"Sort by name: {1000 * (t1 - t0):.2f} ms")
-        print(f"Sort by size: {1000 * (t2 - t1):.2f} ms")
-        print(f"Sort by date: {1000 * (t3 - t2):.2f} ms")
-        print(f"Sort by folder size: {1000 * (t4 - t3):.2f} ms")
-        print(f"Sort by extension+name: {1000 * (t5 - t4):.2f} ms")
->       assert (t1 - t0) < 0.1, f"Sort by name took too long: {t1 - t0:.3f}s"
-E       AssertionError: Sort by name took too long: 0.111s
-E       assert (47.528298125 - 47.416903416) < 0.1
-
-tests/core/test_sorting_benchmark.py:105: AssertionError
------------------------------ Captured stdout call -----------------------------
-Sort by name: 111.39 ms
-Sort by size: 48.54 ms
-Sort by date: 29.12 ms
-Sort by folder size: 85.57 ms
-Sort by extension+name: 170.31 ms
-________________________ test_sorting_performance_live _________________________
-
-    @pytest.mark.skipif(
-        len(collect_filesystem_data(str(Path.home()), 10000)) < 10000,
-        reason="Not enough files for live sorting performance test",
-    )
-    def test_sorting_performance_live() -> None:
-        files = collect_filesystem_data(str(Path.home()), 20000)
-        engine = SortingEngine()
-        sort_criteria_list = [
-            ("Sort by name (asc)", AttributeSortCriteria("name"), "asc"),
-            ("Sort by name (desc)", AttributeSortCriteria("name"), "desc"),
-            ("Sort by date_modified (asc)", AttributeSortCriteria("date_modified"), "asc"),
-            (
-                "Sort by date_modified (desc)",
-                AttributeSortCriteria("date_modified"),
-                "desc",
-            ),
-            ("Sort by size (asc)", AttributeSortCriteria("size"), "asc"),
-            ("Sort by size (desc)", AttributeSortCriteria("size"), "desc"),
-            ("Sort by folder size (asc)", FolderSizeSortCriteria(), "asc"),
-            ("Sort by folder size (desc)", FolderSizeSortCriteria(), "desc"),
-            (
-                "Sort by directory+name (asc)",
-                [AttributeSortCriteria("file_type"), AttributeSortCriteria("name")],
-                "asc",
-            ),
-        ]
-        results = run_sorting_benchmark(files, engine, sort_criteria_list, iterations=5)
-        for sort_name, stats in results.items():
->           assert stats["mean"] <= 100, (
-                f"{sort_name} exceeded 100ms: {stats['mean']:.2f}ms"
-            )
-E           AssertionError: Sort by name (asc) exceeded 100ms: 223.95ms
-E           assert 223.94886133333122 <= 100
-
-tests/test_search/test_sorting_performance.py:109: AssertionError
-_____________________ TestUIIntegration.test_app_lifecycle _____________________
-
-self = <MagicMock name='mock.makeKeyAndOrderFront_' id='4560662480'>
-
-    def assert_called_once(self):
-        """assert that the mock was called only once.
-        """
-        if not self.call_count == 1:
-            msg = ("Expected '%s' to have been called once. Called %s times.%s"
-                   % (self._mock_name or 'mock',
-                      self.call_count,
-                      self._calls_repr()))
->           raise AssertionError(msg)
-E           AssertionError: Expected 'makeKeyAndOrderFront_' to have been called once. Called 0 times.
-
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:886: AssertionError
-
-During handling of the above exception, another exception occurred:
-
-self = <test_ui_integration.TestUIIntegration object at 0x10e07d430>
-mock_shared_app = <MagicMock name='sharedApplication' id='4851881152'>
-mock_nsapp = <MagicMock name='NSApp' id='4851829872'>
-
-    @patch("AppKit.NSApp")
-    @patch("AppKit.NSApplication.sharedApplication")
-    def test_app_lifecycle(self, mock_shared_app, mock_nsapp) -> None:
-        """Test the show method of FileSearchApp."""
-        mock_app = MagicMock()
-        mock_shared_app.return_value = mock_app
-        app = FileSearchApp()
-        app._window = MagicMock()
-        app.show()
->       app._window.makeKeyAndOrderFront_.assert_called_once()
-E       AssertionError: Expected 'makeKeyAndOrderFront_' to have been called once. Called 0 times.
-
-tests/ui/test_ui_integration.py:146: AssertionError
------------------------------ Captured stdout call -----------------------------
-PyObjC not available - UI features disabled
-Cannot show UI - PyObjC not available
-____________ TestUIComponentIntegration.test_component_integration _____________
-
-self = <test_ui_integration.TestUIComponentIntegration object at 0x10e07d8e0>
-mock_table_alloc = <MagicMock name='alloc' id='4562541632'>
-mock_segment_alloc = <MagicMock name='alloc' id='4562459232'>
-mock_search_alloc = <MagicMock name='alloc' id='4562598016'>
-mock_shared_app = <MagicMock name='sharedApplication' id='4562524144'>
-mock_nsapp = <MagicMock name='NSApp' id='4562007520'>
-
-    @patch("AppKit.NSApp")
-    @patch("AppKit.NSApplication.sharedApplication")
-    @patch("AppKit.NSSearchField.alloc")
-    @patch("AppKit.NSSegmentedControl.alloc")
-    @patch("AppKit.NSTableView.alloc")
-    def test_component_integration(
-        self,
-        mock_table_alloc,
-        mock_segment_alloc,
-        mock_search_alloc,
-        mock_shared_app,
-        mock_nsapp,
+    def test_init_with_pyobjc(
+        self, mock_objc_modules: None, mock_wrappers: None
     ) -> None:
-        """Test UI component instantiation and delegate setup."""
-        mock_search_field = MagicMock()
-        mock_search_alloc.return_value.init.return_value = mock_search_field
-        mock_segment_control = MagicMock()
-        mock_segment_alloc.return_value.init.return_value = mock_segment_control
-        mock_table_view = MagicMock()
-        mock_table_alloc.return_value.init.return_value = mock_table_view
-        app = FileSearchApp()
-        # Test that the wrappers were instantiated
->       assert hasattr(app, "_search_field")
-E       AssertionError: assert False
-E        +  where False = hasattr(<panoptikon.ui.macos_app.FileSearchApp object at 0x10fe87ac0>, '_search_field')
+        """Test initializing with PyObjC mocked."""
+        # Patch the PyObjC imports to succeed and setup UI
+        with patch("src.panoptikon.ui.macos_app.FileSearchApp._set_up_delegates"):
+>           app = FileSearchApp()
 
-tests/ui/test_ui_integration.py:184: AssertionError
------------------------------ Captured stdout call -----------------------------
-PyObjC not available - UI features disabled
-_______________ TestUIEventIntegration.test_ui_event_integration _______________
+tests/ui/test_macos_app.py:131: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/panoptikon/ui/macos_app.py:80: in __init__
+    self._setup_ui()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <MagicMock name='mock.makeKeyAndOrderFront_' id='4561406896'>
+self = <src.panoptikon.ui.macos_app.FileSearchApp object at 0x1077e8280>
 
-    def assert_called_once(self):
-        """assert that the mock was called only once.
+    def _setup_ui(self) -> None:
+        """Set up the UI components.
+    
+        This method creates the application window and UI components.
         """
-        if not self.call_count == 1:
-            msg = ("Expected '%s' to have been called once. Called %s times.%s"
-                   % (self._mock_name or 'mock',
-                      self.call_count,
-                      self._calls_repr()))
->           raise AssertionError(msg)
-E           AssertionError: Expected 'makeKeyAndOrderFront_' to have been called once. Called 0 times.
-
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:886: AssertionError
-
-During handling of the above exception, another exception occurred:
-
-self = <test_ui_integration.TestUIEventIntegration object at 0x10e07dd90>
-mock_shared_app = <MagicMock name='sharedApplication' id='4561383632'>
-mock_nsapp = <MagicMock name='NSApp' id='4561521968'>
-
-    @patch("AppKit.NSApp")
-    @patch("AppKit.NSApplication.sharedApplication")
-    def test_ui_event_integration(self, mock_shared_app, mock_nsapp) -> None:
-        """Test that show does not error when PyObjC is available."""
-        mock_app = MagicMock()
-        mock_shared_app.return_value = mock_app
-        app = FileSearchApp()
-        app._window = MagicMock()
-        app.show()
->       app._window.makeKeyAndOrderFront_.assert_called_once()
-E       AssertionError: Expected 'makeKeyAndOrderFront_' to have been called once. Called 0 times.
-
-tests/ui/test_ui_integration.py:209: AssertionError
------------------------------ Captured stdout call -----------------------------
-PyObjC not available - UI features disabled
-Cannot show UI - PyObjC not available
-________________ TestUIFileSystemIntegration.test_file_display _________________
-
-self = <test_ui_integration.TestUIFileSystemIntegration object at 0x10e09c280>
-mock_shared_app = <MagicMock name='sharedApplication' id='4561020000'>
-mock_nsapp = <MagicMock name='NSApp' id='4849639680'>
-
-    @patch("AppKit.NSApp")
-    @patch("AppKit.NSApplication.sharedApplication")
-    def test_file_display(self, mock_shared_app, mock_nsapp) -> None:
-        """Test display of filesystem items in the UI."""
-        # Create app
-        app = FileSearchApp()
+        if not self._pyobjc_available:
+            return
     
-        # Setup test files
-        test_files = [
-            str(Path("/test/dir1/file1.txt")),
-            str(Path("/test/dir1/file2.txt")),
-            str(Path("/test/dir2/file3.txt")),
-        ]
+        # Import PyObjC modules only within the methods that use them
+        import AppKit  # type: ignore[import-untyped]
+        import Foundation
     
-        # Set files
-        app.set_files(test_files)
-    
-        # Test basic search
->       app.search("file1")
-E       AttributeError: 'FileSearchApp' object has no attribute 'search'
-
-tests/ui/test_ui_integration.py:243: AttributeError
------------------------------ Captured stdout call -----------------------------
-PyObjC not available - UI features disabled
-_______________ TestFileSearchAppMocked.test_app_initialization ________________
-
-args = (<test_ui_integration.TestFileSearchAppMocked object at 0x10e09c760>,)
-keywargs = {}
-
-    @wraps(func)
-    def patched(*args, **keywargs):
->       with self.decoration_helper(patched,
-                                    args,
-                                    keywargs) as (newargs, newkeywargs):
-
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1333: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:119: in __enter__
-    return next(self.gen)
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1315: in decoration_helper
-    arg = exit_stack.enter_context(patching)
-../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:448: in enter_context
-    result = _cm_type.__enter__(cm)
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1404: in __enter__
-    original, local = self.get_original()
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <unittest.mock._patch object at 0x10e08ba90>
-
-    def get_original(self):
-        target = self.getter()
-        name = self.attribute
-    
-        original = DEFAULT
-        local = False
-    
-        try:
-            original = target.__dict__[name]
-        except (AttributeError, KeyError):
-            original = getattr(target, name, DEFAULT)
-        else:
-            local = True
-    
-        if name in _builtins and isinstance(target, ModuleType):
-            self.create = True
-    
-        if not self.create and original is DEFAULT:
->           raise AttributeError(
-                "%s does not have the attribute %r" % (target, name)
+        # Create a window
+        frame = (200, 200, 800, 600)  # x, y, width, height
+        self._window: Any = (
+            AppKit.NSWindow.alloc().initWithContentRect_styleMask_backing_defer_(
+                Foundation.NSMakeRect(*frame),
+                AppKit.NSWindowStyleMaskTitled
+                | AppKit.NSWindowStyleMaskClosable
+                | AppKit.NSWindowStyleMaskResizable,
+                AppKit.NSBackingStoreBuffered,
+                False,
             )
-E           AttributeError: <module 'panoptikon.ui.macos_app' from '/Users/james/Documents/GitHub/panoptikon/src/panoptikon/ui/macos_app.py'> does not have the attribute 'Foundation'
-
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1377: AttributeError
-_____________ TestFileSearchAppMocked.test_file_loading_and_search _____________
-
-args = (<test_ui_integration.TestFileSearchAppMocked object at 0x10e09c970>,)
-keywargs = {}
-
-    @wraps(func)
-    def patched(*args, **keywargs):
->       with self.decoration_helper(patched,
-                                    args,
-                                    keywargs) as (newargs, newkeywargs):
-
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1333: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:119: in __enter__
-    return next(self.gen)
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1315: in decoration_helper
-    arg = exit_stack.enter_context(patching)
-../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:448: in enter_context
-    result = _cm_type.__enter__(cm)
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1404: in __enter__
-    original, local = self.get_original()
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <unittest.mock._patch object at 0x10e08be20>
-
-    def get_original(self):
-        target = self.getter()
-        name = self.attribute
+        )
+        self._window.setTitle_("Panoptikon File Search")
+        self._window.setReleasedWhenClosed_(False)
     
-        original = DEFAULT
-        local = False
+        # Create a content view
+        content_view: Any = self._window.contentView()
     
-        try:
-            original = target.__dict__[name]
-        except (AttributeError, KeyError):
-            original = getattr(target, name, DEFAULT)
-        else:
-            local = True
+        # Create search field using our wrapper
+        search_frame = (20, frame[3] - 60, frame[2] - 40, 30)
+        self._search_field = SearchFieldWrapper(search_frame)
+        self._search_field.set_placeholder("Search files...")
     
-        if name in _builtins and isinstance(target, ModuleType):
-            self.create = True
+        # Create segmented control for search options
+        segments = ["Name", "Content", "Date", "Size"]
+        segment_frame = (20, frame[3] - 100, 300, 24)
+        self._search_options = SegmentedControlWrapper(segments, segment_frame, 1)
     
-        if not self.create and original is DEFAULT:
->           raise AttributeError(
-                "%s does not have the attribute %r" % (target, name)
-            )
-E           AttributeError: <module 'panoptikon.ui.macos_app' from '/Users/james/Documents/GitHub/panoptikon/src/panoptikon/ui/macos_app.py'> does not have the attribute 'Foundation'
-
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1377: AttributeError
-___________ TestFileSearchAppMocked.test_ui_delegates_and_datasource ___________
-
-args = (<test_ui_integration.TestFileSearchAppMocked object at 0x10e09cb80>,)
-keywargs = {}
-
-    @wraps(func)
-    def patched(*args, **keywargs):
->       with self.decoration_helper(patched,
-                                    args,
-                                    keywargs) as (newargs, newkeywargs):
-
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1333: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:119: in __enter__
-    return next(self.gen)
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1315: in decoration_helper
-    arg = exit_stack.enter_context(patching)
-../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:448: in enter_context
-    result = _cm_type.__enter__(cm)
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1404: in __enter__
-    original, local = self.get_original()
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <unittest.mock._patch object at 0x10e0911c0>
-
-    def get_original(self):
-        target = self.getter()
-        name = self.attribute
+        # Create table view for results
+        table_frame = (20, 20, frame[2] - 40, frame[3] - 140)
+        self._table_view = TableViewWrapper(table_frame)
+        self._table_view.add_column("0", "Name", 300)
+        self._table_view.add_column("1", "Path", 200)
+        self._table_view.add_column("2", "Size", 100)
+        self._table_view.add_column("3", "Date", 150)
     
-        original = DEFAULT
-        local = False
-    
-        try:
-            original = target.__dict__[name]
-        except (AttributeError, KeyError):
-            original = getattr(target, name, DEFAULT)
-        else:
-            local = True
-    
-        if name in _builtins and isinstance(target, ModuleType):
-            self.create = True
-    
-        if not self.create and original is DEFAULT:
->           raise AttributeError(
-                "%s does not have the attribute %r" % (target, name)
-            )
-E           AttributeError: <module 'panoptikon.ui.macos_app' from '/Users/james/Documents/GitHub/panoptikon/src/panoptikon/ui/macos_app.py'> does not have the attribute 'Foundation'
+        # Create status label for indexing state
+        status_frame = (20, frame[3] - 130, frame[2] - 40, 24)
+>       self._status_label = AppKit.NSTextField.alloc().initWithFrame_(
+            Foundation.NSMakeRect(*status_frame)
+        )
+E       objc.internal_error: Cannot calculate FFI type for {CGRect={CGPoint=dd}{CGSize=dd}}
 
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1377: AttributeError
-________________ TestSearchIntegration.test_search_capabilities ________________
-
-args = (<test_ui_integration.TestSearchIntegration object at 0x10e09cfd0>,)
-keywargs = {}
-
-    @wraps(func)
-    def patched(*args, **keywargs):
->       with self.decoration_helper(patched,
-                                    args,
-                                    keywargs) as (newargs, newkeywargs):
-
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1333: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:119: in __enter__
-    return next(self.gen)
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1315: in decoration_helper
-    arg = exit_stack.enter_context(patching)
-../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:448: in enter_context
-    result = _cm_type.__enter__(cm)
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1404: in __enter__
-    original, local = self.get_original()
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <unittest.mock._patch object at 0x10e091580>
-
-    def get_original(self):
-        target = self.getter()
-        name = self.attribute
-    
-        original = DEFAULT
-        local = False
-    
-        try:
-            original = target.__dict__[name]
-        except (AttributeError, KeyError):
-            original = getattr(target, name, DEFAULT)
-        else:
-            local = True
-    
-        if name in _builtins and isinstance(target, ModuleType):
-            self.create = True
-    
-        if not self.create and original is DEFAULT:
->           raise AttributeError(
-                "%s does not have the attribute %r" % (target, name)
-            )
-E           AttributeError: <module 'panoptikon.ui.macos_app' from '/Users/james/Documents/GitHub/panoptikon/src/panoptikon/ui/macos_app.py'> does not have the attribute 'Foundation'
-
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1377: AttributeError
-_________________ TestEventBusIntegration.test_event_handling __________________
-
-args = (<test_ui_integration.TestEventBusIntegration object at 0x10e0a3580>,)
-keywargs = {}
-
-    @wraps(func)
-    def patched(*args, **keywargs):
->       with self.decoration_helper(patched,
-                                    args,
-                                    keywargs) as (newargs, newkeywargs):
-
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1333: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:119: in __enter__
-    return next(self.gen)
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1315: in decoration_helper
-    arg = exit_stack.enter_context(patching)
-../../../.pyenv/versions/3.9.18/lib/python3.9/contextlib.py:448: in enter_context
-    result = _cm_type.__enter__(cm)
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1404: in __enter__
-    original, local = self.get_original()
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <unittest.mock._patch object at 0x10e091970>
-
-    def get_original(self):
-        target = self.getter()
-        name = self.attribute
-    
-        original = DEFAULT
-        local = False
-    
-        try:
-            original = target.__dict__[name]
-        except (AttributeError, KeyError):
-            original = getattr(target, name, DEFAULT)
-        else:
-            local = True
-    
-        if name in _builtins and isinstance(target, ModuleType):
-            self.create = True
-    
-        if not self.create and original is DEFAULT:
->           raise AttributeError(
-                "%s does not have the attribute %r" % (target, name)
-            )
-E           AttributeError: <module 'panoptikon.ui.macos_app' from '/Users/james/Documents/GitHub/panoptikon/src/panoptikon/ui/macos_app.py'> does not have the attribute 'Foundation'
-
-../../../.pyenv/versions/3.9.18/lib/python3.9/unittest/mock.py:1377: AttributeError
+src/panoptikon/ui/macos_app.py:132: internal_error
 =============================== warnings summary ===============================
 tests/conftest.py:24
   /Users/james/Documents/GitHub/panoptikon/tests/conftest.py:24: PytestCollectionWarning: cannot collect test class 'TestConfigSection' because it has a __init__ constructor (from: tests/core/test_bootstrap.py)
@@ -605,74 +686,68 @@ tests/core/test_events.py:58
   /Users/james/Documents/GitHub/panoptikon/tests/core/test_events.py:58: PytestCollectionWarning: cannot collect test class 'TestErrorEventHandler' because it has a __init__ constructor (from: tests/core/test_events.py)
     class TestErrorEventHandler(EventHandler[ErrorEvent]):
 
+tests/ui/test_macos_app.py::TestFileSearchApp::test_init_with_pyobjc
+  /Users/james/Documents/GitHub/panoptikon/src/panoptikon/ui/macos_app.py:132: UninitializedDeallocWarning: leaking an uninitialized object of type NSTextField
+    self._status_label = AppKit.NSTextField.alloc().initWithFrame_(
+
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 ================================ tests coverage ================================
 _______________ coverage: platform darwin, python 3.9.18-final-0 _______________
 
-Name                                             Stmts   Miss  Cover   Missing
-------------------------------------------------------------------------------
+Name                                             Stmts   Miss  Cover
+--------------------------------------------------------------------
 src/panoptikon/__init__.py                           1      0   100%
 src/panoptikon/__main__.py                          34      0   100%
 src/panoptikon/benchmark/__init__.py                 0      0   100%
 src/panoptikon/benchmark/sorting_benchmark.py       21      0   100%
-src/panoptikon/core/__init__.py                      0      0   100%
-src/panoptikon/core/config.py                      246     37    85%   73-82, 196, 248, 301-305, 324, 355, 384, 401-402, 442, 510-513, 519-525, 550, 566, 630, 662-669, 677-678
-src/panoptikon/core/errors.py                      179     21    88%   128, 134, 312, 395, 442, 461-462, 489, 491, 493, 496-497, 511-512, 522-523, 586, 600, 608, 612, 623
-src/panoptikon/core/events.py                      169      9    95%   63, 344, 434, 439, 453, 458, 462-466
-src/panoptikon/core/lifecycle.py                   135      7    95%   223, 359-362, 367-368
-src/panoptikon/core/service.py                     108      5    95%   125-129, 247, 310-311
+src/panoptikon/core/__init__.py                      1      0   100%
+src/panoptikon/core/config.py                      246     37    85%
+src/panoptikon/core/errors.py                      182     21    88%
+src/panoptikon/core/events.py                      169      9    95%
+src/panoptikon/core/indexer.py                     209     47    78%
+src/panoptikon/core/lifecycle.py                   135      7    95%
+src/panoptikon/core/service.py                     108      5    95%
 src/panoptikon/core/service_extensions.py            7      0   100%
 src/panoptikon/database/__init__.py                 18      0   100%
-src/panoptikon/database/config.py                   54      6    89%   65, 84, 102, 120, 142, 144
-src/panoptikon/database/connection.py              122     30    75%   81-82, 124-125, 197, 199, 205-211, 247, 265-267, 275-287, 296-298, 306
-src/panoptikon/database/optimization.py             37      2    95%   48, 104
-src/panoptikon/database/performance_monitor.py      27      6    78%   48, 67-73, 77, 81
-src/panoptikon/database/pool.py                    341     59    83%   85, 100, 233-234, 254-261, 322-332, 413, 423-425, 430-431, 438, 463-469, 494-498, 565-566, 589-593, 675, 734, 752, 777-805
-src/panoptikon/database/pool_service.py            136     22    84%   71, 101, 105-117, 128, 155, 193, 245, 247, 253-259, 295
-src/panoptikon/database/query_builder.py            33      0   100%
-src/panoptikon/database/schema.py                  239     53    78%   150-153, 174-177, 268, 332, 351, 377, 380-381, 415-416, 421-422, 426-427, 454-458, 485, 492, 501-502, 514, 524-525, 565-567, 577-597, 601-602, 612-616, 627, 638
-src/panoptikon/database/service.py                  76      6    92%   56, 79, 86-87, 107-108
-src/panoptikon/database/statement_registry.py       43      1    98%   86
+src/panoptikon/database/config.py                   54      6    89%
+src/panoptikon/database/connection.py              122     30    75%
+src/panoptikon/database/optimization.py             37      2    95%
+src/panoptikon/database/performance_monitor.py      27      6    78%
+src/panoptikon/database/pool.py                    341     59    83%
+src/panoptikon/database/pool_service.py            136     22    84%
+src/panoptikon/database/query_builder.py            32      0   100%
+src/panoptikon/database/schema.py                  241     53    78%
+src/panoptikon/database/service.py                  76      6    92%
+src/panoptikon/database/statement_registry.py       43      1    98%
 src/panoptikon/filesystem/__init__.py                7      0   100%
-src/panoptikon/filesystem/access.py                288     50    83%   223, 258-260, 281-282, 303-304, 318, 327-332, 347, 357-358, 372, 451, 469, 478, 549-551, 652-656, 670-674, 694, 699-700, 724, 730-731, 751, 756-757, 759-760, 780, 785-786, 811, 820, 825-827, 830, 833-834
-src/panoptikon/filesystem/bookmarks.py             214     42    80%   29-31, 63-64, 93-94, 97-98, 139-144, 157, 183-190, 195-201, 210-214, 223, 242-243, 292, 337-338, 350, 405-407, 420, 449-450, 453-455
-src/panoptikon/filesystem/cloud.py                 139     12    91%   74, 88, 95, 102, 114, 121, 215-221, 287
-src/panoptikon/filesystem/events.py                107      3    97%   164, 205, 282
-src/panoptikon/filesystem/paths.py                 106     12    89%   78-80, 174, 285-302
-src/panoptikon/filesystem/watcher.py               296     77    74%   22, 109-113, 117-128, 132-139, 148-186, 194-202, 213, 221, 341-342, 354, 390-391, 403-404, 446-449, 457, 608-610, 618-620, 628, 636, 653
+src/panoptikon/filesystem/access.py                288     50    83%
+src/panoptikon/filesystem/bookmarks.py             214     42    80%
+src/panoptikon/filesystem/cloud.py                 139     12    91%
+src/panoptikon/filesystem/events.py                107      3    97%
+src/panoptikon/filesystem/paths.py                 106     12    89%
+src/panoptikon/filesystem/watcher.py               296     77    74%
+src/panoptikon/indexing/__init__.py                  2      0   100%
+src/panoptikon/indexing/state_manager.py           179     23    87%
 src/panoptikon/search/__init__.py                    3      0   100%
-src/panoptikon/search/filtering.py                 101     16    84%   87, 92, 99-100, 118, 123, 138, 155, 168, 205-218
-src/panoptikon/search/query_parser.py               63      3    95%   131-132, 138
-src/panoptikon/search/result.py                     96     12    88%   17, 22, 27, 31, 63, 67, 71, 77, 131-132, 156, 166
-src/panoptikon/search/search_engine.py             109     24    78%   57-83, 179-192, 205-206, 244-248, 284-285, 322-325
-src/panoptikon/search/sorting.py                    93     31    67%   57, 61-69, 81, 97, 101-109, 132, 142, 167-169, 191, 200, 208-210
+src/panoptikon/search/filtering.py                 101     16    84%
+src/panoptikon/search/query_parser.py               63      3    95%
+src/panoptikon/search/result.py                     96     12    88%
+src/panoptikon/search/search_engine.py             109     24    78%
+src/panoptikon/search/sorting.py                   150     64    57%
 src/panoptikon/typings/__init__.py                   0      0   100%
 src/panoptikon/ui/__init__.py                        0      0   100%
-src/panoptikon/ui/events.py                         77     77     0%   1-167
-src/panoptikon/ui/macos_app.py                     128     26    80%   36, 44, 88, 141, 231, 239, 250, 265-268, 283-286, 293, 301, 309-312, 320-325
-src/panoptikon/ui/objc_wrappers.py                  82     10    88%   34, 55, 95-98, 132, 162, 180, 219-221
-src/panoptikon/ui/validators.py                     37      1    97%   149
-src/panoptikon/ui/window_interfaces.py              32     32     0%   1-70
+src/panoptikon/ui/events.py                         77     77     0%
+src/panoptikon/ui/macos_app.py                     147     77    48%
+src/panoptikon/ui/objc_wrappers.py                  82     48    41%
+src/panoptikon/ui/validators.py                     37     18    51%
+src/panoptikon/ui/window_interfaces.py              32     32     0%
 src/panoptikon/utils/__init__.py                     0      0   100%
-------------------------------------------------------------------------------
-TOTAL                                             4004    692    83%
+--------------------------------------------------------------------
+TOTAL                                             4475    901    80%
 Coverage HTML written to dir htmlcov
 Coverage XML written to file coverage.xml
-Required test coverage of 80% reached. Total coverage: 82.72%
+FAIL Required test coverage of 80% not reached. Total coverage: 79.87%
 =========================== short test summary info ============================
-FAILED tests/core/test_sorting.py::test_sort_by_size_asc - AssertionError: as...
-FAILED tests/core/test_sorting.py::test_sort_by_size_desc - AssertionError: a...
-FAILED tests/core/test_sorting.py::test_sort_by_folder_size_asc - AssertionEr...
-FAILED tests/core/test_sorting.py::test_sort_by_folder_size_desc - AssertionE...
-FAILED tests/core/test_sorting_benchmark.py::test_sorting_performance_mock_data[10000]
-FAILED tests/test_search/test_sorting_performance.py::test_sorting_performance_live
-FAILED tests/ui/test_ui_integration.py::TestUIIntegration::test_app_lifecycle
-FAILED tests/ui/test_ui_integration.py::TestUIComponentIntegration::test_component_integration
-FAILED tests/ui/test_ui_integration.py::TestUIEventIntegration::test_ui_event_integration
-FAILED tests/ui/test_ui_integration.py::TestUIFileSystemIntegration::test_file_display
-FAILED tests/ui/test_ui_integration.py::TestFileSearchAppMocked::test_app_initialization
-FAILED tests/ui/test_ui_integration.py::TestFileSearchAppMocked::test_file_loading_and_search
-FAILED tests/ui/test_ui_integration.py::TestFileSearchAppMocked::test_ui_delegates_and_datasource
-FAILED tests/ui/test_ui_integration.py::TestSearchIntegration::test_search_capabilities
-FAILED tests/ui/test_ui_integration.py::TestEventBusIntegration::test_event_handling
-======= 15 failed, 362 passed, 4 skipped, 7 warnings in 95.21s (0:01:35) =======
+FAILED tests/ui/test_macos_app.py::TestFileSearchApp::test_init_with_pyobjc
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+== 1 failed, 351 passed, 4 skipped, 1 xpassed, 8 warnings in 90.22s (0:01:30) ==

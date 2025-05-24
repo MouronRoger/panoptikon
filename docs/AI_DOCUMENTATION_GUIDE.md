@@ -1,6 +1,25 @@
 # AI Documentation Guide - Panoptikon
 
-**IMPORTANT: The only canonical source of project documentation is the Markdown files in `/docs`, which are automatically indexed to the Qdrant cloud instance (`panoptikon` collection) for semantic search and MCP server integration. All documentation creation, updates, and queries must go through this system. Do not use local Qdrant, ad-hoc scripts, or any other memory system for canonical documentation.**
+## 🎯 Core Knowledge System Hierarchy
+
+**The Panoptikon knowledge system consists of three core components:**
+
+1. **📄 Markdown Documentation** (`/docs/*`) - The canonical source of truth
+2. **🧠 MCP Knowledge Graph** (`memory.jsonl`) - The primary relational knowledge system
+3. **📝 Session Logs** (`ai_docs.md`) - The project history and decision record
+
+**Supporting Tools:**
+- **🔍 Qdrant** - Semantic search index (helps find documentation, NOT the source of truth)
+- **📊 Scripts** - Automation for indexing and relationship extraction
+
+## ⚠️ CRITICAL: Understanding the System
+
+**DO NOT confuse Qdrant with the core knowledge system!**
+- Qdrant is ONLY for semantic search to help find relevant documentation
+- The actual knowledge lives in the Markdown files and MCP knowledge graph
+- Always treat `/docs/*` files as the canonical source
+- The MCP knowledge graph tracks relationships between components
+- Session logs track the evolution and decisions
 
 ## ⚠️ CRITICAL: Timestamp Requirements
 
@@ -25,31 +44,51 @@ This guide provides comprehensive information about the Panoptikon documentation
 
 ## System Overview
 
-The Panoptikon project uses a unified Qdrant-based documentation system for all documentation storage, indexing, and retrieval.
+The Panoptikon project uses a multi-layered knowledge system:
+
+### Primary Knowledge Layers
+
+1. **Markdown Documentation** (`/docs/*`)
+   - The canonical source of all project documentation
+   - Organized by categories (architecture, components, phases, etc.)
+   - Version controlled in Git
+   - This is where the truth lives!
+
+2. **MCP Knowledge Graph** 
+   - Stores relationships between components (contains, depends on, etc.)
+   - Built from the Relationships sections in documentation
+   - Located at: `/Users/james/Library/Application Support/Claude/panoptikon/memory.jsonl`
+   - Extracted and managed by scripts in `/scripts/knowledge/`
+
+3. **Session Logs** (`docs/ai_docs.md`)
+   - Chronicles all development decisions and progress
+   - Tagged entries with phases, decisions, and rationale
+   - The living history of the project
+
+### Supporting Search Layer
+
+**Qdrant Cloud Instance** (NOT the source of truth!)
+- **Purpose**: Semantic search to help find relevant documentation
+- **Collection**: `panoptikon` 
+- **What it does**: Indexes documentation for AI-powered search
+- **What it doesn't do**: Store the canonical knowledge (that's in Markdown files!)
 
 ### Key Components
 
-1. **Qdrant Cloud Instance**
-   - **Collection Name**: `panoptikon` (unified for all documentation)
-   - **Vector Model**: all-MiniLM-L6-v2 (384 dimensions)
-   - **Vector Name** (for MCP): `fast-all-minilm-l6-v2`
-   - **URL**: Configured in scripts
-
-2. **Documentation Scripts**
-   - **Primary Interface**: `/scripts/documentation/ai_docs.py`
-     - Main AI-accessible interface for documentation
-     - Automatically creates markdown files and indexes them in Qdrant
-     - Provides functions for creating, updating, searching documentation
+1. **Documentation System** (`/scripts/documentation/`)
+   - **ai_docs.py** - Main AI interface for creating/updating Markdown documentation
+   - Creates files in `/docs/*` (the source of truth)
+   - Automatically triggers Qdrant indexing for search
    
-   - **Utility Scripts**: `/scripts/qdrant/`
-     - `dual_reindex.py` - Canonical batch script for both Qdrant (semantic search) and knowledge graph (JSON-LD/NDJSON) export. Always use this for batch reindexing and KG export.
-     - `qdrant.sh` - Wrapper script for all MCP-compatible operations
+2. **Knowledge Graph System** (`/scripts/knowledge/`)
+   - **memory_manager.py** - Manages the MCP knowledge graph (memory.jsonl)
+   - **relationship_extractor.py** - Extracts relationships from docs to build the graph
+   - **doc_lint.py** - Ensures documentation has proper relationship sections
 
-3. **MCP Server Integration**
-   - Uses the `panoptikon` collection
-   - Provides semantic search capabilities
-   - Requires `document` field in payload
-   - Syncs automatically when documents are created/updated
+3. **Search Support** (`/scripts/qdrant/`)
+   - **dual_reindex.py** - Rebuilds both Qdrant search index AND exports knowledge graph
+   - **qdrant.sh** - Wrapper for search operations
+   - Remember: Qdrant is just for search, not storage!
 
 ## Usage Examples
 
@@ -126,16 +165,21 @@ update_phase_progress(
 
 ## Available Functions
 
-All functions automatically sync with the Qdrant cloud instance:
+These functions work with the core knowledge system:
 
-1. `create_documentation(category, title, content, **metadata)` - Creates and indexes new docs
-2. `read_documentation(category, title)` - Reads from local files
-3. `update_documentation(category, title, updates)` - Updates and re-indexes docs
-4. `search_documentation(query, limit=5)` - Semantic search via Qdrant
-5. `document_component(name, **details)` - Create component documentation
-6. `document_phase(name, **details)` - Create stage documentation
-7. `record_decision(title, **decision_details)` - Create ADR (Architecture Decision Record)
-8. `update_phase_progress(phase, **updates)` - Update stage progress tracking
+### Documentation Management (Creates/Updates Markdown Files)
+1. `create_documentation(category, title, content, **metadata)` - Creates new Markdown docs
+2. `read_documentation(category, title)` - Reads from Markdown files (source of truth)
+3. `update_documentation(category, title, updates)` - Updates Markdown files
+4. `document_component(name, **details)` - Create component documentation
+5. `document_phase(name, **details)` - Create stage documentation
+6. `record_decision(title, **decision_details)` - Create ADR (Architecture Decision Record)
+7. `update_phase_progress(phase, **updates)` - Update stage progress tracking
+
+### Search Support (Uses Qdrant)
+8. `search_documentation(query, limit=5)` - Semantic search to find relevant docs
+   - This searches the Qdrant index, not the source files
+   - Always verify results by reading the actual Markdown files
 
 ## Document Categories
 
@@ -171,13 +215,22 @@ python dual_reindex.py
 
 ## Important Notes
 
-1. **Single Collection**: Everything uses the `panoptikon` collection
-2. **No Local Qdrant**: Always use the cloud instance
-3. **Automatic Indexing**: The ai_docs.py system automatically indexes on create/update
-4. **MCP Compatible**: The system is fully integrated with the MCP server
-5. **Document Field**: All indexed documents include a `document` field for MCP compatibility
-6. **Batch Operations**: Only use `dual_reindex.py` for batch Qdrant and KG export. All other batch indexers are deprecated.
-7. **Error Logging & Testing**: The canonical batch script (`dual_reindex.py`) includes robust error logging and is covered by basic tests for reliability.
+### Core Knowledge System
+1. **Markdown Files**: The only source of truth (`/docs/*`)
+2. **MCP Knowledge Graph**: Primary relational knowledge (`memory.jsonl`)
+3. **Session Logs**: Project history and decisions (`ai_docs.md`)
+
+### Supporting Tools
+4. **Qdrant Search**: Just helps find documentation (NOT authoritative)
+5. **Automatic Indexing**: Creating/updating docs triggers search indexing
+6. **Batch Operations**: `dual_reindex.py` rebuilds search AND exports knowledge graph
+
+### Best Practices
+- Always read from Markdown files for authoritative information
+- Use search to find relevant docs, then read the actual files
+- Keep relationship sections updated for the knowledge graph
+- Use system timestamps (never AI-generated ones)
+- The MCP knowledge graph is built from documentation relationships
 
 ## Migration Status
 

@@ -7,7 +7,9 @@ from panoptikon.search.sorting import (
     AttributeSortCriteria,
     CustomSortCriteria,
     FolderSizeSortCriteria,
+    SortCriteria,
     SortingEngine,
+    SortKey,
 )
 
 
@@ -155,3 +157,115 @@ def test_sort_stability(dummy_results: List[SearchResult]) -> None:
         cast(List[SearchResult], results), AttributeSortCriteria("size"), "asc"
     )
     assert [r.name for r in sorted_results] == ["a.txt", "b.txt", "c.txt"]
+
+
+def test_sort_empty_result_set() -> None:
+    """Sorting an empty result set should return an empty list."""
+    engine = SortingEngine()
+    results: list[SearchResult] = []
+    sorted_results = engine.apply_sort(results, AttributeSortCriteria("name"), "asc")
+    assert sorted_results == []
+
+
+def test_sort_all_none_values() -> None:
+    """Sorting when all attribute values are None should preserve order."""
+
+    class NoneResult:
+        name = None
+        size = None
+        metadata = {"folder_size": None}
+
+    engine = SortingEngine()
+    results = [cast(SearchResult, NoneResult()), cast(SearchResult, NoneResult())]
+    sorted_results = engine.apply_sort(results, AttributeSortCriteria("size"), "asc")
+    assert sorted_results == results
+
+
+def test_sort_unknown_criteria_fallback() -> None:
+    """Sorting with an unknown criteria type should fallback to original order."""
+
+    class DummyCriteria(SortCriteria):
+        def apply_to_query(self, query: Any, direction: str = "asc") -> Any:
+            return query
+
+        def compare(
+            self, r1: SearchResult, r2: SearchResult, direction: str = "asc"
+        ) -> int:
+            return 0
+
+    engine = SortingEngine()
+    results = [
+        cast(SearchResult, DummyResult("a")),
+        cast(SearchResult, DummyResult("b")),
+    ]
+    sorted_results = engine.apply_sort(results, DummyCriteria(), "asc")
+    assert sorted_results == results
+
+
+def test_sortkey_with_unknown_criteria() -> None:
+    """SortKey should handle unknown criteria gracefully."""
+
+    class UnknownCriteria(SortCriteria):
+        def apply_to_query(self, query: Any, direction: str = "asc") -> Any:
+            return query
+
+        def compare(
+            self, r1: SearchResult, r2: SearchResult, direction: str = "asc"
+        ) -> int:
+            return 0
+
+    dummy = DummyResult("a")
+    key = SortKey(dummy, [UnknownCriteria()], "asc")
+    # Should return float('-inf') for unknown
+    assert key.values == [float("-inf")]
+
+
+def test_create_sort_criteria_with_custom_fn() -> None:
+    """SortingEngine.create_sort_criteria should return CustomSortCriteria if custom_fn is given."""
+    engine = SortingEngine()
+
+    def cmp(r1: SearchResult, r2: SearchResult) -> int:
+        return 0
+
+    crit = engine.create_sort_criteria("name", custom_fn=cmp)
+    assert isinstance(crit, CustomSortCriteria)
+
+
+def test_create_sort_criteria_default() -> None:
+    """SortingEngine.create_sort_criteria should return AttributeSortCriteria if no custom_fn is given."""
+    engine = SortingEngine()
+    crit = engine.create_sort_criteria("name")
+    assert isinstance(crit, AttributeSortCriteria)
+
+
+def test_comparator_sort_direction_param() -> None:
+    """Test comparator sort with criteria that does and does not accept direction param."""
+
+    class NoDirectionCriteria(SortCriteria):
+        def apply_to_query(self, query: Any, direction: str = "asc") -> Any:
+            return query
+
+        def compare(
+            self, r1: SearchResult, r2: SearchResult, direction: str = "asc"
+        ) -> int:
+            return 0
+
+    class WithDirectionCriteria(SortCriteria):
+        def apply_to_query(self, query: Any, direction: str = "asc") -> Any:
+            return query
+
+        def compare(
+            self, r1: SearchResult, r2: SearchResult, direction: str = "asc"
+        ) -> int:
+            return 0
+
+    engine = SortingEngine()
+    results = [
+        cast(SearchResult, DummyResult("a")),
+        cast(SearchResult, DummyResult("b")),
+    ]
+    # Should not raise
+    sorted_results = engine.apply_sort(
+        results, [NoDirectionCriteria(), WithDirectionCriteria()], "asc"
+    )
+    assert sorted_results == results

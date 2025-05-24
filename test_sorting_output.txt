@@ -1,0 +1,85 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.9.18, pytest-8.3.5, pluggy-1.5.0 -- /Users/james/Documents/GitHub/panoptikon/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /Users/james/Documents/GitHub/panoptikon
+configfile: pyproject.toml
+plugins: anyio-4.9.0, asyncio-0.26.0, mock-3.14.0, cov-6.1.1
+asyncio: mode=strict, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
+collecting ... collected 16 items
+
+tests/core/test_sorting.py::test_sort_by_name_asc PASSED
+tests/core/test_sorting.py::test_sort_by_name_desc PASSED
+tests/core/test_sorting.py::test_sort_by_size_asc PASSED
+tests/core/test_sorting.py::test_sort_by_size_desc PASSED
+tests/core/test_sorting.py::test_sort_by_folder_size_asc PASSED
+tests/core/test_sorting.py::test_sort_by_folder_size_desc XPASS (Fol...)
+tests/core/test_sorting.py::test_sort_by_extension_then_name PASSED
+tests/core/test_sorting.py::test_custom_sort PASSED
+tests/core/test_sorting.py::test_sort_stability PASSED
+tests/core/test_sorting.py::test_sort_empty_result_set PASSED
+tests/core/test_sorting.py::test_sort_all_none_values PASSED
+tests/core/test_sorting.py::test_sort_unknown_criteria_fallback PASSED
+tests/core/test_sorting.py::test_sortkey_with_unknown_criteria PASSED
+tests/core/test_sorting.py::test_create_sort_criteria_with_custom_fn PASSED
+tests/core/test_sorting.py::test_create_sort_criteria_default PASSED
+tests/core/test_sorting.py::test_comparator_sort_direction_param PASSED
+ERROR: Coverage failure: total of 26 is less than fail-under=80
+
+
+================================ tests coverage ================================
+_______________ coverage: platform darwin, python 3.9.18-final-0 _______________
+
+Name                                             Stmts   Miss  Cover
+--------------------------------------------------------------------
+src/panoptikon/__init__.py                           1      0   100%
+src/panoptikon/__main__.py                          34     34     0%
+src/panoptikon/benchmark/__init__.py                 0      0   100%
+src/panoptikon/benchmark/sorting_benchmark.py       21     21     0%
+src/panoptikon/core/__init__.py                      1      0   100%
+src/panoptikon/core/config.py                      246    199    19%
+src/panoptikon/core/errors.py                      182    105    42%
+src/panoptikon/core/events.py                      169    107    37%
+src/panoptikon/core/indexer.py                     209    140    33%
+src/panoptikon/core/lifecycle.py                   135    135     0%
+src/panoptikon/core/service.py                     108     80    26%
+src/panoptikon/core/service_extensions.py            7      7     0%
+src/panoptikon/database/__init__.py                 18      4    78%
+src/panoptikon/database/config.py                   54     21    61%
+src/panoptikon/database/connection.py              122     93    24%
+src/panoptikon/database/optimization.py             37     26    30%
+src/panoptikon/database/performance_monitor.py      27     17    37%
+src/panoptikon/database/pool.py                    341    266    22%
+src/panoptikon/database/pool_service.py            136    104    24%
+src/panoptikon/database/query_builder.py            32     21    34%
+src/panoptikon/database/schema.py                  241    195    19%
+src/panoptikon/database/service.py                  76     52    32%
+src/panoptikon/database/statement_registry.py       43     32    26%
+src/panoptikon/filesystem/__init__.py                7      0   100%
+src/panoptikon/filesystem/access.py                288    214    26%
+src/panoptikon/filesystem/bookmarks.py             214    174    19%
+src/panoptikon/filesystem/cloud.py                 139    103    26%
+src/panoptikon/filesystem/events.py                107     61    43%
+src/panoptikon/filesystem/paths.py                 106     68    36%
+src/panoptikon/filesystem/watcher.py               296    227    23%
+src/panoptikon/indexing/__init__.py                  2      0   100%
+src/panoptikon/indexing/state_manager.py           179    123    31%
+src/panoptikon/search/__init__.py                    3      0   100%
+src/panoptikon/search/filtering.py                 101     62    39%
+src/panoptikon/search/query_parser.py               63     44    30%
+src/panoptikon/search/result.py                     96     59    39%
+src/panoptikon/search/search_engine.py             109     93    15%
+src/panoptikon/search/sorting.py                   150     52    65%
+src/panoptikon/typings/__init__.py                   0      0   100%
+src/panoptikon/ui/__init__.py                        0      0   100%
+src/panoptikon/ui/events.py                         77     77     0%
+src/panoptikon/ui/macos_app.py                     147    147     0%
+src/panoptikon/ui/objc_wrappers.py                  82     82     0%
+src/panoptikon/ui/validators.py                     37     37     0%
+src/panoptikon/ui/window_interfaces.py              32     32     0%
+src/panoptikon/utils/__init__.py                     0      0   100%
+--------------------------------------------------------------------
+TOTAL                                             4475   3314    26%
+Coverage HTML written to dir htmlcov
+Coverage XML written to file coverage.xml
+FAIL Required test coverage of 80% not reached. Total coverage: 25.94%
+======================== 15 passed, 1 xpassed in 1.26s =========================
