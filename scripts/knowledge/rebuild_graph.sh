@@ -51,34 +51,34 @@ echo "  Knowledge graph cleared"
 # Phase 2: Extract from Documentation
 echo -e "\n[Phase 2] Document Extraction"
 
-# Check for typed extractor, fall back to original
-EXTRACTOR="$SCRIPTS_DIR/relationship_extractor.py"
-if python -c "import scripts.knowledge.models" 2>/dev/null && [ -f "$SCRIPTS_DIR/relationship_extractor_typed.py" ]; then
-    EXTRACTOR="$SCRIPTS_DIR/relationship_extractor_typed.py"
-    echo "  Using typed extractor"
+# Extract from roadmap (structure and relationships)
+echo "  Extracting project structure from roadmap..."
+if [ -f "$DOCS_DIR/panoptikon_roadmap.md" ]; then
+    if [ -f "$SCRIPTS_DIR/relationship_extractor_typed.py" ]; then
+        python "$SCRIPTS_DIR/relationship_extractor_typed.py" "$DOCS_DIR/panoptikon_roadmap.md"
+    else
+        python "$SCRIPTS_DIR/relationship_extractor.py" "$DOCS_DIR/panoptikon_roadmap.md"
+    fi
 else
-    echo "  Using original extractor"
+    echo "  [ERROR] panoptikon_roadmap.md not found!"
+    exit 1
 fi
 
-# Extract phases
-echo "  Extracting Phase entities..."
-find "$DOCS_DIR/phases" -name "*.md" -type f | sort | while read -r file; do
-    python "$EXTRACTOR" "$file"
-done
-
-# Extract components
-echo "  Extracting Component entities..."
-find "$DOCS_DIR/components" -name "*.md" -type f | sort | while read -r file; do
-    python "$EXTRACTOR" "$file"
-done
-
-# Extract decisions (if directory exists)
-if [ -d "$DOCS_DIR/decisions" ]; then
-    echo "  Extracting Decision entities..."
-    find "$DOCS_DIR/decisions" -name "*.md" -type f | sort | while read -r file; do
-        python "$EXTRACTOR" "$file"
-    done
+# Extract from ai_docs (progress and status)
+echo "  Extracting progress from ai_docs..."
+if [ -f "$DOCS_DIR/ai_docs.md" ]; then
+    if [ -f "$SCRIPTS_DIR/ai_docs_parser.py" ]; then
+        python "$SCRIPTS_DIR/ai_docs_parser.py" "$DOCS_DIR/ai_docs.md"
+    else
+        echo "  [ERROR] ai_docs_parser.py not found!"
+        exit 1
+    fi
+else
+    echo "  [WARN] ai_docs.md not found - no progress data"
 fi
+
+# Remove old directory processing - these are empty
+# No longer processing phases/, components/, decisions/
 
 # Phase 3: Add Core Entities
 echo -e "\n[Phase 3] Core Entity Addition"

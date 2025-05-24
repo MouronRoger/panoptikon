@@ -134,41 +134,6 @@ class KnowledgeGraphManager:
             f.write(json.dumps(entity.to_jsonl_dict()) + "\n")
         print(f"  [Add] Entity: {entity.name} ({entity.entityType})")
 
-    def add_observation(
-        self,
-        entity_name: str,
-        observation: str,
-        *,
-        dry_run: bool = False,
-    ) -> None:
-        """Add observation to existing entity by normalized name."""
-        normalized = normalize_name(entity_name)
-        entity = None
-        for e in self._entity_cache.values():
-            if normalize_name(e.name) == normalized:
-                entity = e
-                break
-        if not entity:
-            print(f"  [Error] Entity not found: {entity_name}")
-            return
-        if dry_run:
-            print(f"  [DRY] Would add observation to {entity.name}: {observation}")
-            return
-        if observation in entity.observations:
-            print(f"  [Skip] Observation already exists on {entity.name}")
-            return
-        entity.observations.append(observation)
-        with self.memory_path.open("a", encoding="utf-8") as f:
-            f.write(json.dumps(entity.to_jsonl_dict()) + "\n")
-        print(f"  [Add] Observation to {entity.name}: {observation}")
-
-    def entity_exists(self, name: str) -> bool:
-        """Check if entity exists by normalized name."""
-        normalized = normalize_name(name)
-        return any(
-            normalize_name(e.name) == normalized for e in self._entity_cache.values()
-        )
-
     # Relations
 
     def add_relation(
@@ -268,69 +233,11 @@ def valid_target(token: str) -> bool:
 # ---------------------------------------------------------------------------
 
 
-def _extract_roadmap_relationships(
-    relationships_text: str, km: KnowledgeGraphManager, dry_run: bool
-) -> None:
-    """Parse and add all relationships from the roadmap Relationships section, with debug output."""
-    sub_sections = re.split(r"^### ", relationships_text, flags=re.MULTILINE)
-    for section in sub_sections:
-        lines = [line.rstrip() for line in section.splitlines() if line.strip()]
-        parent = None
-        for i, line in enumerate(lines):
-            parent_match = re.match(r"- \*\*(.+?)\*\*", line)
-            if parent_match:
-                parent = parent_match.group(1).strip()
-                parent_type = km.infer_type(parent)
-                print(f"[DEBUG] Parent entity: '{parent}' (type: {parent_type})")
-                km.add_entity(parent, parent_type, dry_run=dry_run)
-                j = i + 1
-                while j < len(lines):
-                    rel_line = lines[j]
-                    rel_match = re.match(r"\s*- \*\*(.+?)\*\*: (.+)", rel_line)
-                    if rel_match:
-                        rel_type_raw = rel_match.group(1).strip()
-                        rel_type = RELATION_TYPES.get(rel_type_raw)
-                        print(f"[DEBUG]   Relationship line: '{rel_line}'")
-                        if not rel_type:
-                            print(f"  [Warn] Unknown relation type: {rel_type_raw}")
-                            j += 1
-                            continue
-                        targets = [
-                            t.strip()
-                            for t in rel_match.group(2).split(",")
-                            if t.strip()
-                        ]
-                        for target in targets:
-                            target_type = km.infer_type(target)
-                            print(
-                                f"[DEBUG]     Adding relation: {parent} -[{rel_type}]-> {target} (type: {target_type})"
-                            )
-                            km.add_entity(target, target_type, dry_run=dry_run)
-                            km.add_relation(
-                                parent,
-                                parent_type,
-                                target,
-                                target_type,
-                                rel_type,
-                                dry_run=dry_run,
-                            )
-                    else:
-                        if re.match(r"- \*\*.+?\*\*", rel_line) or rel_line.startswith(
-                            "### "
-                        ):
-                            break
-                    j += 1
-
-
 def process_file(
     path: Path, km: KnowledgeGraphManager, *, dry_run: bool = False
 ) -> None:
-    """Extract entity + relations from a single markdown *path* (roadmap-aware)."""
-    try:
-        rel_path = path.relative_to(Path.cwd())
-        print(f"\nProcessing: {rel_path}")
-    except ValueError:
-        print(f"\nProcessing: {path}")
+    """Extract entity + relations from a single markdown *path*."""
+    print(f"\nProcessing: {path.relative_to(Path.cwd())}")
     if dry_run:
         print("  [DRY RUN]")
 
@@ -338,11 +245,10 @@ def process_file(
     content = path.read_text(encoding="utf-8")
     entity_name = extract_first_header(content, path.stem.replace("-", " "))
 
-    # 1. Entity (skip adding the roadmap file itself as an entity)
-    if entity_type != "Unknown":
-        km.add_entity(entity_name, entity_type, dry_run=dry_run)
+    # 1. Entity
+    km.add_entity(entity_name, entity_type, dry_run=dry_run)
 
-    # 2. Relationships section (robust, roadmap-aware)
+    # 2. Relationships section
     match_section = re.search(
         r"## Relationships.*?(?=^##|\Z)", content, re.DOTALL | re.MULTILINE
     )
@@ -350,8 +256,26 @@ def process_file(
         print("  [Info] No Relationships section found")
         return
 
-    relationships_text = match_section.group(0)
-    _extract_roadmap_relationships(relationships_text, km, dry_run)
+    pairs = re.findall(
+        r"^\s*-\s*\*\*(.*?)\*\*: \s*(.*)$", match_section.group(0), re.MULTILINE
+    )
+    for rel_type_raw, targets in pairs:
+        rel_type = RELATION_TYPES.get(rel_type_raw.strip())
+        if not rel_type:
+            print(f"  [Warn] Unknown relation type: {rel_type_raw}")
+            continue
+        for target in re.split(r",\s*", targets):
+            if not valid_target(target):
+                continue
+            target_type = km.infer_type(target)
+            km.add_relation(
+                entity_name,
+                entity_type,
+                target.strip(),
+                target_type,
+                rel_type,
+                dry_run=dry_run,
+            )
 
 
 # ---------------------------------------------------------------------------
