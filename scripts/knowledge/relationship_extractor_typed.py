@@ -227,6 +227,46 @@ class KnowledgeGraphManager:
             return "Decision"
         return "Component"
 
+    def sync_entity(self, entity_data: dict, dry_run: bool = False) -> None:
+        """Akro-inspired update-or-create pattern: upsert entity and observations."""
+        name = entity_data["name"]
+        if self.entity_exists(name):
+            existing = self.search_entities(name)
+            # Add new observations only
+            for obs in entity_data.get("observations", []):
+                if obs not in existing.observations:
+                    self.add_observation(name, obs, dry_run=dry_run)
+        else:
+            self.add_entity(
+                name,
+                entity_data["entityType"],
+                entity_data.get("observations", [None])[0],
+                dry_run=dry_run,
+            )
+
+    def detect_evolution(self, entry_data: dict) -> Optional[str]:
+        """Detect if entity is a new version/evolution of an existing one (Akro-style)."""
+        import re
+
+        name = entry_data.get("name", "")
+        # Simple version/evolution detection
+        if re.search(r"v\d+|version \d+|updated|revised", name, re.I):
+            base = re.sub(
+                r"v\d+|version \d+|updated|revised", "", name, flags=re.I
+            ).strip()
+            for e in self._entity_cache.values():
+                if base in e.name and e.name != name:
+                    return e.name
+        return None
+
+    def search_entities(self, name: str) -> Optional[Entity]:
+        """Search for entity by normalized name."""
+        normalized = normalize_name(name)
+        for e in self._entity_cache.values():
+            if normalize_name(e.name) == normalized:
+                return e
+        return None
+
 
 # ---------------------------------------------------------------------------
 # Markdown helpers
@@ -271,55 +311,36 @@ def valid_target(token: str) -> bool:
 def _extract_roadmap_relationships(
     relationships_text: str, km: KnowledgeGraphManager, dry_run: bool
 ) -> None:
-    """Parse and add all relationships from the roadmap Relationships section, with debug output."""
-    sub_sections = re.split(r"^### ", relationships_text, flags=re.MULTILINE)
-    for section in sub_sections:
-        lines = [line.rstrip() for line in section.splitlines() if line.strip()]
-        parent = None
-        for i, line in enumerate(lines):
-            parent_match = re.match(r"- \*\*(.+?)\*\*", line)
-            if parent_match:
-                parent = parent_match.group(1).strip()
-                parent_type = km.infer_type(parent)
-                print(f"[DEBUG] Parent entity: '{parent}' (type: {parent_type})")
-                km.add_entity(parent, parent_type, dry_run=dry_run)
-                j = i + 1
-                while j < len(lines):
-                    rel_line = lines[j]
-                    rel_match = re.match(r"\s*- \*\*(.+?)\*\*: (.+)", rel_line)
-                    if rel_match:
-                        rel_type_raw = rel_match.group(1).strip()
-                        rel_type = RELATION_TYPES.get(rel_type_raw)
-                        print(f"[DEBUG]   Relationship line: '{rel_line}'")
-                        if not rel_type:
-                            print(f"  [Warn] Unknown relation type: {rel_type_raw}")
-                            j += 1
-                            continue
-                        targets = [
-                            t.strip()
-                            for t in rel_match.group(2).split(",")
-                            if t.strip()
-                        ]
-                        for target in targets:
-                            target_type = km.infer_type(target)
-                            print(
-                                f"[DEBUG]     Adding relation: {parent} -[{rel_type}]-> {target} (type: {target_type})"
-                            )
-                            km.add_entity(target, target_type, dry_run=dry_run)
-                            km.add_relation(
-                                parent,
-                                parent_type,
-                                target,
-                                target_type,
-                                rel_type,
-                                dry_run=dry_run,
-                            )
-                    else:
-                        if re.match(r"- \*\*.+?\*\*", rel_line) or rel_line.startswith(
-                            "### "
-                        ):
-                            break
-                    j += 1
+    """Tolerant extraction: match bolded parents and relationships, add relations."""
+    all_lines = relationships_text.splitlines()
+    lines = [line.rstrip() for line in all_lines if line.strip()]
+    parent = None
+    parent_type = None
+    for line in lines:
+        parent_match = re.match(r"^\s*-?\s*\*\*(.+?)\*\*\s*$", line)
+        if parent_match:
+            parent = parent_match.group(1).strip()
+            parent_type = km.infer_type(parent)
+            km.add_entity(parent, parent_type, dry_run=dry_run)
+            continue
+        rel_match = re.match(r"^\s*-?\s*\*\*(.+?)\*\*:\s*(.+)$", line)
+        if rel_match and parent:
+            rel_type_raw = rel_match.group(1).strip()
+            rel_type = RELATION_TYPES.get(rel_type_raw)
+            if not rel_type:
+                continue
+            targets = [t.strip() for t in rel_match.group(2).split(",") if t.strip()]
+            for target in targets:
+                target_type = km.infer_type(target)
+                km.add_entity(target, target_type, dry_run=dry_run)
+                km.add_relation(
+                    parent,
+                    parent_type,
+                    target,
+                    target_type,
+                    rel_type,
+                    dry_run=dry_run,
+                )
 
 
 def process_file(

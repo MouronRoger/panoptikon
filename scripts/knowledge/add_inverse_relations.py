@@ -1,14 +1,17 @@
+from __future__ import annotations
+
+import json
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
+
 """Add missing inverse relationships to the knowledge-graph NDJSON store.
 
 The mapping between a relation and its inverse is defined in *INVERSE_MAP*.
 The script is idempotent – it reads the current store, determines which
 inverse edges are absent and appends only those.
 """
-
-from __future__ import annotations
-
-import json
-from pathlib import Path
 
 from scripts.knowledge.models import Relation
 

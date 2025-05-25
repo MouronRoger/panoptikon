@@ -470,7 +470,7 @@ The emphasis on early implementation of high-risk components, multiple implement
 
 ## Relationships
 
-### Phase Relationships
+**Phase Relationships**
 - **Phase 1 - Foundation**
   - **Precedes**: Phase 2 - Core Engine
   - **Contains**: Stage 1 - Project Initialization, Stage 2 - Core Infrastructure, Stage 3 - Filesystem Abstraction, Stage 4 - Database Foundation
@@ -499,7 +499,7 @@ The emphasis on early implementation of high-risk components, multiple implement
   - **Depends On**: Phase 5 - Optimization
   - **Contains**: Stage 11 - Packaging and Release
 
-### Stage Component Relationships (MCP naming conventions)
+**Stage Component Relationships (MCP naming conventions)**
 - **Stage 1 - Project Initialization**
   - **Contains**: Project_Structure, Build_System, Testing_Framework
 
@@ -521,7 +521,7 @@ The emphasis on early implementation of high-risk components, multiple implement
 - **Stage 7 - UI Framework**
   - **Contains**: Main_Window, Search_Field, Results_Table, Dual_Window_Manager, Folder_Size_Display
 
-### Component Dependencies
+**Component Dependencies**
 - **Service_Container**
   - **Used By**: All core components
 
@@ -535,11 +535,7 @@ The emphasis on early implementation of high-risk components, multiple implement
   - **Depends On**: Database_Schema, Query_Parser
   - **Used By**: UI_Framework
 
-### Feature Relationships
+**Feature Relationships**
 - **Folder_Size_Feature**
   - **Implemented By**: Folder_Size_Calculation, Folder_Size_Display
   - **Depends On**: Database_Schema, Migration_System
-
-- **Dual_Window_Feature**
-  - **Implemented By**: Dual_Window_Manager
-  - **Depends On**: Main_Window, Event_Bus
